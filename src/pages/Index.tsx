@@ -137,8 +137,8 @@ const Index = () => {
               </p>
             </div>
 
-            {/* 4x4 Grid Layout - 300x250px cards */}
-            <div className="grid grid-cols-4 gap-6 max-w-[1320px] mx-auto">
+            {/* Responsive Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1320px] mx-auto">
               {gridItems.map((item) => (
                 item.type === "firma" ? (
                   <FirmaCard key={item.id} firma={item.data} />

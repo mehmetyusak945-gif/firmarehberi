@@ -151,7 +151,7 @@ const Category = () => {
 
           {/* Sıralama ve Firma Grid */}
           <section className="container mx-auto px-4 py-12">
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold mb-2">
                   {validCategory} Kategorisi
@@ -161,10 +161,10 @@ const Category = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium">Sırala:</label>
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <label className="text-sm font-medium whitespace-nowrap">Sırala:</label>
                 <Select value={sortOption} onValueChange={handleSortChange}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full md:w-[180px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -178,8 +178,8 @@ const Category = () => {
               </div>
             </div>
 
-            {/* 4x4 Grid Layout - 300x250px cards */}
-            <div className="grid grid-cols-4 gap-6 max-w-[1320px] mx-auto">
+            {/* Responsive Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1320px] mx-auto">
               {gridItems.map((item) => (
                 item.type === "firma" ? (
                   <FirmaCard key={item.id} firma={item.data} />
