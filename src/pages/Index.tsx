@@ -4,9 +4,7 @@ import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
 import { AdBanner } from "@/components/AdBanner";
 import { SEOHead } from "@/components/SEOHead";
-import { mockFirms, categories, type Category } from "@/data/mockFirms";
-import { Filter } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { mockFirms, categories } from "@/data/mockFirms";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -75,23 +73,32 @@ const Index = () => {
                 Elektrikçiden restorana, tesisatçıdan çeşmeciye kadar her şey burada!
               </p>
 
-              {/* Filtre */}
-              <div className="max-w-md mx-auto">
-                <div className="flex items-center space-x-2 bg-white/95 backdrop-blur-sm rounded-lg p-2 shadow-xl">
-                  <Filter className="h-5 w-5 text-muted-foreground ml-2" />
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="flex-1 border-0 focus:ring-0 bg-transparent">
-                      <SelectValue placeholder="Kategori Seçin" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background z-50">
-                      <SelectItem value="all">Tüm Kategoriler</SelectItem>
-                      {categories.map(category => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              {/* Kategori Pills */}
+              <div className="max-w-4xl mx-auto">
+                <div className="flex items-center justify-center gap-2 flex-wrap px-4">
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md ${
+                      selectedCategory === "all"
+                        ? "gradient-accent text-white"
+                        : "bg-white/95 text-foreground hover:bg-white hover:scale-105"
+                    }`}
+                  >
+                    Tümü
+                  </button>
+                  {categories.map(category => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md ${
+                        selectedCategory === category
+                          ? "gradient-accent text-white"
+                          : "bg-white/95 text-foreground hover:bg-white hover:scale-105"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
