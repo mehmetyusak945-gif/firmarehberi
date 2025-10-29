@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
@@ -7,7 +8,17 @@ import { SEOHead } from "@/components/SEOHead";
 import { mockFirms, categories } from "@/data/mockFirms";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  
+  const handleCategoryClick = (category: string) => {
+    if (category === "all") {
+      setSelectedCategory("all");
+    } else {
+      const slug = category.toLowerCase().replace(/\s+/g, "-");
+      navigate(`/kategori/${slug}`);
+    }
+  };
 
   // Filtrelenmiş firmalar
   const filteredFirms = useMemo(() => {
@@ -90,7 +101,7 @@ const Index = () => {
               <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-center gap-2 flex-wrap px-4">
                   <button
-                    onClick={() => setSelectedCategory("all")}
+                    onClick={() => handleCategoryClick("all")}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md ${
                       selectedCategory === "all"
                         ? "gradient-accent text-white"
@@ -102,12 +113,8 @@ const Index = () => {
                   {categories.map(category => (
                     <button
                       key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md ${
-                        selectedCategory === category
-                          ? "gradient-accent text-white"
-                          : "bg-white/95 text-foreground hover:bg-white hover:scale-105"
-                      }`}
+                      onClick={() => handleCategoryClick(category)}
+                      className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
                     >
                       {category}
                     </button>

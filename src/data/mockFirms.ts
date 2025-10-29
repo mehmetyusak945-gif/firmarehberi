@@ -1,4 +1,4 @@
-// Mock firma verileri - Her kategoriden 10'ar adet
+// Mock firma verileri - Her kategoriden 24'er adet
 export interface Firma {
   id: string;
   name: string;
@@ -9,6 +9,7 @@ export interface Firma {
   category: string;
   description: string;
   slug: string;
+  createdAt: string; // ISO date string for sorting
 }
 
 export const categories = [
@@ -23,7 +24,7 @@ export const categories = [
 export type Category = typeof categories[number];
 
 export const mockFirms: Firma[] = [
-  // Elektrikçi - 10 adet
+  // Elektrikçi - 24 adet
   {
     id: "1",
     name: "Aydınlatma Elektrik",
@@ -33,7 +34,8 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Elektrikçi",
     description: "30 yıllık tecrübesiyle ev ve işyeri elektrik işlerinizde güvenilir çözüm ortağınız.",
-    slug: "aydinlatma-elektrik-kadikoy"
+    slug: "aydinlatma-elektrik-kadikoy",
+    createdAt: "2024-01-15T10:30:00Z"
   },
   {
     id: "2",
@@ -44,7 +46,8 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Elektrikçi",
     description: "7/24 acil elektrik arıza servisi ve profesyonel elektrik tesisatı hizmetleri.",
-    slug: "parlak-elektrik-ustasi-besiktas"
+    slug: "parlak-elektrik-ustasi-besiktas",
+    createdAt: "2024-02-20T14:15:00Z"
   },
   {
     id: "3",
@@ -55,7 +58,8 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Elektrikçi",
     description: "Modern elektrik sistemleri kurulumu ve bakımında uzman ekip.",
-    slug: "volt-elektrik-hizmetleri-beyoglu"
+    slug: "volt-elektrik-hizmetleri-beyoglu",
+    createdAt: "2024-03-10T09:45:00Z"
   },
   {
     id: "4",
@@ -66,7 +70,8 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Elektrikçi",
     description: "Enerji verimliliği ve güvenli elektrik tesisatları konusunda profesyonel hizmet.",
-    slug: "enerji-elektrik-maltepe"
+    slug: "enerji-elektrik-maltepe",
+    createdAt: "2024-04-05T16:20:00Z"
   },
   {
     id: "5",
@@ -77,7 +82,8 @@ export const mockFirms: Firma[] = [
     rating: 4.5,
     category: "Elektrikçi",
     description: "Aydınlatma sistemleri ve elektrik panosu montajında uzman kadro.",
-    slug: "isik-elektrik-ustasi-uskudar"
+    slug: "isik-elektrik-ustasi-uskudar",
+    createdAt: "2024-05-12T11:30:00Z"
   },
   {
     id: "6",
@@ -88,7 +94,8 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Elektrikçi",
     description: "Hızlı ve kaliteli elektrik arıza çözümleri için tek adres.",
-    slug: "simsek-elektrik-kartal"
+    slug: "simsek-elektrik-kartal",
+    createdAt: "2024-06-18T08:00:00Z"
   },
   {
     id: "7",
@@ -99,7 +106,8 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Elektrikçi",
     description: "Endüstriyel ve konut tipi elektrik projelerinde güvenilir partner.",
-    slug: "guc-elektrik-sistemleri-umraniye"
+    slug: "guc-elektrik-sistemleri-umraniye",
+    createdAt: "2024-07-22T13:45:00Z"
   },
   {
     id: "8",
@@ -110,7 +118,8 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Elektrikçi",
     description: "LED aydınlatma ve akıllı ev sistemleri kurulum uzmanı.",
-    slug: "ampul-elektrik-bakirkoy"
+    slug: "ampul-elektrik-bakirkoy",
+    createdAt: "2024-08-14T10:20:00Z"
   },
   {
     id: "9",
@@ -121,7 +130,8 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Elektrikçi",
     description: "Elektrik projesi çizimi ve uygulama hizmetlerinde 20 yıllık deneyim.",
-    slug: "elektro-teknik-pendik"
+    slug: "elektro-teknik-pendik",
+    createdAt: "2024-09-03T15:10:00Z"
   },
   {
     id: "10",
@@ -132,12 +142,181 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Elektrikçi",
     description: "Ticari ve endüstriyel elektrik tesisatlarında profesyonel çözümler.",
-    slug: "yildirim-elektrik-sisli"
+    slug: "yildirim-elektrik-sisli",
+    createdAt: "2024-10-07T12:30:00Z"
   },
-
-  // Restoran - 10 adet
   {
     id: "11",
+    name: "Akar Elektrik",
+    address: "Esenler Caddesi No:56, Esenler/İstanbul",
+    phone: "0212 555 01 11",
+    website: "www.akarelektrik.com",
+    rating: 4.7,
+    category: "Elektrikçi",
+    description: "Elektrik pano revizyonu ve yenileme işlerinde uzman ekip.",
+    slug: "akar-elektrik-esenler",
+    createdAt: "2024-11-10T09:15:00Z"
+  },
+  {
+    id: "12",
+    name: "Dijital Elektrik",
+    address: "Tuzla Caddesi No:178, Tuzla/İstanbul",
+    phone: "0216 555 01 12",
+    website: "www.dijitalelektrik.com",
+    rating: 4.9,
+    category: "Elektrikçi",
+    description: "Akıllı bina otomasyon sistemleri ve dijital elektrik çözümleri.",
+    slug: "dijital-elektrik-tuzla",
+    createdAt: "2024-12-01T14:40:00Z"
+  },
+  {
+    id: "13",
+    name: "Mega Elektrik",
+    address: "Bahçeşehir Caddesi No:92, Başakşehir/İstanbul",
+    phone: "0212 555 01 13",
+    website: "www.megaelektrik.com",
+    rating: 4.6,
+    category: "Elektrikçi",
+    description: "Toplu konutlar ve siteler için özel elektrik proje ve uygulama.",
+    slug: "mega-elektrik-bahcesehir",
+    createdAt: "2023-12-15T11:25:00Z"
+  },
+  {
+    id: "14",
+    name: "Çağdaş Elektrik",
+    address: "Gaziosmanpaşa Caddesi No:34, Gaziosmanpaşa/İstanbul",
+    phone: "0212 555 01 14",
+    website: "www.cagdaselektrik.com",
+    rating: 4.8,
+    category: "Elektrikçi",
+    description: "Çağdaş elektrik teknolojileri ile güvenli ve verimli tesisatlar.",
+    slug: "cagdas-elektrik-gaziosmanpasa",
+    createdAt: "2023-11-20T16:50:00Z"
+  },
+  {
+    id: "15",
+    name: "Güvenilir Elektrik",
+    address: "Sultangazi Caddesi No:145, Sultangazi/İstanbul",
+    phone: "0212 555 01 15",
+    website: "www.guvenirlektrik.com",
+    rating: 4.5,
+    category: "Elektrikçi",
+    description: "Güvenlik ve kalite standartlarında elektrik hizmetleri.",
+    slug: "guvenilir-elektrik-sultangazi",
+    createdAt: "2023-10-08T10:00:00Z"
+  },
+  {
+    id: "16",
+    name: "Elektra Plus",
+    address: "Arnavutköy Caddesi No:67, Arnavutköy/İstanbul",
+    phone: "0212 555 01 16",
+    website: "www.elektraplus.com",
+    rating: 4.7,
+    category: "Elektrikçi",
+    description: "Elektrik tesisatı montaj, bakım ve onarım hizmetleri.",
+    slug: "elektra-plus-arnavutkoy",
+    createdAt: "2023-09-14T13:20:00Z"
+  },
+  {
+    id: "17",
+    name: "Süper Elektrik",
+    address: "Eyüpsultan Caddesi No:89, Eyüpsultan/İstanbul",
+    phone: "0212 555 01 17",
+    website: "www.superelektrik.com",
+    rating: 4.9,
+    category: "Elektrikçi",
+    description: "Süper hızlı servis ve kaliteli malzeme kullanımı.",
+    slug: "super-elektrik-eyupsultan",
+    createdAt: "2023-08-25T08:45:00Z"
+  },
+  {
+    id: "18",
+    name: "Bilge Elektrik",
+    address: "Bayrampaşa Caddesi No:123, Bayrampaşa/İstanbul",
+    phone: "0212 555 01 18",
+    website: "www.bilgeelektrik.com",
+    rating: 4.6,
+    category: "Elektrikçi",
+    description: "Bilgili ve deneyimli ekiple elektrik sorunlarına çözüm.",
+    slug: "bilge-elektrik-bayrampasa",
+    createdAt: "2023-07-30T15:30:00Z"
+  },
+  {
+    id: "19",
+    name: "Elite Elektrik",
+    address: "Zeytinburnu Caddesi No:56, Zeytinburnu/İstanbul",
+    phone: "0212 555 01 19",
+    website: "www.eliteelektrik.com",
+    rating: 4.8,
+    category: "Elektrikçi",
+    description: "Elite standartlarda elektrik tesisatı ve danışmanlık.",
+    slug: "elite-elektrik-zeytinburnu",
+    createdAt: "2023-06-12T12:00:00Z"
+  },
+  {
+    id: "20",
+    name: "Profesyonel Elektrik",
+    address: "Kağıthane Caddesi No:78, Kağıthane/İstanbul",
+    phone: "0212 555 01 20",
+    website: "www.profesyonelektrik.com",
+    rating: 4.7,
+    category: "Elektrikçi",
+    description: "Profesyonel ekip ve modern ekipmanlarla elektrik hizmetleri.",
+    slug: "profesyonel-elektrik-kagithane",
+    createdAt: "2023-05-18T09:40:00Z"
+  },
+  {
+    id: "21",
+    name: "Standart Elektrik",
+    address: "Sarıyer Caddesi No:234, Sarıyer/İstanbul",
+    phone: "0212 555 01 21",
+    website: "www.standartelektrik.com",
+    rating: 4.5,
+    category: "Elektrikçi",
+    description: "Uluslararası standartlarda elektrik tesisatı uygulamaları.",
+    slug: "standart-elektrik-sariyer",
+    createdAt: "2023-04-22T14:15:00Z"
+  },
+  {
+    id: "22",
+    name: "Tekno Elektrik",
+    address: "Çekmeköy Caddesi No:145, Çekmeköy/İstanbul",
+    phone: "0216 555 01 22",
+    website: "www.teknoelektrik.com",
+    rating: 4.9,
+    category: "Elektrikçi",
+    description: "Teknolojik elektrik çözümleri ve otomasyon sistemleri.",
+    slug: "tekno-elektrik-cekmekoy",
+    createdAt: "2023-03-28T11:50:00Z"
+  },
+  {
+    id: "23",
+    name: "Usta İşi Elektrik",
+    address: "Sancaktepe Caddesi No:67, Sancaktepe/İstanbul",
+    phone: "0216 555 01 23",
+    website: "www.ustaisi.com",
+    rating: 4.6,
+    category: "Elektrikçi",
+    description: "Usta işçilik ve titiz çalışmayla elektrik hizmetleri.",
+    slug: "usta-isi-elektrik-sancaktepe",
+    createdAt: "2023-02-14T16:25:00Z"
+  },
+  {
+    id: "24",
+    name: "Zirve Elektrik",
+    address: "Silivri Caddesi No:189, Silivri/İstanbul",
+    phone: "0212 555 01 24",
+    website: "www.zirveelektrik.com",
+    rating: 4.8,
+    category: "Elektrikçi",
+    description: "Zirve kalitede elektrik tesisatı ve danışmanlık hizmetleri.",
+    slug: "zirve-elektrik-silivri",
+    createdAt: "2023-01-10T10:30:00Z"
+  },
+
+  // Restoran - 24 adet
+  {
+    id: "25",
     name: "Lezzet Durağı Restaurant",
     address: "Nişantaşı Caddesi No:12, Şişli/İstanbul",
     phone: "0212 555 02 01",
@@ -145,10 +324,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Restoran",
     description: "Modern Türk mutfağının en lezzetli örneklerini sunan şık restoran.",
-    slug: "lezzet-duragi-restaurant-nisantasi"
+    slug: "lezzet-duragi-restaurant-nisantasi",
+    createdAt: "2024-01-20T12:00:00Z"
   },
   {
-    id: "12",
+    id: "26",
     name: "Deniz Restaurant",
     address: "Kuruçeşme Caddesi No:34, Beşiktaş/İstanbul",
     phone: "0212 555 02 02",
@@ -156,10 +336,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Restoran",
     description: "Boğaz manzaralı, taze deniz ürünleri ve meyhane kültürü bir arada.",
-    slug: "deniz-restaurant-kurucesme"
+    slug: "deniz-restaurant-kurucesme",
+    createdAt: "2024-02-15T14:30:00Z"
   },
   {
-    id: "13",
+    id: "27",
     name: "Gurme Sofra",
     address: "Bağdat Caddesi No:456, Kadıköy/İstanbul",
     phone: "0216 555 02 03",
@@ -167,10 +348,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Restoran",
     description: "Dünya mutfağından seçkin lezzetler ve özel menüler.",
-    slug: "gurme-sofra-kadikoy"
+    slug: "gurme-sofra-kadikoy",
+    createdAt: "2024-03-12T11:15:00Z"
   },
   {
-    id: "14",
+    id: "28",
     name: "Köşe Restaurant",
     address: "Moda Caddesi No:67, Kadıköy/İstanbul",
     phone: "0216 555 02 04",
@@ -178,10 +360,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Restoran",
     description: "Samimi ortamıyla ev yemekleri ve özel tarifler sunan aile restoranı.",
-    slug: "kose-restaurant-moda"
+    slug: "kose-restaurant-moda",
+    createdAt: "2024-04-18T16:45:00Z"
   },
   {
-    id: "15",
+    id: "29",
     name: "Şehir Lezzetleri",
     address: "Taksim Meydanı No:23, Beyoğlu/İstanbul",
     phone: "0212 555 02 05",
@@ -189,10 +372,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Restoran",
     description: "İstanbul'un kalbinde, geleneksel lezzetlerle modern sunum.",
-    slug: "sehir-lezzetleri-taksim"
+    slug: "sehir-lezzetleri-taksim",
+    createdAt: "2024-05-22T13:20:00Z"
   },
   {
-    id: "16",
+    id: "30",
     name: "Bahçe Restaurant",
     address: "Emirgan Korusu Yanı No:5, Sarıyer/İstanbul",
     phone: "0212 555 02 06",
@@ -200,10 +384,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Restoran",
     description: "Yeşillikler içinde, doğayla iç içe kahvaltı ve yemek keyfi.",
-    slug: "bahce-restaurant-emirgan"
+    slug: "bahce-restaurant-emirgan",
+    createdAt: "2024-06-28T10:00:00Z"
   },
   {
-    id: "17",
+    id: "31",
     name: "Keyif Sofrası",
     address: "Caddebostan Sahil No:89, Kadıköy/İstanbul",
     phone: "0216 555 02 07",
@@ -211,10 +396,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Restoran",
     description: "Deniz kenarında, romantik akşam yemekleri ve canlı müzik.",
-    slug: "keyif-sofrasi-caddebostan"
+    slug: "keyif-sofrasi-caddebostan",
+    createdAt: "2024-07-15T15:30:00Z"
   },
   {
-    id: "18",
+    id: "32",
     name: "Mangal Keyfi",
     address: "Florya Sahil Yolu No:123, Bakırköy/İstanbul",
     phone: "0212 555 02 08",
@@ -222,10 +408,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Restoran",
     description: "Özel mangal soslu etleri ve mezeler eşliğinde lezzet şöleni.",
-    slug: "mangal-keyfi-florya"
+    slug: "mangal-keyfi-florya",
+    createdAt: "2024-08-20T12:45:00Z"
   },
   {
-    id: "19",
+    id: "33",
     name: "Anadolu Sofrası",
     address: "Ataşehir Bulvarı No:234, Ataşehir/İstanbul",
     phone: "0216 555 02 09",
@@ -233,10 +420,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Restoran",
     description: "Anadolu'nun dört bir yanından geleneksel lezzetler.",
-    slug: "anadolu-sofrasi-atasehir"
+    slug: "anadolu-sofrasi-atasehir",
+    createdAt: "2024-09-10T09:20:00Z"
   },
   {
-    id: "20",
+    id: "34",
     name: "İstanbul Sofrası",
     address: "Sultanahmet Meydanı No:45, Fatih/İstanbul",
     phone: "0212 555 02 10",
@@ -244,12 +432,181 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Restoran",
     description: "Tarihi yarımadada Osmanlı mutfağının en seçkin örnekleri.",
-    slug: "istanbul-sofrasi-sultanahmet"
+    slug: "istanbul-sofrasi-sultanahmet",
+    createdAt: "2024-10-05T14:00:00Z"
+  },
+  {
+    id: "35",
+    name: "Balık Evi Restaurant",
+    address: "Ortaköy Caddesi No:56, Beşiktaş/İstanbul",
+    phone: "0212 555 02 11",
+    website: "www.balikevi.com",
+    rating: 4.7,
+    category: "Restoran",
+    description: "Taze balık ve deniz ürünleri ile Boğaz'ın eşsiz manzarası.",
+    slug: "balik-evi-restaurant-ortakoy",
+    createdAt: "2024-11-12T11:30:00Z"
+  },
+  {
+    id: "36",
+    name: "Köfteci Restaurant",
+    address: "Levent Caddesi No:78, Beşiktaş/İstanbul",
+    phone: "0212 555 02 12",
+    website: "www.kofteci.com",
+    rating: 4.9,
+    category: "Restoran",
+    description: "Özel harmanlanmış köfte ve kebap çeşitleriyle ünlü restoran.",
+    slug: "kofteci-restaurant-levent",
+    createdAt: "2024-12-03T16:15:00Z"
+  },
+  {
+    id: "37",
+    name: "Dönerci Restaurant",
+    address: "Etiler Caddesi No:90, Beşiktaş/İstanbul",
+    phone: "0212 555 02 13",
+    website: "www.donerci.com",
+    rating: 4.6,
+    category: "Restoran",
+    description: "El yapımı döner ve kebap ustası ile lezzet durağı.",
+    slug: "donerci-restaurant-etiler",
+    createdAt: "2023-12-20T13:40:00Z"
+  },
+  {
+    id: "38",
+    name: "Pide Sarayı",
+    address: "Kalamış Caddesi No:123, Kadıköy/İstanbul",
+    phone: "0216 555 02 14",
+    website: "www.pidesarayi.com",
+    rating: 4.8,
+    category: "Restoran",
+    description: "Taş fırında pişen geleneksel pide ve lahmacun lezzetleri.",
+    slug: "pide-sarayi-kalamis",
+    createdAt: "2023-11-15T10:20:00Z"
+  },
+  {
+    id: "39",
+    name: "Kebapçı Restaurant",
+    address: "Şişli Caddesi No:145, Şişli/İstanbul",
+    phone: "0212 555 02 15",
+    website: "www.kebapci.com",
+    rating: 4.5,
+    category: "Restoran",
+    description: "Adana, urfa ve diğer kebap çeşitlerinde uzman restoran.",
+    slug: "kebapci-restaurant-sisli",
+    createdAt: "2023-10-10T15:50:00Z"
+  },
+  {
+    id: "40",
+    name: "Meze Dünyası",
+    address: "Kadıköy İskelesi Yanı No:34, Kadıköy/İstanbul",
+    phone: "0216 555 02 16",
+    website: "www.mezedunyasi.com",
+    rating: 4.7,
+    category: "Restoran",
+    description: "60'tan fazla meze çeşidi ve rakı sofrası keyfı.",
+    slug: "meze-dunyasi-kadikoy",
+    createdAt: "2023-09-05T12:30:00Z"
+  },
+  {
+    id: "41",
+    name: "Güveç Evi",
+    address: "Bostancı Caddesi No:67, Kadıköy/İstanbul",
+    phone: "0216 555 02 17",
+    website: "www.guvecevi.com",
+    rating: 4.9,
+    category: "Restoran",
+    description: "Toprak güveçlerde pişen özel yemek tarifleri.",
+    slug: "guvec-evi-bostanci",
+    createdAt: "2023-08-18T09:15:00Z"
+  },
+  {
+    id: "42",
+    name: "Ocakbaşı Restaurant",
+    address: "Nişantaşı Caddesi No:89, Şişli/İstanbul",
+    phone: "0212 555 02 18",
+    website: "www.ocakbasi.com",
+    rating: 4.6,
+    category: "Restoran",
+    description: "Canlı müzik eşliğinde ocakbaşı ve meyhane lezzetleri.",
+    slug: "ocakbasi-restaurant-nisantasi",
+    createdAt: "2023-07-25T14:45:00Z"
+  },
+  {
+    id: "43",
+    name: "Balkan Sofrası",
+    address: "Fatih Caddesi No:234, Fatih/İstanbul",
+    phone: "0212 555 02 19",
+    website: "www.balkansofrasi.com",
+    rating: 4.8,
+    category: "Restoran",
+    description: "Balkan mutfağından özel tarifler ve geleneksel lezzetler.",
+    slug: "balkan-sofrasi-fatih",
+    createdAt: "2023-06-30T11:20:00Z"
+  },
+  {
+    id: "44",
+    name: "Ege Lezzetleri",
+    address: "Yeşilköy Caddesi No:156, Bakırköy/İstanbul",
+    phone: "0212 555 02 20",
+    website: "www.egelezzetleri.com",
+    rating: 4.7,
+    category: "Restoran",
+    description: "Ege bölgesi zeytinyağlıları ve otlu yemekleri.",
+    slug: "ege-lezzetleri-yesilkoy",
+    createdAt: "2023-05-15T16:00:00Z"
+  },
+  {
+    id: "45",
+    name: "Karadeniz Mutfağı",
+    address: "Pendik Caddesi No:78, Pendik/İstanbul",
+    phone: "0216 555 02 21",
+    website: "www.karadenizkuzhani.com",
+    rating: 4.5,
+    category: "Restoran",
+    description: "Karadeniz bölgesinin geleneksel hamur işleri ve balık yemekleri.",
+    slug: "karadeniz-mutfagi-pendik",
+    createdAt: "2023-04-20T13:30:00Z"
+  },
+  {
+    id: "46",
+    name: "Akdeniz Sofrası",
+    address: "Maltepe Caddesi No:90, Maltepe/İstanbul",
+    phone: "0216 555 02 22",
+    website: "www.akdenizsofrasi.com",
+    rating: 4.9,
+    category: "Restoran",
+    description: "Akdeniz mutfağının hafif ve sağlıklı lezzetleri.",
+    slug: "akdeniz-sofrasi-maltepe",
+    createdAt: "2023-03-10T10:45:00Z"
+  },
+  {
+    id: "47",
+    name: "Güneydoğu Lezzetleri",
+    address: "Beyoğlu Caddesi No:123, Beyoğlu/İstanbul",
+    phone: "0212 555 02 23",
+    website: "www.guneydogulezzet.com",
+    rating: 4.6,
+    category: "Restoran",
+    description: "Gaziantep ve Urfa mutfağından baharatlı lezzetler.",
+    slug: "guneydogu-lezzetleri-beyoglu",
+    createdAt: "2023-02-05T15:20:00Z"
+  },
+  {
+    id: "48",
+    name: "İç Anadolu Sofrası",
+    address: "Ümraniye Caddesi No:145, Ümraniye/İstanbul",
+    phone: "0216 555 02 24",
+    website: "www.icanadolusofrasi.com",
+    rating: 4.8,
+    category: "Restoran",
+    description: "Ankara, Konya ve Kayseri mutfaklarından özel tarifler.",
+    slug: "ic-anadolu-sofrasi-umraniye",
+    createdAt: "2023-01-15T12:00:00Z"
   },
 
-  // Lokanta - 10 adet
+  // Lokanta - 24 adet
   {
-    id: "21",
+    id: "49",
     name: "Ev Yemekleri Lokantası",
     address: "Tunalı Hilmi Caddesi No:56, Ankara",
     phone: "0312 555 03 01",
@@ -257,10 +614,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Lokanta",
     description: "Anne eli değmiş gibi ev yemekleri ve günlük taze menüler.",
-    slug: "ev-yemekleri-lokantasi-tunali"
+    slug: "ev-yemekleri-lokantasi-tunali",
+    createdAt: "2024-01-18T11:00:00Z"
   },
   {
-    id: "22",
+    id: "50",
     name: "Pişman Olmaz Lokantası",
     address: "Kızılay Caddesi No:78, Ankara",
     phone: "0312 555 03 02",
@@ -268,10 +626,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Lokanta",
     description: "50 yıllık gelenekle, lezzeti damağınızda kalan ev yemekleri.",
-    slug: "pisman-olmaz-lokantasi-kizilay"
+    slug: "pisman-olmaz-lokantasi-kizilay",
+    createdAt: "2024-02-22T13:30:00Z"
   },
   {
-    id: "23",
+    id: "51",
     name: "Huzur Lokantası",
     address: "Bahçelievler Caddesi No:123, Ankara",
     phone: "0312 555 03 03",
@@ -279,10 +638,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Lokanta",
     description: "Aile ortamında günün sıcak yemekleri ve tatlıları.",
-    slug: "huzur-lokantasi-bahcelievler"
+    slug: "huzur-lokantasi-bahcelievler",
+    createdAt: "2024-03-15T10:20:00Z"
   },
   {
-    id: "24",
+    id: "52",
     name: "Kardeşler Lokantası",
     address: "Ulus Meydanı No:34, Ankara",
     phone: "0312 555 03 04",
@@ -290,10 +650,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Lokanta",
     description: "1975'ten beri aynı kalitede hizmet veren geleneksel lokanta.",
-    slug: "kardesler-lokantasi-ulus"
+    slug: "kardesler-lokantasi-ulus",
+    createdAt: "2024-04-20T15:45:00Z"
   },
   {
-    id: "25",
+    id: "53",
     name: "Memleket Lokantası",
     address: "Çankaya Caddesi No:89, Ankara",
     phone: "0312 555 03 05",
@@ -301,10 +662,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Lokanta",
     description: "Memleket lezzetleri ve sıcak servis anlayışı.",
-    slug: "memleket-lokantasi-cankaya"
+    slug: "memleket-lokantasi-cankaya",
+    createdAt: "2024-05-25T12:15:00Z"
   },
   {
-    id: "26",
+    id: "54",
     name: "Usta Eller Lokantası",
     address: "Keçiören Caddesi No:156, Ankara",
     phone: "0312 555 03 06",
@@ -312,10 +674,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Lokanta",
     description: "Usta ellerde hazırlanan özel tarifler ve günlük çorbalar.",
-    slug: "usta-eller-lokantasi-kecioren"
+    slug: "usta-eller-lokantasi-kecioren",
+    createdAt: "2024-06-30T09:40:00Z"
   },
   {
-    id: "27",
+    id: "55",
     name: "Aile Lokantası",
     address: "Etimesgut Caddesi No:234, Ankara",
     phone: "0312 555 03 07",
@@ -323,10 +686,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Lokanta",
     description: "Hijyenik ortam, bol porsiyon ve uygun fiyatlarla hizmetinizde.",
-    slug: "aile-lokantasi-etimesgut"
+    slug: "aile-lokantasi-etimesgut",
+    createdAt: "2024-07-12T14:00:00Z"
   },
   {
-    id: "28",
+    id: "56",
     name: "Lezzet Lokantası",
     address: "Mamak Caddesi No:67, Ankara",
     phone: "0312 555 03 08",
@@ -334,10 +698,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Lokanta",
     description: "Her gün farklı menü seçenekleri ve taze malzemeler.",
-    slug: "lezzet-lokantasi-mamak"
+    slug: "lezzet-lokantasi-mamak",
+    createdAt: "2024-08-18T11:30:00Z"
   },
   {
-    id: "29",
+    id: "57",
     name: "Sofra Lokantası",
     address: "Pursaklar Caddesi No:123, Ankara",
     phone: "0312 555 03 09",
@@ -345,10 +710,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Lokanta",
     description: "Geleneksel pişirme teknikleriyle hazırlanan özel lezzetler.",
-    slug: "sofra-lokantasi-pursaklar"
+    slug: "sofra-lokantasi-pursaklar",
+    createdAt: "2024-09-22T16:20:00Z"
   },
   {
-    id: "30",
+    id: "58",
     name: "Bereket Lokantası",
     address: "Sincan Caddesi No:45, Ankara",
     phone: "0312 555 03 10",
@@ -356,12 +722,181 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Lokanta",
     description: "Bereketli sofralar, doyurucu porsiyonlar ve güleryüzlü hizmet.",
-    slug: "bereket-lokantasi-sincan"
+    slug: "bereket-lokantasi-sincan",
+    createdAt: "2024-10-28T13:50:00Z"
+  },
+  {
+    id: "59",
+    name: "Nefis Lokanta",
+    address: "Yenimahalle Caddesi No:78, Ankara",
+    phone: "0312 555 03 11",
+    website: "www.nefislokanta.com",
+    rating: 4.6,
+    category: "Lokanta",
+    description: "Nefis ev yemekleri ve öğle menüleri.",
+    slug: "nefis-lokanta-yenimahalle",
+    createdAt: "2024-11-15T10:10:00Z"
+  },
+  {
+    id: "60",
+    name: "Şifa Lokantası",
+    address: "Altındağ Caddesi No:90, Ankara",
+    phone: "0312 555 03 12",
+    website: "www.sifalokanta.com",
+    rating: 4.8,
+    category: "Lokanta",
+    description: "Sağlıklı ve hafif yemekler, diyet menüleri.",
+    slug: "sifa-lokantasi-altindag",
+    createdAt: "2024-12-05T15:30:00Z"
+  },
+  {
+    id: "61",
+    name: "Köy Sofrası Lokanta",
+    address: "Polatlı Caddesi No:123, Ankara",
+    phone: "0312 555 03 13",
+    website: "www.koysofrasi.com",
+    rating: 4.5,
+    category: "Lokanta",
+    description: "Köy yemekleri ve organik malzemelerle hazırlanan menüler.",
+    slug: "koy-sofrasi-lokanta-polatli",
+    createdAt: "2023-12-18T12:40:00Z"
+  },
+  {
+    id: "62",
+    name: "Tadım Lokantası",
+    address: "Gölbaşı Caddesi No:56, Ankara",
+    phone: "0312 555 03 14",
+    website: "www.tadimlokanta.com",
+    rating: 4.7,
+    category: "Lokanta",
+    description: "Her damak zevkine uygun yemek çeşitleri.",
+    slug: "tadim-lokantasi-golbasi",
+    createdAt: "2023-11-22T09:20:00Z"
+  },
+  {
+    id: "63",
+    name: "Köşk Lokantası",
+    address: "Çubuk Caddesi No:145, Ankara",
+    phone: "0312 555 03 15",
+    website: "www.kosklokanta.com",
+    rating: 4.9,
+    category: "Lokanta",
+    description: "Köşk mimarisiyle nostaljik atmosferde ev yemekleri.",
+    slug: "kosk-lokantasi-cubuk",
+    createdAt: "2023-10-15T14:50:00Z"
+  },
+  {
+    id: "64",
+    name: "Mutfak Lokantası",
+    address: "Elmadağ Caddesi No:67, Ankara",
+    phone: "0312 555 03 16",
+    website: "www.mutfaklokanta.com",
+    rating: 4.6,
+    category: "Lokanta",
+    description: "Açık mutfak konsepti ile şeffaf ve hijyenik hizmet.",
+    slug: "mutfak-lokantasi-elmadag",
+    createdAt: "2023-09-10T11:30:00Z"
+  },
+  {
+    id: "65",
+    name: "Pişirici Lokantası",
+    address: "Kalecik Caddesi No:89, Ankara",
+    phone: "0312 555 03 17",
+    website: "www.pisiricilokanta.com",
+    rating: 4.8,
+    category: "Lokanta",
+    description: "Geleneksel pişirme yöntemleri ile hazırlanan özel lezzetler.",
+    slug: "pisirici-lokantasi-kalecik",
+    createdAt: "2023-08-05T16:10:00Z"
+  },
+  {
+    id: "66",
+    name: "Damak Lokantası",
+    address: "Haymana Caddesi No:234, Ankara",
+    phone: "0312 555 03 18",
+    website: "www.damaklokanta.com",
+    rating: 4.5,
+    category: "Lokanta",
+    description: "Damak tadına uygun zengin menü seçenekleri.",
+    slug: "damak-lokantasi-haymana",
+    createdAt: "2023-07-12T13:20:00Z"
+  },
+  {
+    id: "67",
+    name: "Seçkin Lokanta",
+    address: "Beypazarı Caddesi No:156, Ankara",
+    phone: "0312 555 03 19",
+    website: "www.seckinlokanta.com",
+    rating: 4.7,
+    category: "Lokanta",
+    description: "Seçkin malzemeler ve özenli hazırlık.",
+    slug: "seckin-lokanta-beypazari",
+    createdAt: "2023-06-18T10:40:00Z"
+  },
+  {
+    id: "68",
+    name: "Doyuran Lokanta",
+    address: "Ayaş Caddesi No:78, Ankara",
+    phone: "0312 555 03 20",
+    website: "www.doyuranlokanta.com",
+    rating: 4.9,
+    category: "Lokanta",
+    description: "Bol porsiyonlu ve doyurucu ev yemekleri.",
+    slug: "doyuran-lokanta-ayas",
+    createdAt: "2023-05-25T15:00:00Z"
+  },
+  {
+    id: "69",
+    name: "Günlük Lokanta",
+    address: "Şereflikoçhisar Caddesi No:90, Ankara",
+    phone: "0312 555 03 21",
+    website: "www.gunluklokanta.com",
+    rating: 4.6,
+    category: "Lokanta",
+    description: "Her gün taze pişen günlük ev yemekleri.",
+    slug: "gunluk-lokanta-sereflikochisa",
+    createdAt: "2023-04-30T12:30:00Z"
+  },
+  {
+    id: "70",
+    name: "Sıcak Lokanta",
+    address: "Nallıhan Caddesi No:123, Ankara",
+    phone: "0312 555 03 22",
+    website: "www.sicaklokanta.com",
+    rating: 4.8,
+    category: "Lokanta",
+    description: "Sıcak ve samimi ortamda lezzetli yemekler.",
+    slug: "sicak-lokanta-nallihan",
+    createdAt: "2023-03-15T09:50:00Z"
+  },
+  {
+    id: "71",
+    name: "Hazır Lokanta",
+    address: "Bala Caddesi No:145, Ankara",
+    phone: "0312 555 03 23",
+    website: "www.hazirlokanta.com",
+    rating: 4.5,
+    category: "Lokanta",
+    description: "Hızlı servis ve hazır yemek seçenekleri.",
+    slug: "hazir-lokanta-bala",
+    createdAt: "2023-02-20T14:20:00Z"
+  },
+  {
+    id: "72",
+    name: "Taze Lokanta",
+    address: "Çamlıdere Caddesi No:67, Ankara",
+    phone: "0312 555 03 24",
+    website: "www.tazelokanta.com",
+    rating: 4.7,
+    category: "Lokanta",
+    description: "Taze malzemeler ve günlük pişen yemekler.",
+    slug: "taze-lokanta-camlidere",
+    createdAt: "2023-01-25T11:10:00Z"
   },
 
-  // Çeşmeci - 10 adet
+  // Çeşmeci - 24 adet
   {
-    id: "31",
+    id: "73",
     name: "Sular Çeşmeci",
     address: "Levent Caddesi No:45, Beşiktaş/İstanbul",
     phone: "0212 555 04 01",
@@ -369,10 +904,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Çeşmeci",
     description: "Musluk tamiri, su kaçağı tespiti ve çeşme montajında profesyonel hizmet.",
-    slug: "sular-cesmeci-levent"
+    slug: "sular-cesmeci-levent",
+    createdAt: "2024-01-12T10:30:00Z"
   },
   {
-    id: "32",
+    id: "74",
     name: "Damla Çeşmecilik",
     address: "Maltepe Caddesi No:67, Maltepe/İstanbul",
     phone: "0216 555 04 02",
@@ -380,10 +916,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Çeşmeci",
     description: "Banyo ve mutfak armatürleri konusunda uzman çeşmeci.",
-    slug: "damla-cesmecilik-maltepe"
+    slug: "damla-cesmecilik-maltepe",
+    createdAt: "2024-02-18T14:15:00Z"
   },
   {
-    id: "33",
+    id: "75",
     name: "Akıllı Çeşme Sistemleri",
     address: "Kartal Caddesi No:123, Kartal/İstanbul",
     phone: "0216 555 04 03",
@@ -391,10 +928,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Çeşmeci",
     description: "Sensörlü musluk ve modern çeşme sistemleri kurulumu.",
-    slug: "akilli-cesme-sistemleri-kartal"
+    slug: "akilli-cesme-sistemleri-kartal",
+    createdAt: "2024-03-22T11:40:00Z"
   },
   {
-    id: "34",
+    id: "76",
     name: "Su Ustası Çeşmecilik",
     address: "Üsküdar Caddesi No:89, Üsküdar/İstanbul",
     phone: "0216 555 04 04",
@@ -402,10 +940,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Çeşmeci",
     description: "7/24 acil çeşme arıza servisi ve tamir hizmetleri.",
-    slug: "su-ustasi-cesmecilik-uskudar"
+    slug: "su-ustasi-cesmecilik-uskudar",
+    createdAt: "2024-04-28T16:20:00Z"
   },
   {
-    id: "35",
+    id: "77",
     name: "Modern Çeşmeci",
     address: "Beyoğlu Caddesi No:234, Beyoğlu/İstanbul",
     phone: "0212 555 04 05",
@@ -413,10 +952,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Çeşmeci",
     description: "İthal armatür satış ve montaj hizmetlerinde güvenilir adres.",
-    slug: "modern-cesmeci-beyoglu"
+    slug: "modern-cesmeci-beyoglu",
+    createdAt: "2024-05-15T13:00:00Z"
   },
   {
-    id: "36",
+    id: "78",
     name: "Pratik Çeşme",
     address: "Kadıköy Caddesi No:156, Kadıköy/İstanbul",
     phone: "0216 555 04 06",
@@ -424,10 +964,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Çeşmeci",
     description: "Hızlı ve uygun fiyatlı çeşme tamir ve bakım hizmetleri.",
-    slug: "pratik-cesme-kadikoy"
+    slug: "pratik-cesme-kadikoy",
+    createdAt: "2024-06-20T09:30:00Z"
   },
   {
-    id: "37",
+    id: "79",
     name: "Su Dünyası Çeşmecilik",
     address: "Pendik Caddesi No:67, Pendik/İstanbul",
     phone: "0216 555 04 07",
@@ -435,10 +976,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Çeşmeci",
     description: "Gömme rezervuar ve modern banyo sistemleri kurulum uzmanı.",
-    slug: "su-dunyasi-cesmecilik-pendik"
+    slug: "su-dunyasi-cesmecilik-pendik",
+    createdAt: "2024-07-25T14:45:00Z"
   },
   {
-    id: "38",
+    id: "80",
     name: "Çeşme Teknik",
     address: "Ümraniye Caddesi No:123, Ümraniye/İstanbul",
     phone: "0216 555 04 08",
@@ -446,10 +988,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Çeşmeci",
     description: "Sıhhi tesisat ve çeşme sistemlerinde kapsamlı çözümler.",
-    slug: "cesme-teknik-umraniye"
+    slug: "cesme-teknik-umraniye",
+    createdAt: "2024-08-30T11:15:00Z"
   },
   {
-    id: "39",
+    id: "81",
     name: "Usta Çeşmeci",
     address: "Bakırköy Caddesi No:89, Bakırköy/İstanbul",
     phone: "0212 555 04 09",
@@ -457,10 +1000,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Çeşmeci",
     description: "30 yıllık deneyimle çeşme ve musluk tamirinde uzman.",
-    slug: "usta-cesmeci-bakirkoy"
+    slug: "usta-cesmeci-bakirkoy",
+    createdAt: "2024-09-15T16:00:00Z"
   },
   {
-    id: "40",
+    id: "82",
     name: "Hızlı Çeşme Servisi",
     address: "Şişli Caddesi No:234, Şişli/İstanbul",
     phone: "0212 555 04 10",
@@ -468,12 +1012,181 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Çeşmeci",
     description: "Aynı gün servis garantisi ve kaliteli malzeme kullanımı.",
-    slug: "hizli-cesme-servisi-sisli"
+    slug: "hizli-cesme-servisi-sisli",
+    createdAt: "2024-10-20T12:30:00Z"
+  },
+  {
+    id: "83",
+    name: "Akış Çeşmecilik",
+    address: "Fatih Caddesi No:56, Fatih/İstanbul",
+    phone: "0212 555 04 11",
+    website: "www.akiscesmeci.com",
+    rating: 4.6,
+    category: "Çeşmeci",
+    description: "Su akış problemleri ve basınç ayarında uzman ekip.",
+    slug: "akis-cesmecilik-fatih",
+    createdAt: "2024-11-25T09:45:00Z"
+  },
+  {
+    id: "84",
+    name: "Damlacık Çeşmeci",
+    address: "Sarıyer Caddesi No:78, Sarıyer/İstanbul",
+    phone: "0212 555 04 12",
+    website: "www.damlacik.com",
+    rating: 4.9,
+    category: "Çeşmeci",
+    description: "Su tasarrufu sistemleri ve ekonomik çeşme çözümleri.",
+    slug: "damlacik-cesmeci-sariyer",
+    createdAt: "2024-12-10T14:20:00Z"
+  },
+  {
+    id: "85",
+    name: "Titiz Çeşmeci",
+    address: "Beykoz Caddesi No:90, Beykoz/İstanbul",
+    phone: "0216 555 04 13",
+    website: "www.titizcesmeci.com",
+    rating: 4.5,
+    category: "Çeşmeci",
+    description: "Titiz işçilik ve detaylı çeşme montajı.",
+    slug: "titiz-cesmeci-beykoz",
+    createdAt: "2023-12-12T11:00:00Z"
+  },
+  {
+    id: "86",
+    name: "Pırıl Çeşmecilik",
+    address: "Adalar Caddesi No:123, Adalar/İstanbul",
+    phone: "0216 555 04 14",
+    website: "www.pirilcesmeci.com",
+    rating: 4.8,
+    category: "Çeşmeci",
+    description: "Pırıl pırıl temizlik ve bakım hizmetleri.",
+    slug: "piril-cesmecilik-adalar",
+    createdAt: "2023-11-18T15:30:00Z"
+  },
+  {
+    id: "87",
+    name: "Çeşme Master",
+    address: "Gaziosmanpaşa Caddesi No:145, Gaziosmanpaşa/İstanbul",
+    phone: "0212 555 04 15",
+    website: "www.cesmemaster.com",
+    rating: 4.7,
+    category: "Çeşmeci",
+    description: "Master seviyesinde çeşme ve armatür hizmetleri.",
+    slug: "cesme-master-gaziosmanpasa",
+    createdAt: "2023-10-22T12:45:00Z"
+  },
+  {
+    id: "88",
+    name: "Banyo Çeşmecisi",
+    address: "Sultangazi Caddesi No:67, Sultangazi/İstanbul",
+    phone: "0212 555 04 16",
+    website: "www.banyocesmecisi.com",
+    rating: 4.6,
+    category: "Çeşmeci",
+    description: "Banyo renovasyonu ve çeşme yenileme uzmanı.",
+    slug: "banyo-cesmecisi-sultangazi",
+    createdAt: "2023-09-28T09:20:00Z"
+  },
+  {
+    id: "89",
+    name: "Mutfak Çeşmecisi",
+    address: "Arnavutköy Caddesi No:89, Arnavutköy/İstanbul",
+    phone: "0212 555 04 17",
+    website: "www.mutfakcesmecisi.com",
+    rating: 4.9,
+    category: "Çeşmeci",
+    description: "Mutfak armatürleri ve eviye montajı.",
+    slug: "mutfak-cesmecisi-arnavutkoy",
+    createdAt: "2023-08-15T14:10:00Z"
+  },
+  {
+    id: "90",
+    name: "Lavabo Ustası",
+    address: "Eyüpsultan Caddesi No:234, Eyüpsultan/İstanbul",
+    phone: "0212 555 04 18",
+    website: "www.labaustasi.com",
+    rating: 4.5,
+    category: "Çeşmeci",
+    description: "Lavabo ve musluk montaj, tamir hizmetleri.",
+    slug: "lavabo-ustasi-eyupsultan",
+    createdAt: "2023-07-20T11:40:00Z"
+  },
+  {
+    id: "91",
+    name: "Musluk Tamircisi",
+    address: "Bayrampaşa Caddesi No:156, Bayrampaşa/İstanbul",
+    phone: "0212 555 04 19",
+    website: "www.musluktamircisi.com",
+    rating: 4.8,
+    category: "Çeşmeci",
+    description: "Musluk tamir ve yedek parça hizmetleri.",
+    slug: "musluk-tamircisi-bayrampasa",
+    createdAt: "2023-06-25T16:00:00Z"
+  },
+  {
+    id: "92",
+    name: "Vana Ustası",
+    address: "Zeytinburnu Caddesi No:78, Zeytinburnu/İstanbul",
+    phone: "0212 555 04 20",
+    website: "www.vanaustasi.com",
+    rating: 4.7,
+    category: "Çeşmeci",
+    description: "Vana ve sızdırmazlık sistemleri uzmanı.",
+    slug: "vana-ustasi-zeytinburnu",
+    createdAt: "2023-05-30T13:20:00Z"
+  },
+  {
+    id: "93",
+    name: "Armatür Çeşmecisi",
+    address: "Kağıthane Caddesi No:90, Kağıthane/İstanbul",
+    phone: "0212 555 04 21",
+    website: "www.armaturcesmeci.com",
+    rating: 4.6,
+    category: "Çeşmeci",
+    description: "İthal ve yerli armatür satış ve montajı.",
+    slug: "armatur-cesmecisi-kagithane",
+    createdAt: "2023-04-15T10:50:00Z"
+  },
+  {
+    id: "94",
+    name: "Kaçak Tespit Çeşmeci",
+    address: "Çekmeköy Caddesi No:123, Çekmeköy/İstanbul",
+    phone: "0216 555 04 22",
+    website: "www.kacaktespit.com",
+    rating: 4.9,
+    category: "Çeşmeci",
+    description: "Elektronik cihazlarla su kaçağı tespiti.",
+    slug: "kacak-tespit-cesmeci-cekmekoy",
+    createdAt: "2023-03-20T15:30:00Z"
+  },
+  {
+    id: "95",
+    name: "Filtre Çeşmecisi",
+    address: "Sancaktepe Caddesi No:145, Sancaktepe/İstanbul",
+    phone: "0216 555 04 23",
+    website: "www.filtrecesmeci.com",
+    rating: 4.5,
+    category: "Çeşmeci",
+    description: "Su arıtma ve filtre sistemleri montajı.",
+    slug: "filtre-cesmecisi-sancaktepe",
+    createdAt: "2023-02-25T12:10:00Z"
+  },
+  {
+    id: "96",
+    name: "Basınç Çeşmecisi",
+    address: "Silivri Caddesi No:67, Silivri/İstanbul",
+    phone: "0212 555 04 24",
+    website: "www.basinccesmeci.com",
+    rating: 4.8,
+    category: "Çeşmeci",
+    description: "Su basıncı ayarlama ve hidrofor sistemleri.",
+    slug: "basinc-cesmecisi-silivri",
+    createdAt: "2023-01-30T09:40:00Z"
   },
 
-  // Tesisatçı - 10 adet
+  // Tesisatçı - 24 adet
   {
-    id: "41",
+    id: "97",
     name: "Master Tesisat",
     address: "Mecidiyeköy Caddesi No:45, Şişli/İstanbul",
     phone: "0212 555 05 01",
@@ -481,10 +1194,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Tesisatçı",
     description: "Komple tesisat montajı ve tadilat işlerinde profesyonel ekip.",
-    slug: "master-tesisat-mecidiyekoy"
+    slug: "master-tesisat-mecidiyekoy",
+    createdAt: "2024-01-10T11:30:00Z"
   },
   {
-    id: "42",
+    id: "98",
     name: "Güvenli Tesisat",
     address: "Beşiktaş Caddesi No:67, Beşiktaş/İstanbul",
     phone: "0212 555 05 02",
@@ -492,10 +1206,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Tesisatçı",
     description: "Kalorifer, petek ve ısıtma sistemleri kurulumu uzmanı.",
-    slug: "guvenli-tesisat-besiktas"
+    slug: "guvenli-tesisat-besiktas",
+    createdAt: "2024-02-14T15:00:00Z"
   },
   {
-    id: "43",
+    id: "99",
     name: "Usta Tesisatçı",
     address: "Kadıköy Caddesi No:123, Kadıköy/İstanbul",
     phone: "0216 555 05 03",
@@ -503,10 +1218,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Tesisatçı",
     description: "Pis su ve temiz su tesisatı döşeme ve onarım hizmetleri.",
-    slug: "usta-tesisatci-kadikoy"
+    slug: "usta-tesisatci-kadikoy",
+    createdAt: "2024-03-18T12:20:00Z"
   },
   {
-    id: "44",
+    id: "100",
     name: "Akıl Tesisat",
     address: "Üsküdar Caddesi No:89, Üsküdar/İstanbul",
     phone: "0216 555 05 04",
@@ -514,10 +1230,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Tesisatçı",
     description: "Doğalgaz tesisatı ve kombi bakım servisi.",
-    slug: "akil-tesisat-uskudar"
+    slug: "akil-tesisat-uskudar",
+    createdAt: "2024-04-22T09:45:00Z"
   },
   {
-    id: "45",
+    id: "101",
     name: "Hızlı Tesisat Servisi",
     address: "Maltepe Caddesi No:234, Maltepe/İstanbul",
     phone: "0216 555 05 05",
@@ -525,10 +1242,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Tesisatçı",
     description: "Acil tesisat arızalarında 24 saat hızlı müdahale.",
-    slug: "hizli-tesisat-servisi-maltepe"
+    slug: "hizli-tesisat-servisi-maltepe",
+    createdAt: "2024-05-26T14:15:00Z"
   },
   {
-    id: "46",
+    id: "102",
     name: "Pro Tesisat",
     address: "Kartal Caddesi No:156, Kartal/İstanbul",
     phone: "0216 555 05 06",
@@ -536,10 +1254,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Tesisatçı",
     description: "Modern tesisat teknolojileri ve akıllı su yönetim sistemleri.",
-    slug: "pro-tesisat-kartal"
+    slug: "pro-tesisat-kartal",
+    createdAt: "2024-06-30T11:00:00Z"
   },
   {
-    id: "47",
+    id: "103",
     name: "Deneyimli Tesisatçı",
     address: "Bakırköy Caddesi No:67, Bakırköy/İstanbul",
     phone: "0212 555 05 07",
@@ -547,10 +1266,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Tesisatçı",
     description: "40 yıllık deneyimle tüm tesisat işlerinizde yanınızda.",
-    slug: "deneyimli-tesisatci-bakirkoy"
+    slug: "deneyimli-tesisatci-bakirkoy",
+    createdAt: "2024-07-15T16:30:00Z"
   },
   {
-    id: "48",
+    id: "104",
     name: "Pratik Tesisat",
     address: "Pendik Caddesi No:123, Pendik/İstanbul",
     phone: "0216 555 05 08",
@@ -558,10 +1278,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Tesisatçı",
     description: "Uygun fiyatlı ve kaliteli tesisat çözümleri.",
-    slug: "pratik-tesisat-pendik"
+    slug: "pratik-tesisat-pendik",
+    createdAt: "2024-08-20T13:45:00Z"
   },
   {
-    id: "49",
+    id: "105",
     name: "Su Yolu Tesisat",
     address: "Ümraniye Caddesi No:89, Ümraniye/İstanbul",
     phone: "0216 555 05 09",
@@ -569,10 +1290,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Tesisatçı",
     description: "Su kaçağı tespiti ve yeraltı tesisatı onarımında uzman.",
-    slug: "su-yolu-tesisat-umraniye"
+    slug: "su-yolu-tesisat-umraniye",
+    createdAt: "2024-09-25T10:20:00Z"
   },
   {
-    id: "50",
+    id: "106",
     name: "Modern Tesisat",
     address: "Beyoğlu Caddesi No:234, Beyoğlu/İstanbul",
     phone: "0212 555 05 10",
@@ -580,12 +1302,181 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Tesisatçı",
     description: "Yeni nesil tesisat malzemeleri ve uygulama tekniklerinde öncü.",
-    slug: "modern-tesisat-beyoglu"
+    slug: "modern-tesisat-beyoglu",
+    createdAt: "2024-10-30T15:00:00Z"
+  },
+  {
+    id: "107",
+    name: "Boru Ustası",
+    address: "Fatih Caddesi No:145, Fatih/İstanbul",
+    phone: "0212 555 05 11",
+    website: "www.boruustasi.com",
+    rating: 4.5,
+    category: "Tesisatçı",
+    description: "Boru döşeme ve değiştirme işlerinde uzman.",
+    slug: "boru-ustasi-fatih",
+    createdAt: "2024-11-15T12:30:00Z"
+  },
+  {
+    id: "108",
+    name: "Kalorifer Tesisatçısı",
+    address: "Sarıyer Caddesi No:56, Sarıyer/İstanbul",
+    phone: "0212 555 05 12",
+    website: "www.kalorifertesisat.com",
+    rating: 4.9,
+    category: "Tesisatçı",
+    description: "Merkezi ısıtma ve kalorifer sistemleri kurulumu.",
+    slug: "kalorifer-tesisatcisi-sariyer",
+    createdAt: "2024-12-08T09:45:00Z"
+  },
+  {
+    id: "109",
+    name: "Kombi Tesisatçısı",
+    address: "Beykoz Caddesi No:78, Beykoz/İstanbul",
+    phone: "0216 555 05 13",
+    website: "www.kombitesisat.com",
+    rating: 4.6,
+    category: "Tesisatçı",
+    description: "Kombi montaj, bakım ve onarım hizmetleri.",
+    slug: "kombi-tesisatcisi-beykoz",
+    createdAt: "2023-12-20T14:20:00Z"
+  },
+  {
+    id: "110",
+    name: "Petek Tesisatçısı",
+    address: "Adalar Caddesi No:90, Adalar/İstanbul",
+    phone: "0216 555 05 14",
+    website: "www.petektesisat.com",
+    rating: 4.8,
+    category: "Tesisatçı",
+    description: "Petek montajı ve ısıtma sistemi optimizasyonu.",
+    slug: "petek-tesisatcisi-adalar",
+    createdAt: "2023-11-25T11:00:00Z"
+  },
+  {
+    id: "111",
+    name: "Doğalgaz Tesisatçısı",
+    address: "Gaziosmanpaşa Caddesi No:123, Gaziosmanpaşa/İstanbul",
+    phone: "0212 555 05 15",
+    website: "www.dogalgaztesisat.com",
+    rating: 4.7,
+    category: "Tesisatçı",
+    description: "İGDAŞ onaylı doğalgaz tesisatı ve proje hizmetleri.",
+    slug: "dogalgaz-tesisatcisi-gaziosmanpasa",
+    createdAt: "2023-10-30T16:15:00Z"
+  },
+  {
+    id: "112",
+    name: "Klima Tesisatçısı",
+    address: "Sultangazi Caddesi No:145, Sultangazi/İstanbul",
+    phone: "0212 555 05 16",
+    website: "www.klimatesisat.com",
+    rating: 4.5,
+    category: "Tesisatçı",
+    description: "VRF ve split klima tesisat montajı.",
+    slug: "klima-tesisatcisi-sultangazi",
+    createdAt: "2023-09-15T13:30:00Z"
+  },
+  {
+    id: "113",
+    name: "Kanal Tesisatçısı",
+    address: "Arnavutköy Caddesi No:67, Arnavutköy/İstanbul",
+    phone: "0212 555 05 17",
+    website: "www.kanaltesisat.com",
+    rating: 4.9,
+    category: "Tesisatçı",
+    description: "Kanal temizliği ve kanalizasyon tesisatı.",
+    slug: "kanal-tesisatcisi-arnavutkoy",
+    createdAt: "2023-08-20T10:45:00Z"
+  },
+  {
+    id: "114",
+    name: "Atık Su Tesisatçısı",
+    address: "Eyüpsultan Caddesi No:89, Eyüpsultan/İstanbul",
+    phone: "0212 555 05 18",
+    website: "www.atıksutesisat.com",
+    rating: 4.6,
+    category: "Tesisatçı",
+    description: "Atık su arıtma ve foseptik sistemleri.",
+    slug: "atik-su-tesisatcisi-eyupsultan",
+    createdAt: "2023-07-25T15:20:00Z"
+  },
+  {
+    id: "115",
+    name: "Yağmur Suyu Tesisatçısı",
+    address: "Bayrampaşa Caddesi No:234, Bayrampaşa/İstanbul",
+    phone: "0212 555 05 19",
+    website: "www.yagmursutesisat.com",
+    rating: 4.8,
+    category: "Tesisatçı",
+    description: "Yağmur suyu toplama ve drenaj sistemleri.",
+    slug: "yagmur-suyu-tesisatcisi-bayrampasa",
+    createdAt: "2023-06-30T12:00:00Z"
+  },
+  {
+    id: "116",
+    name: "Yangın Tesisatçısı",
+    address: "Zeytinburnu Caddesi No:156, Zeytinburnu/İstanbul",
+    phone: "0212 555 05 20",
+    website: "www.yangintesisat.com",
+    rating: 4.7,
+    category: "Tesisatçı",
+    description: "Yangın söndürme ve sprinkler sistemleri.",
+    slug: "yangin-tesisatcisi-zeytinburnu",
+    createdAt: "2023-05-15T09:30:00Z"
+  },
+  {
+    id: "117",
+    name: "Havuz Tesisatçısı",
+    address: "Kağıthane Caddesi No:78, Kağıthane/İstanbul",
+    phone: "0212 555 05 21",
+    website: "www.havuztesisat.com",
+    rating: 4.5,
+    category: "Tesisatçı",
+    description: "Yüzme havuzu filtrasyon ve tesisat sistemleri.",
+    slug: "havuz-tesisatcisi-kagithane",
+    createdAt: "2023-04-20T14:45:00Z"
+  },
+  {
+    id: "118",
+    name: "Bahçe Sulama Tesisatçısı",
+    address: "Çekmeköy Caddesi No:90, Çekmeköy/İstanbul",
+    phone: "0216 555 05 22",
+    website: "www.bahcesulama.com",
+    rating: 4.9,
+    category: "Tesisatçı",
+    description: "Otomatik bahçe sulama ve damla sulama sistemleri.",
+    slug: "bahce-sulama-tesisatcisi-cekmekoy",
+    createdAt: "2023-03-25T11:20:00Z"
+  },
+  {
+    id: "119",
+    name: "Hidrofor Tesisatçısı",
+    address: "Sancaktepe Caddesi No:123, Sancaktepe/İstanbul",
+    phone: "0216 555 05 23",
+    website: "www.hidrofortesisat.com",
+    rating: 4.6,
+    category: "Tesisatçı",
+    description: "Hidrofor ve su deposu sistemleri kurulumu.",
+    slug: "hidrofor-tesisatcisi-sancaktepe",
+    createdAt: "2023-02-28T16:00:00Z"
+  },
+  {
+    id: "120",
+    name: "Genel Tesisat",
+    address: "Silivri Caddesi No:145, Silivri/İstanbul",
+    phone: "0212 555 05 24",
+    website: "www.geneltesisat.com",
+    rating: 4.8,
+    category: "Tesisatçı",
+    description: "Tüm tesisat ihtiyaçlarınız için tek adres.",
+    slug: "genel-tesisat-silivri",
+    createdAt: "2023-01-15T13:15:00Z"
   },
 
-  // Sıhhi Tesisat - 10 adet
+  // Sıhhi Tesisat - 24 adet
   {
-    id: "51",
+    id: "121",
     name: "Sağlık Sıhhi Tesisat",
     address: "Nişantaşı Caddesi No:45, Şişli/İstanbul",
     phone: "0212 555 06 01",
@@ -593,10 +1484,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Sıhhi Tesisat",
     description: "Banyo ve mutfak sıhhi tesisat sistemleri kurulum ve bakımı.",
-    slug: "saglik-sihhi-tesisat-nisantasi"
+    slug: "saglik-sihhi-tesisat-nisantasi",
+    createdAt: "2024-01-08T10:00:00Z"
   },
   {
-    id: "52",
+    id: "122",
     name: "Temiz Su Sıhhi Tesisat",
     address: "Kadıköy Caddesi No:67, Kadıköy/İstanbul",
     phone: "0216 555 06 02",
@@ -604,10 +1496,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Sıhhi Tesisat",
     description: "Hijyenik su tesisatı ve arıtma sistemleri uzmanı.",
-    slug: "temiz-su-sihhi-tesisat-kadikoy"
+    slug: "temiz-su-sihhi-tesisat-kadikoy",
+    createdAt: "2024-02-12T14:30:00Z"
   },
   {
-    id: "53",
+    id: "123",
     name: "Profesyonel Sıhhi Tesisat",
     address: "Beşiktaş Caddesi No:123, Beşiktaş/İstanbul",
     phone: "0212 555 06 03",
@@ -615,10 +1508,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Sıhhi Tesisat",
     description: "Hastane ve okul gibi büyük projelerde sıhhi tesisat çözümleri.",
-    slug: "profesyonel-sihhi-tesisat-besiktas"
+    slug: "profesyonel-sihhi-tesisat-besiktas",
+    createdAt: "2024-03-16T11:45:00Z"
   },
   {
-    id: "54",
+    id: "124",
     name: "Kaliteli Sıhhi Tesisat",
     address: "Üsküdar Caddesi No:89, Üsküdar/İstanbul",
     phone: "0216 555 06 04",
@@ -626,10 +1520,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Sıhhi Tesisat",
     description: "Kaliteli malzeme ve uzman kadroyla sıhhi tesisat hizmetleri.",
-    slug: "kaliteli-sihhi-tesisat-uskudar"
+    slug: "kaliteli-sihhi-tesisat-uskudar",
+    createdAt: "2024-04-20T16:20:00Z"
   },
   {
-    id: "55",
+    id: "125",
     name: "Uzman Sıhhi Tesisat",
     address: "Maltepe Caddesi No:234, Maltepe/İstanbul",
     phone: "0216 555 06 05",
@@ -637,10 +1532,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Sıhhi Tesisat",
     description: "Atık su sistemleri ve drenaj çözümlerinde profesyonel hizmet.",
-    slug: "uzman-sihhi-tesisat-maltepe"
+    slug: "uzman-sihhi-tesisat-maltepe",
+    createdAt: "2024-05-24T13:00:00Z"
   },
   {
-    id: "56",
+    id: "126",
     name: "Garantili Sıhhi Tesisat",
     address: "Kartal Caddesi No:156, Kartal/İstanbul",
     phone: "0216 555 06 06",
@@ -648,10 +1544,11 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Sıhhi Tesisat",
     description: "5 yıl garanti ile sıhhi tesisat montaj ve onarım.",
-    slug: "garantili-sihhi-tesisat-kartal"
+    slug: "garantili-sihhi-tesisat-kartal",
+    createdAt: "2024-06-28T09:30:00Z"
   },
   {
-    id: "57",
+    id: "127",
     name: "Hızlı Sıhhi Tesisat",
     address: "Bakırköy Caddesi No:67, Bakırköy/İstanbul",
     phone: "0212 555 06 07",
@@ -659,10 +1556,11 @@ export const mockFirms: Firma[] = [
     rating: 4.9,
     category: "Sıhhi Tesisat",
     description: "Acil sıhhi tesisat arızalarında aynı gün çözüm garantisi.",
-    slug: "hizli-sihhi-tesisat-bakirkoy"
+    slug: "hizli-sihhi-tesisat-bakirkoy",
+    createdAt: "2024-07-18T14:45:00Z"
   },
   {
-    id: "58",
+    id: "128",
     name: "Modern Sıhhi Tesisat",
     address: "Pendik Caddesi No:123, Pendik/İstanbul",
     phone: "0216 555 06 08",
@@ -670,10 +1568,11 @@ export const mockFirms: Firma[] = [
     rating: 4.6,
     category: "Sıhhi Tesisat",
     description: "Son teknoloji sıhhi tesisat sistemleri ve akıllı banyo çözümleri.",
-    slug: "modern-sihhi-tesisat-pendik"
+    slug: "modern-sihhi-tesisat-pendik",
+    createdAt: "2024-08-22T11:15:00Z"
   },
   {
-    id: "59",
+    id: "129",
     name: "Ekonomik Sıhhi Tesisat",
     address: "Ümraniye Caddesi No:89, Ümraniye/İstanbul",
     phone: "0216 555 06 09",
@@ -681,10 +1580,11 @@ export const mockFirms: Firma[] = [
     rating: 4.8,
     category: "Sıhhi Tesisat",
     description: "Uygun fiyatlarla kaliteli sıhhi tesisat hizmetleri.",
-    slug: "ekonomik-sihhi-tesisat-umraniye"
+    slug: "ekonomik-sihhi-tesisat-umraniye",
+    createdAt: "2024-09-26T16:00:00Z"
   },
   {
-    id: "60",
+    id: "130",
     name: "Deneyim Sıhhi Tesisat",
     address: "Beyoğlu Caddesi No:234, Beyoğlu/İstanbul",
     phone: "0212 555 06 10",
@@ -692,7 +1592,176 @@ export const mockFirms: Firma[] = [
     rating: 4.7,
     category: "Sıhhi Tesisat",
     description: "35 yıllık tecrübeyle sıhhi tesisat projelerinde güvenilir partner.",
-    slug: "deneyim-sihhi-tesisat-beyoglu"
+    slug: "deneyim-sihhi-tesisat-beyoglu",
+    createdAt: "2024-10-12T12:30:00Z"
+  },
+  {
+    id: "131",
+    name: "Banyo Sıhhi Tesisat",
+    address: "Fatih Caddesi No:145, Fatih/İstanbul",
+    phone: "0212 555 06 11",
+    website: "www.banyosihhi.com",
+    rating: 4.5,
+    category: "Sıhhi Tesisat",
+    description: "Banyo tadilat ve yenileme sıhhi tesisat işleri.",
+    slug: "banyo-sihhi-tesisat-fatih",
+    createdAt: "2024-11-16T09:45:00Z"
+  },
+  {
+    id: "132",
+    name: "Mutfak Sıhhi Tesisat",
+    address: "Sarıyer Caddesi No:56, Sarıyer/İstanbul",
+    phone: "0212 555 06 12",
+    website: "www.mutfaksihhi.com",
+    rating: 4.9,
+    category: "Sıhhi Tesisat",
+    description: "Mutfak renovasyon ve sıhhi tesisat çözümleri.",
+    slug: "mutfak-sihhi-tesisat-sariyer",
+    createdAt: "2024-12-20T14:20:00Z"
+  },
+  {
+    id: "133",
+    name: "WC Sıhhi Tesisat",
+    address: "Beykoz Caddesi No:78, Beykoz/İstanbul",
+    phone: "0216 555 06 13",
+    website: "www.wcsihhi.com",
+    rating: 4.6,
+    category: "Sıhhi Tesisat",
+    description: "Tuvalet ve rezervuar montaj, tamir hizmetleri.",
+    slug: "wc-sihhi-tesisat-beykoz",
+    createdAt: "2023-12-22T11:00:00Z"
+  },
+  {
+    id: "134",
+    name: "Duş Sıhhi Tesisat",
+    address: "Adalar Caddesi No:90, Adalar/İstanbul",
+    phone: "0216 555 06 14",
+    website: "www.dussihhi.com",
+    rating: 4.8,
+    category: "Sıhhi Tesisat",
+    description: "Duş kabini ve hidromasaj sistemleri kurulumu.",
+    slug: "dus-sihhi-tesisat-adalar",
+    createdAt: "2023-11-28T15:30:00Z"
+  },
+  {
+    id: "135",
+    name: "Küvet Sıhhi Tesisat",
+    address: "Gaziosmanpaşa Caddesi No:123, Gaziosmanpaşa/İstanbul",
+    phone: "0212 555 06 15",
+    website: "www.kuvetsihhi.com",
+    rating: 4.7,
+    category: "Sıhhi Tesisat",
+    description: "Jakuzi ve küvet montaj, bakım hizmetleri.",
+    slug: "kuvet-sihhi-tesisat-gaziosmanpasa",
+    createdAt: "2023-10-25T12:45:00Z"
+  },
+  {
+    id: "136",
+    name: "Eviye Sıhhi Tesisat",
+    address: "Sultangazi Caddesi No:145, Sultangazi/İstanbul",
+    phone: "0212 555 06 16",
+    website: "www.eviyesihhi.com",
+    rating: 4.5,
+    category: "Sıhhi Tesisat",
+    description: "Mutfak eviyesi ve sifon sistemleri montajı.",
+    slug: "eviye-sihhi-tesisat-sultangazi",
+    createdAt: "2023-09-20T09:20:00Z"
+  },
+  {
+    id: "137",
+    name: "Gider Sıhhi Tesisat",
+    address: "Arnavutköy Caddesi No:67, Arnavutköy/İstanbul",
+    phone: "0212 555 06 17",
+    website: "www.gidersihhi.com",
+    rating: 4.9,
+    category: "Sıhhi Tesisat",
+    description: "Pis su gideri ve drenaj sistemleri.",
+    slug: "gider-sihhi-tesisat-arnavutkoy",
+    createdAt: "2023-08-15T14:10:00Z"
+  },
+  {
+    id: "138",
+    name: "Sifon Sıhhi Tesisat",
+    address: "Eyüpsultan Caddesi No:89, Eyüpsultan/İstanbul",
+    phone: "0212 555 06 18",
+    website: "www.sifonsihhi.com",
+    rating: 4.6,
+    category: "Sıhhi Tesisat",
+    description: "Sifon temizliği ve değişimi hizmetleri.",
+    slug: "sifon-sihhi-tesisat-eyupsultan",
+    createdAt: "2023-07-20T11:40:00Z"
+  },
+  {
+    id: "139",
+    name: "Rezervuar Sıhhi Tesisat",
+    address: "Bayrampaşa Caddesi No:234, Bayrampaşa/İstanbul",
+    phone: "0212 555 06 19",
+    website: "www.rezervuarsihhi.com",
+    rating: 4.8,
+    category: "Sıhhi Tesisat",
+    description: "Gömme rezervuar ve tuvalet mekanizması montajı.",
+    slug: "rezervuar-sihhi-tesisat-bayrampasa",
+    createdAt: "2023-06-25T16:00:00Z"
+  },
+  {
+    id: "140",
+    name: "Tıkanıklık Sıhhi Tesisat",
+    address: "Zeytinburnu Caddesi No:156, Zeytinburnu/İstanbul",
+    phone: "0212 555 06 20",
+    website: "www.tikanikliksihhi.com",
+    rating: 4.7,
+    category: "Sıhhi Tesisat",
+    description: "Tıkanıklık açma ve kanal temizliği.",
+    slug: "tikaniklik-sihhi-tesisat-zeytinburnu",
+    createdAt: "2023-05-30T13:20:00Z"
+  },
+  {
+    id: "141",
+    name: "Koku Giderme Sıhhi Tesisat",
+    address: "Kağıthane Caddesi No:78, Kağıthane/İstanbul",
+    phone: "0212 555 06 21",
+    website: "www.kokugidermesihhi.com",
+    rating: 4.5,
+    category: "Sıhhi Tesisat",
+    description: "Pis su kokusu ve havalandırma sorunları çözümü.",
+    slug: "koku-giderme-sihhi-tesisat-kagithane",
+    createdAt: "2023-04-15T10:50:00Z"
+  },
+  {
+    id: "142",
+    name: "Tazyikli Sıhhi Tesisat",
+    address: "Çekmeköy Caddesi No:90, Çekmeköy/İstanbul",
+    phone: "0216 555 06 22",
+    website: "www.tazyiklisihhi.com",
+    rating: 4.9,
+    category: "Sıhhi Tesisat",
+    description: "Tazyikli su ile kanal temizliği ve bakım.",
+    slug: "tazyikli-sihhi-tesisat-cekmekoy",
+    createdAt: "2023-03-20T15:30:00Z"
+  },
+  {
+    id: "143",
+    name: "Kamera ile Sıhhi Tesisat",
+    address: "Sancaktepe Caddesi No:123, Sancaktepe/İstanbul",
+    phone: "0216 555 06 23",
+    website: "www.kamerasihi.com",
+    rating: 4.6,
+    category: "Sıhhi Tesisat",
+    description: "Kamera ile boru içi görüntüleme ve arıza tespiti.",
+    slug: "kamera-ile-sihhi-tesisat-sancaktepe",
+    createdAt: "2023-02-25T12:10:00Z"
+  },
+  {
+    id: "144",
+    name: "Kapsamlı Sıhhi Tesisat",
+    address: "Silivri Caddesi No:145, Silivri/İstanbul",
+    phone: "0212 555 06 24",
+    website: "www.kapsamlisihhi.com",
+    rating: 4.8,
+    category: "Sıhhi Tesisat",
+    description: "Tüm sıhhi tesisat ihtiyaçlarınız için eksiksiz hizmet.",
+    slug: "kapsamli-sihhi-tesisat-silivri",
+    createdAt: "2023-01-30T09:40:00Z"
   },
 ];
 
