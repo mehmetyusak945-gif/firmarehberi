@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
-import { AdBanner } from "@/components/AdBanner";
+import { AdBox, AdLeaderboard } from "@/components/ads";
 import { SEOHead } from "@/components/SEOHead";
 import { mockFirms, categories } from "@/data/mockFirms";
 
@@ -137,7 +137,7 @@ const Index = () => {
                   <FirmaCard key={item.id} firma={item.data} />
                 ) : (
                   <div key={item.id} className="flex items-center justify-center">
-                    <AdBanner size="small" />
+                    <AdBox />
                   </div>
                 )
               ))}
@@ -145,7 +145,7 @@ const Index = () => {
 
             {/* Leaderboard Reklam */}
             <div className="mt-12 flex justify-center">
-              <AdBanner size="leaderboard" />
+              <AdLeaderboard />
             </div>
           </section>
         </main>

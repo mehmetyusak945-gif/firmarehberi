@@ -1,9 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { FirmaCard } from "@/components/FirmaCard";
-import { AdBanner } from "@/components/AdBanner";
 import { SEOHead } from "@/components/SEOHead";
+import { AdBox, AdLeaderboard } from "@/components/ads";
 import { getFirmaBySlug, getRandomFirms } from "@/data/mockFirms";
 import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight } from "lucide-react";
 import { formatPhone } from "@/lib/slugify";
@@ -14,9 +13,6 @@ const FirmaDetail = () => {
   const firma = slug ? getFirmaBySlug(slug) : undefined;
   const [aiDescription, setAiDescription] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(true);
-
-  // İlgili firmalar (internal linking için)
-  const relatedFirms = firma ? getRandomFirms(6, firma.id) : [];
 
   useEffect(() => {
     // AI ile firma açıklaması oluşturma simülasyonu
@@ -207,18 +203,15 @@ const FirmaDetail = () => {
 
                     {/* Reklam Alanı 1 */}
                     <div className="flex justify-center my-8">
-                      <AdBanner size="large" />
+                      <AdLeaderboard />
                     </div>
                   </div>
                 </article>
 
-                {/* İlgili Firmalar (Internal Linking) */}
+                {/* Geniş Reklam Alanı */}
                 <section className="mb-8">
-                  <h2 className="text-2xl font-bold mb-6">Benzer Firmalar</h2>
-                  <div className="grid grid-cols-2 gap-6">
-                    {relatedFirms.slice(0, 2).map((relatedFirma) => (
-                      <FirmaCard key={relatedFirma.id} firma={relatedFirma} />
-                    ))}
+                  <div className="flex justify-center">
+                    <AdLeaderboard />
                   </div>
                 </section>
               </div>
@@ -227,7 +220,7 @@ const FirmaDetail = () => {
               <aside className="lg:col-span-4 space-y-6">
                 {/* Reklam Alanı 2 */}
                 <div className="sticky top-20 space-y-6">
-                  <AdBanner size="small" />
+                  <AdBox />
                   
                   {/* CTA Card - 300x250 */}
                   <div className="bg-card rounded-xl border shadow-md w-[300px] h-[250px] flex flex-col p-4">
@@ -243,7 +236,7 @@ const FirmaDetail = () => {
                     </Link>
                   </div>
 
-                  <AdBanner size="small" />
+                  <AdBox />
                 </div>
               </aside>
             </div>
