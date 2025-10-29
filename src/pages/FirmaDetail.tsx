@@ -162,56 +162,87 @@ const FirmaDetail = () => {
                       )}
                     </section>
 
-                    {/* İletişim Bilgileri */}
-                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                      <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
-                        <MapPin className="h-5 w-5 text-secondary flex-shrink-0 mt-0.5" />
-                        <div>
-                          <h3 className="font-semibold mb-1">Adres</h3>
-                          <p className="text-sm text-muted-foreground">{firma.address}</p>
-                        </div>
-                      </div>
-
+                    {/* İletişim Bilgileri & CTA Butonlar */}
+                    <section className="space-y-6 mb-8">
+                      {/* Telefon */}
                       <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
                         <Phone className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
-                        <div>
+                        <div className="flex-1">
                           <h3 className="font-semibold mb-1">Telefon</h3>
+                          <p className="text-sm text-muted-foreground mb-3">{formatPhone(firma.phone)}</p>
                           <a 
                             href={`tel:${firma.phone}`}
-                            className="text-sm text-primary hover:underline"
+                            className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-success text-white hover:bg-success/90 shadow-md w-full md:w-auto"
+                            aria-label={`${firma.name} firmasını ara`}
                           >
-                            {formatPhone(firma.phone)}
+                            <Phone className="h-4 w-4 mr-2" />
+                            Hemen Ara
                           </a>
                         </div>
                       </div>
 
-                      <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg md:col-span-2">
+                      {/* Web Sitesi */}
+                      <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
                         <Globe className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div>
+                        <div className="flex-1">
                           <h3 className="font-semibold mb-1">Web Sitesi</h3>
+                          <p className="text-sm text-muted-foreground mb-3">{firma.website}</p>
                           <a 
                             href={`https://${firma.website}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-primary hover:underline"
+                            className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-md w-full md:w-auto"
+                            aria-label={`${firma.name} web sitesini ziyaret et`}
                           >
-                            {firma.website}
+                            <Globe className="h-4 w-4 mr-2" />
+                            Siteyi Ziyaret Et
                           </a>
+                        </div>
+                      </div>
+
+                      {/* Adres */}
+                      <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
+                        <MapPin className="h-5 w-5 text-secondary flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold mb-1">Adres</h3>
+                          <p className="text-sm text-muted-foreground mb-3">{firma.address}</p>
+                          <div className="flex flex-wrap gap-2">
+                            <a 
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(firma.address)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-md"
+                              aria-label="Google Maps'te aç"
+                            >
+                              <MapPin className="h-4 w-4 mr-2" />
+                              Google Maps
+                            </a>
+                            <a 
+                              href={`https://yandex.com.tr/maps/?text=${encodeURIComponent(firma.address)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-md"
+                              aria-label="Yandex Maps'te aç"
+                            >
+                              <MapPin className="h-4 w-4 mr-2" />
+                              Yandex Maps
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </section>
 
-                    {/* Reklam Alanı 1 */}
+                    {/* Reklam Alanı */}
                     <div className="flex justify-center my-8">
-                      <AdLeaderboard />
+                      <AdBox />
                     </div>
                   </div>
                 </article>
 
-                {/* Geniş Reklam Alanı */}
+                {/* Reklam Alanı */}
                 <section className="mb-8">
                   <div className="flex justify-center">
-                    <AdLeaderboard />
+                    <AdBox />
                   </div>
                 </section>
               </div>
