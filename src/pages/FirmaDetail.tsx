@@ -226,13 +226,13 @@ const FirmaDetail = () => {
               {/* Sidebar */}
               <aside className="lg:col-span-4 space-y-6">
                 {/* Reklam Alanı 2 */}
-                <div className="sticky top-20">
-                  <AdBanner size="medium" className="mb-6" />
+                <div className="sticky top-20 space-y-6">
+                  <AdBanner size="small" />
                   
-                  {/* CTA Card */}
-                  <div className="bg-card rounded-xl border p-6 shadow-md">
-                    <h3 className="font-bold text-lg mb-4">Firmanızı Ekleyin</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
+                  {/* CTA Card - 300x250 */}
+                  <div className="bg-card rounded-xl border shadow-md w-[300px] h-[250px] flex flex-col p-4">
+                    <h3 className="font-bold text-base mb-2">Firmanızı Ekleyin</h3>
+                    <p className="text-xs text-muted-foreground mb-4 flex-1">
                       Siz de firmanızı rehberimize ekleyerek binlerce potansiyel müşteriye ulaşın!
                     </p>
                     <Link
@@ -243,9 +243,7 @@ const FirmaDetail = () => {
                     </Link>
                   </div>
 
-                  <div className="mt-6">
-                    <AdBanner size="rectangle" />
-                  </div>
+                  <AdBanner size="small" />
                 </div>
               </aside>
             </div>
