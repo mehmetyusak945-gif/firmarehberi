@@ -215,13 +215,10 @@ const FirmaDetail = () => {
                 {/* İlgili Firmalar (Internal Linking) */}
                 <section className="mb-8">
                   <h2 className="text-2xl font-bold mb-6">Benzer Firmalar</h2>
-                  <div className="grid grid-cols-4 gap-6 max-w-[1320px]">
+                  <div className="grid grid-cols-3 gap-6">
                     {relatedFirms.slice(0, 3).map((relatedFirma) => (
                       <FirmaCard key={relatedFirma.id} firma={relatedFirma} />
                     ))}
-                    <div className="flex items-center justify-center">
-                      <AdBanner size="small" />
-                    </div>
                   </div>
                 </section>
               </div>
