@@ -28,7 +28,7 @@ All colors MUST be HSL.
 
     /* Muted: Soft gri tonları */
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 25% 35%;
 
     /* Accent: Parlak sarı-turuncu (CTA için) */
     --accent: 38 92% 50%;
@@ -81,7 +81,7 @@ All colors MUST be HSL.
     --secondary-foreground: 0 0% 100%;
 
     --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 215 20% 75%;
 
     --accent: 38 92% 50%;
     --accent-foreground: 0 0% 100%;

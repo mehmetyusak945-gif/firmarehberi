@@ -7,7 +7,7 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover-lift">
+          <Link to="/" className="flex items-center space-x-2 hover-lift" aria-label="Firma Rehberim Ana Sayfa">
             <div className="flex items-center justify-center w-10 h-10 rounded-lg gradient-primary">
               <Building2 className="h-6 w-6 text-white" />
             </div>

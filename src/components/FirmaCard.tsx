@@ -34,7 +34,7 @@ export const FirmaCard = ({ firma }: FirmaCardProps) => {
         </div>
 
         {/* Firma ismi */}
-        <Link to={`/firma/${firma.slug}`}>
+        <Link to={`/firma/${firma.slug}`} aria-label={`${firma.name} firma detayları`}>
           <h2 className="text-sm font-bold mb-1.5 group-hover:text-primary transition-fast line-clamp-1">
             {firma.name}
           </h2>
@@ -56,6 +56,7 @@ export const FirmaCard = ({ firma }: FirmaCardProps) => {
             <a 
               href={`tel:${firma.phone}`}
               className="hover:text-primary transition-fast"
+              aria-label={`${firma.name} telefon numarasını ara`}
             >
               {formatPhone(firma.phone)}
             </a>
@@ -66,6 +67,7 @@ export const FirmaCard = ({ firma }: FirmaCardProps) => {
         <Link
           to={`/firma/${firma.slug}`}
           className="inline-flex items-center justify-center w-full rounded-lg px-3 py-1.5 text-xs font-medium transition-base gradient-accent text-white hover:opacity-90 shadow-md"
+          aria-label={`${firma.name} detaylı bilgi sayfasına git`}
         >
           Detaylı Bilgi
           <ExternalLink className="ml-1.5 h-3 w-3" />
