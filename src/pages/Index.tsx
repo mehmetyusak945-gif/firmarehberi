@@ -15,24 +15,37 @@ const Index = () => {
     return mockFirms.filter(firma => firma.category === selectedCategory);
   }, [selectedCategory]);
 
-  // Grid için karışık içerik (firma + reklam)
+  // Grid için karışık içerik (firma + reklam) - 16 alan: 12 firma + 4 reklam
   const gridItems = useMemo(() => {
-    const items: Array<{ type: "firma" | "ad"; data?: any; adSize?: any; id: string }> = [];
-    const firmsToShow = filteredFirms.slice(0, 20); // İlk 20 firma
+    const items: Array<{ type: "firma" | "ad"; data?: any; id: string }> = [];
+    const firmsToShow = filteredFirms.slice(0, 12); // İlk 12 firma
     
-    // Her 4 içerikten birini reklam yap
-    firmsToShow.forEach((firma, index) => {
-      items.push({ type: "firma", data: firma, id: firma.id });
-      
-      // Her 4 firmadan sonra reklam ekle (yaklaşık %25 reklam oranı)
-      if ((index + 1) % 4 === 0 && items.length < 24) {
-        const adSizes = ["small", "medium", "rectangle", "small"];
-        const adSize = adSizes[Math.floor(Math.random() * adSizes.length)];
+    // 16 pozisyon oluştur (4x4 grid)
+    const positions = Array.from({ length: 16 }, (_, i) => i);
+    
+    // Rastgele 4 pozisyon seç reklam için
+    const shuffled = [...positions].sort(() => Math.random() - 0.5);
+    const adPositions = new Set(shuffled.slice(0, 4));
+    
+    let firmaIndex = 0;
+    let adIndex = 0;
+    
+    // Her pozisyonu doldur
+    positions.forEach((pos) => {
+      if (adPositions.has(pos)) {
+        // Reklam ekle
         items.push({ 
           type: "ad", 
-          adSize: adSize as any,
-          id: `ad-${index}` 
+          id: `ad-${adIndex++}` 
         });
+      } else if (firmaIndex < firmsToShow.length) {
+        // Firma ekle
+        items.push({ 
+          type: "firma", 
+          data: firmsToShow[firmaIndex], 
+          id: firmsToShow[firmaIndex].id 
+        });
+        firmaIndex++;
       }
     });
 
@@ -117,25 +130,23 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Masonry Grid Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* 4x4 Grid Layout - 300x250px cards */}
+            <div className="grid grid-cols-4 gap-6 max-w-[1320px] mx-auto">
               {gridItems.map((item) => (
                 item.type === "firma" ? (
                   <FirmaCard key={item.id} firma={item.data} />
                 ) : (
                   <div key={item.id} className="flex items-center justify-center">
-                    <AdBanner size={item.adSize} />
+                    <AdBanner size="small" />
                   </div>
                 )
               ))}
             </div>
 
             {/* Leaderboard Reklam */}
-            {filteredFirms.length > 12 && (
-              <div className="mt-12 flex justify-center">
-                <AdBanner size="leaderboard" />
-              </div>
-            )}
+            <div className="mt-12 flex justify-center">
+              <AdBanner size="leaderboard" />
+            </div>
           </section>
         </main>
 
