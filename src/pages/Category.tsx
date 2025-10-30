@@ -32,13 +32,7 @@ const Category = () => {
   );
 
   const { data: firms, isLoading: firmsLoading, error: firmsError } = useFirms(validCategory?.id);
-
-  useEffect(() => {
-    if (!categoriesLoading && categories && !validCategory) {
-      navigate("/404");
-    }
-  }, [validCategory, categoriesLoading, categories, navigate]);
-
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>("random");
   const [randomSeed, setRandomSeed] = useState(Math.random());
@@ -48,56 +42,27 @@ const Category = () => {
     return firms || [];
   }, [firms]);
 
-  if (categoriesError || firmsError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-destructive mb-4">Bir hata oluştu</p>
-          <button onClick={() => navigate("/")} className="text-primary hover:underline">
-            Ana sayfaya dön
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (firmsLoading || categoriesLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!validCategory) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   // Sıralama
   const sortedFirms = useMemo(() => {
-    const firms = [...categoryFirms];
+    const firmsList = [...categoryFirms];
 
     switch (sortOption) {
       case "newest":
-        return firms.sort((a, b) => 
+        return firmsList.sort((a, b) => 
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
       case "oldest":
-        return firms.sort((a, b) => 
+        return firmsList.sort((a, b) => 
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
       case "highest":
-        return firms.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        return firmsList.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case "lowest":
-        return firms.sort((a, b) => (a.rating || 0) - (b.rating || 0));
+        return firmsList.sort((a, b) => (a.rating || 0) - (b.rating || 0));
       case "random":
       default:
         // Stable random sort using seed
-        return firms.sort((a, b) => {
+        return firmsList.sort((a, b) => {
           const hashA = a.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
           const hashB = b.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
           return ((hashA + randomSeed) % 1) - ((hashB + randomSeed) % 1);
@@ -149,6 +114,41 @@ const Category = () => {
 
     return items;
   }, [paginatedFirms, currentPage]);
+
+  useEffect(() => {
+    if (!categoriesLoading && categories && !validCategory) {
+      navigate("/404");
+    }
+  }, [validCategory, categoriesLoading, categories, navigate]);
+
+  if (categoriesError || firmsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Bir hata oluştu</p>
+          <button onClick={() => navigate("/")} className="text-primary hover:underline">
+            Ana sayfaya dön
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (firmsLoading || categoriesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!validCategory) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
