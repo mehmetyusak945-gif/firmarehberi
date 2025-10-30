@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Trash2, Pencil } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, Search } from "lucide-react";
 import { slugify } from "@/lib/slugify";
 import {
   AlertDialog,
@@ -46,6 +46,17 @@ export const CategoryManagement = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editCategoryName, setEditCategoryName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return categories;
+    
+    const query = searchQuery.toLowerCase();
+    return categories.filter((category) => 
+      category.name.toLowerCase().includes(query) ||
+      category.slug.toLowerCase().includes(query)
+    );
+  }, [categories, searchQuery]);
 
   useEffect(() => {
     fetchCategories();
@@ -228,12 +239,23 @@ export const CategoryManagement = () => {
       {/* Categories List */}
       <Card>
         <CardHeader>
-          <CardTitle>Mevcut Kategoriler ({categories.length})</CardTitle>
+          <div className="flex items-center justify-between gap-4">
+            <CardTitle>Mevcut Kategoriler ({categories.length})</CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Kategori ara..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          {categories.length === 0 ? (
+          {filteredCategories.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              Henüz kategori eklenmemiş. Yukarıdaki formdan kategori ekleyebilirsiniz.
+              {searchQuery ? "Arama sonucu bulunamadı." : "Henüz kategori eklenmemiş. Yukarıdaki formdan kategori ekleyebilirsiniz."}
             </div>
           ) : (
             <div className="border rounded-lg overflow-hidden">
@@ -247,7 +269,7 @@ export const CategoryManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {categories.map((category) => (
+                  {filteredCategories.map((category) => (
                     <TableRow key={category.id}>
                       <TableCell className="font-medium">{category.name}</TableCell>
                       <TableCell className="text-muted-foreground">{category.slug}</TableCell>
