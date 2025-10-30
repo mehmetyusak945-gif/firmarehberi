@@ -253,12 +253,6 @@ const FirmaDetail = () => {
                   </div>
                 </article>
 
-                {/* Reklam Alanı */}
-                <section className="mb-8">
-                  <div className="flex justify-center">
-                    <AdBox />
-                  </div>
-                </section>
               </div>
 
               {/* Sidebar */}

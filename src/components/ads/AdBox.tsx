@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adConfig } from "./AdConfig";
+import { useAdCodes } from "@/hooks/useAdCodes";
 
 interface AdBoxProps {
   className?: string;
@@ -8,25 +8,32 @@ interface AdBoxProps {
 // 300x250 standart reklam kutusu
 export const AdBox = ({ className = "" }: AdBoxProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [randomAdCode, setRandomAdCode] = useState<string | null>(null);
+  const { data: adCodes, isLoading } = useAdCodes();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  // Gerçek reklam kodu buraya gelecek
-  if (!adConfig.showPlaceholder) {
+  useEffect(() => {
+    // Rastgele bir reklam kodu seç
+    if (adCodes && adCodes.length > 0) {
+      const randomIndex = Math.floor(Math.random() * adCodes.length);
+      setRandomAdCode(adCodes[randomIndex].code);
+    }
+  }, [adCodes]);
+
+  // Gerçek reklam kodu varsa göster
+  if (randomAdCode && !isLoading) {
     return (
-      <div className={className} style={{ width: 300, height: 250 }}>
-        {/* Google AdSense veya başka reklam kodu buraya */}
-        <ins
-          className="adsbygoogle"
-          style={{ display: "block" }}
-          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-          data-ad-slot={adConfig.slots.box300x250}
-          data-ad-format="auto"
-        />
-      </div>
+      <div
+        className={`relative overflow-hidden rounded-lg transition-all duration-500 ${
+          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        } ${className}`}
+        style={{ width: 300, height: 250 }}
+        dangerouslySetInnerHTML={{ __html: randomAdCode }}
+      />
     );
   }
 

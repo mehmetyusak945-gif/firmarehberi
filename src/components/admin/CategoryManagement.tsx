@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil } from "lucide-react";
 import { slugify } from "@/lib/slugify";
 import {
   AlertDialog,
@@ -19,6 +19,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Category {
   id: string;
@@ -32,7 +41,10 @@ export const CategoryManagement = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editCategoryName, setEditCategoryName] = useState("");
 
   useEffect(() => {
     fetchCategories();
@@ -86,6 +98,40 @@ export const CategoryManagement = () => {
       });
     } finally {
       setIsAdding(false);
+    }
+  };
+
+  const handleEditCategory = async () => {
+    if (!editingCategory || !editCategoryName.trim()) return;
+
+    setIsEditing(true);
+    try {
+      const { error } = await supabase
+        .from("categories")
+        .update({
+          name: editCategoryName.trim(),
+          slug: slugify(editCategoryName.trim()),
+        })
+        .eq("id", editingCategory.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Başarılı!",
+        description: "Kategori başarıyla güncellendi.",
+      });
+
+      setEditingCategory(null);
+      setEditCategoryName("");
+      await fetchCategories();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message,
+      });
+    } finally {
+      setIsEditing(false);
     }
   };
 
@@ -179,7 +225,7 @@ export const CategoryManagement = () => {
                   <TableRow>
                     <TableHead>Kategori Adı</TableHead>
                     <TableHead>Slug</TableHead>
-                    <TableHead className="w-[100px]">İşlem</TableHead>
+                    <TableHead className="w-[120px]">İşlem</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -188,31 +234,81 @@ export const CategoryManagement = () => {
                       <TableCell className="font-medium">{category.name}</TableCell>
                       <TableCell className="text-muted-foreground">{category.slug}</TableCell>
                       <TableCell>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Kategoriyi Sil</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                "{category.name}" kategorisini silmek istediğinizden emin misiniz?
-                                Bu işlem geri alınamaz.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>İptal</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteCategory(category.id, category.name)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        <div className="flex items-center gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setEditCategoryName(category.name);
+                                }}
                               >
-                                Sil
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                                <Pencil className="h-4 w-4 text-primary" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Kategoriyi Düzenle</DialogTitle>
+                                <DialogDescription>
+                                  Kategori adını güncelleyin.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-category">Kategori Adı</Label>
+                                  <Input
+                                    id="edit-category"
+                                    value={editCategoryName}
+                                    onChange={(e) => setEditCategoryName(e.target.value)}
+                                    placeholder="Kategori adı"
+                                  />
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  onClick={handleEditCategory}
+                                  disabled={isEditing || !editCategoryName.trim()}
+                                >
+                                  {isEditing ? (
+                                    <>
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                      Güncelleniyor...
+                                    </>
+                                  ) : (
+                                    "Güncelle"
+                                  )}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Kategoriyi Sil</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  "{category.name}" kategorisini silmek istediğinizden emin misiniz?
+                                  Bu işlem geri alınamaz.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>İptal</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteCategory(category.id, category.name)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Sil
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

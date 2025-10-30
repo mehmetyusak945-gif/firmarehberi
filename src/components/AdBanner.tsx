@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAdCodes } from "@/hooks/useAdCodes";
 
 interface AdBannerProps {
   size: "small" | "medium" | "large" | "leaderboard" | "rectangle";
@@ -16,6 +17,8 @@ const adSizes = {
 
 export const AdBanner = ({ size, className = "" }: AdBannerProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [randomAdCode, setRandomAdCode] = useState<string | null>(null);
+  const { data: adCodes, isLoading } = useAdCodes();
   const dimensions = adSizes[size];
 
   useEffect(() => {
@@ -24,6 +27,33 @@ export const AdBanner = ({ size, className = "" }: AdBannerProps) => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    // Rastgele bir reklam kodu seç
+    if (adCodes && adCodes.length > 0) {
+      const randomIndex = Math.floor(Math.random() * adCodes.length);
+      setRandomAdCode(adCodes[randomIndex].code);
+    }
+  }, [adCodes]);
+
+  // Gerçek reklam kodu varsa göster
+  if (randomAdCode && !isLoading) {
+    return (
+      <div
+        className={`relative overflow-hidden rounded-lg transition-all duration-500 ${
+          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        } ${className}`}
+        style={{
+          minWidth: dimensions.width,
+          minHeight: dimensions.height,
+          maxWidth: dimensions.width,
+          maxHeight: dimensions.height,
+        }}
+        dangerouslySetInnerHTML={{ __html: randomAdCode }}
+      />
+    );
+  }
+
+  // Placeholder göster
   return (
     <div
       className={`relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-br from-accent/10 to-primary/10 flex items-center justify-center transition-all duration-500 ${

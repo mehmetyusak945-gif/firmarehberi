@@ -163,10 +163,6 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Leaderboard Reklam */}
-            <div className="mt-12 flex justify-center">
-              <AdLeaderboard />
-            </div>
           </section>
         </main>
 

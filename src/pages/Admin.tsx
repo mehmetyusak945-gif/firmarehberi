@@ -11,11 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
 import { CategoryManagement } from "@/components/admin/CategoryManagement";
+import { AdManagement } from "@/components/admin/AdManagement";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -171,7 +172,7 @@ const Admin = () => {
 
         <main className="flex-1 container mx-auto px-4 py-8">
           <Tabs defaultValue="firms" className="w-full">
-            <TabsList className="grid w-full max-w-2xl grid-cols-4">
+            <TabsList className="grid w-full max-w-3xl grid-cols-5">
               <TabsTrigger value="firms">
                 <List className="mr-2 h-4 w-4" />
                 Firmalar
@@ -183,6 +184,10 @@ const Admin = () => {
               <TabsTrigger value="categories">
                 <FolderTree className="mr-2 h-4 w-4" />
                 Kategoriler
+              </TabsTrigger>
+              <TabsTrigger value="ads">
+                <Megaphone className="mr-2 h-4 w-4" />
+                Reklamlar
               </TabsTrigger>
               <TabsTrigger value="upload-excel">
                 <Upload className="mr-2 h-4 w-4" />
@@ -196,6 +201,10 @@ const Admin = () => {
 
             <TabsContent value="categories">
               <CategoryManagement />
+            </TabsContent>
+
+            <TabsContent value="ads">
+              <AdManagement />
             </TabsContent>
 
             <TabsContent value="add-firm">
