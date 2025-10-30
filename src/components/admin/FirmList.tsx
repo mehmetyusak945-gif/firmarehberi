@@ -35,6 +35,8 @@ export const FirmList = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedFirm, setSelectedFirm] = useState<Firm | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
 
   useEffect(() => {
     fetchFirms();
@@ -129,6 +131,20 @@ export const FirmList = () => {
     fetchFirms();
   };
 
+  // Sayfalama hesaplamaları
+  const totalPages = Math.ceil(filteredFirms.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedFirms = filteredFirms.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1); // Reset to first page
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -145,7 +161,7 @@ export const FirmList = () => {
       <CardContent>
         <div className="space-y-4">
           {/* Search and Filter */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -168,6 +184,20 @@ export const FirmList = () => {
                 ))}
               </SelectContent>
             </Select>
+            <div className="w-full sm:w-auto">
+              <label className="text-sm font-medium mb-1 block">Sayfa başı:</label>
+              <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+                <SelectTrigger className="w-full sm:w-[100px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="75">75</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Table */}
@@ -183,14 +213,14 @@ export const FirmList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredFirms.length === 0 ? (
+                {paginatedFirms.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                       Firma bulunamadı
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredFirms.map((firm) => (
+                  paginatedFirms.map((firm) => (
                     <TableRow key={firm.id}>
                       <TableCell className="font-medium">{firm.name}</TableCell>
                       <TableCell>{getCategoryName(firm.category_id)}</TableCell>
@@ -221,6 +251,31 @@ export const FirmList = () => {
               </TableBody>
             </Table>
           </div>
+
+          {/* Sayfalama */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Önceki
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Sayfa {currentPage} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Sonraki
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
 

@@ -62,6 +62,42 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          notes: string | null
+          read_at: string | null
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          notes?: string | null
+          read_at?: string | null
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          notes?: string | null
+          read_at?: string | null
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       firms: {
         Row: {
           added_by: string | null
@@ -130,6 +166,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_published: boolean | null
+          meta_description: string | null
+          slug: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          slug: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {

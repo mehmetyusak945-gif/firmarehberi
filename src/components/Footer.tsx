@@ -70,6 +70,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/hakkimizda" className="hover:text-primary transition-fast">
+                  Hakkımızda
+                </Link>
+              </li>
+              <li>
                 <Link to="/firma-ekle" className="hover:text-primary transition-fast">
                   Firma Ekle
                 </Link>
@@ -82,28 +87,23 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Kategoriler */}
+          {/* Yasal */}
           <div>
-            <h3 className="font-semibold mb-4">Kategoriler</h3>
+            <h3 className="font-semibold mb-4">Yasal</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link to="/?kategori=elektrikci" className="hover:text-primary transition-fast">
-                  Elektrikçi
+                <Link to="/gizlilik-politikasi" className="hover:text-primary transition-fast">
+                  Gizlilik Politikası
                 </Link>
               </li>
               <li>
-                <Link to="/?kategori=restoran" className="hover:text-primary transition-fast">
-                  Restoran
+                <Link to="/kullanim-kosullari" className="hover:text-primary transition-fast">
+                  Kullanım Koşulları
                 </Link>
               </li>
               <li>
-                <Link to="/?kategori=lokanta" className="hover:text-primary transition-fast">
-                  Lokanta
-                </Link>
-              </li>
-              <li>
-                <Link to="/?kategori=tesisatci" className="hover:text-primary transition-fast">
-                  Tesisatçı
+                <Link to="/cerez-politikasi" className="hover:text-primary transition-fast">
+                  Çerez Politikası
                 </Link>
               </li>
             </ul>

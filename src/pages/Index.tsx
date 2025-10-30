@@ -30,18 +30,18 @@ const Index = () => {
     return shuffled.slice(0, 16);
   }, [categories]);
 
-  // Filtrelenmiş firmalar
-  const filteredFirms = useMemo(() => {
+  // Filtrelenmiş firmalar - rastgele 12 adet
+  const randomFirms = useMemo(() => {
     if (!firms) return [];
-    if (selectedCategory === "all") return firms;
-    return firms.filter(firma => firma.category_id === selectedCategory);
-  }, [firms, selectedCategory]);
+    // Firmaları rastgele sırala ve ilk 12'sini al
+    const shuffled = [...firms].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 12);
+  }, [firms]);
 
   // Grid için karışık içerik (firma + reklam) - 16 alan: 12 firma + 4 reklam
   const gridItems = useMemo(() => {
-    if (!filteredFirms) return [];
+    if (!randomFirms) return [];
     const items: Array<{ type: "firma" | "ad"; data?: any; id: string }> = [];
-    const firmsToShow = filteredFirms.slice(0, 12); // İlk 12 firma
     
     // 16 pozisyon oluştur (4x4 grid)
     const positions = Array.from({ length: 16 }, (_, i) => i);
@@ -61,19 +61,19 @@ const Index = () => {
           type: "ad", 
           id: `ad-${adIndex++}` 
         });
-      } else if (firmaIndex < firmsToShow.length) {
+      } else if (firmaIndex < randomFirms.length) {
         // Firma ekle
         items.push({ 
           type: "firma", 
-          data: firmsToShow[firmaIndex], 
-          id: firmsToShow[firmaIndex].id 
+          data: randomFirms[firmaIndex], 
+          id: randomFirms[firmaIndex].id 
         });
         firmaIndex++;
       }
     });
 
     return items;
-  }, [filteredFirms]);
+  }, [randomFirms]);
 
   if (firmsLoading || categoriesLoading) {
     return (
@@ -149,7 +149,7 @@ const Index = () => {
                   : `${categories?.find(c => c.id === selectedCategory)?.name} Kategorisi`}
               </h2>
               <p className="text-muted-foreground">
-                {filteredFirms?.length || 0} firma listeleniyor
+                {randomFirms?.length || 0} firma listeleniyor
               </p>
             </div>
 

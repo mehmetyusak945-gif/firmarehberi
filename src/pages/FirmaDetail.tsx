@@ -222,7 +222,7 @@ const FirmaDetail = () => {
                           <p className="text-sm text-muted-foreground mb-3">{firma.address}</p>
                           <div className="flex flex-wrap gap-2">
                             <a 
-                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(firma.address)}`}
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(firma.name + ' ' + firma.address)}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-md"
@@ -232,7 +232,7 @@ const FirmaDetail = () => {
                               Google Maps
                             </a>
                             <a 
-                              href={`https://yandex.com.tr/maps/?text=${encodeURIComponent(firma.address)}`}
+                              href={`https://yandex.com.tr/maps/?text=${encodeURIComponent(firma.name + ' ' + firma.address)}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-md"
