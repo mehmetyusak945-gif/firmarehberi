@@ -229,22 +229,25 @@ serve(async (req) => {
 
         // External ID'yi benzersiz yap (timestamp + position)
         const timestamp = Date.now();
-        const externalId = `serper-${timestamp}-${firm.position || Math.random().toString(36).substr(2, 9)}`;
+        const externalId = `${timestamp}-${firm.position || Math.random().toString(36).substr(2, 9)}`;
         
-        // Firma slug oluştur - SEO için il ve ilçe bilgisiyle
+        // Firma slug oluştur - ID + Firma İsmi + İl + İlçe
         const nameSlug = slugify(firm.title || 'firma');
         const locationParts = [];
         if (city) locationParts.push(slugify(city));
         if (district) locationParts.push(slugify(district));
+        
+        // ID slug'ın başına ekleniyor
+        const idPrefix = `${timestamp}-${firm.position || Math.random().toString(36).substr(2, 9)}`;
         const locationSuffix = locationParts.length > 0 ? `-${locationParts.join('-')}` : '';
 
-        let finalSlug = `${nameSlug}${locationSuffix}`;
+        let finalSlug = `${idPrefix}-${nameSlug}${locationSuffix}`;
         
         // Eğer çakışma varsa sayı ekle
         let counter = 1;
         let tempSlug = finalSlug;
         while (existingSlugs.has(tempSlug)) {
-          tempSlug = `${nameSlug}${locationSuffix}-${counter}`;
+          tempSlug = `${idPrefix}-${nameSlug}${locationSuffix}-${counter}`;
           counter++;
         }
         finalSlug = tempSlug;
