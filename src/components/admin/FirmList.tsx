@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Search, Eye } from "lucide-react";
+import { Loader2, Search, Eye, ExternalLink } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { FirmDetailModal } from "./FirmDetailModal";
 
@@ -212,7 +212,7 @@ export const FirmList = () => {
                   <TableHead>Kategori</TableHead>
                   <TableHead>Telefon</TableHead>
                   <TableHead>Durum</TableHead>
-                  <TableHead className="w-[100px]">İşlem</TableHead>
+                  <TableHead className="w-[150px]">İşlem</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -240,13 +240,24 @@ export const FirmList = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleViewDetails(firm)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewDetails(firm)}
+                            title="Detayları Görüntüle"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(`/firma/${firm.slug}`, '_blank')}
+                            title="Sitede Görüntüle"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))

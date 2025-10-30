@@ -195,64 +195,76 @@ const Admin = () => {
 
         <main className="flex-1 container mx-auto px-4 py-8">
           <Tabs defaultValue="firms" className="w-full">
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <TabsList className="grid w-full max-w-5xl grid-cols-3 md:grid-cols-10 gap-2">
-                <TabsTrigger value="firms" className="text-xs md:text-sm">
-                  <List className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Firmalar</span>
-                </TabsTrigger>
-                <TabsTrigger value="pending" className="text-xs md:text-sm">
-                  <Clock className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Bekleyenler</span>
-                </TabsTrigger>
-                <TabsTrigger value="add-firm" className="text-xs md:text-sm">
-                  <Building2 className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Firma Ekle</span>
-                </TabsTrigger>
-                <TabsTrigger value="categories" className="text-xs md:text-sm">
-                  <FolderTree className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Kategoriler</span>
-                </TabsTrigger>
-                <TabsTrigger value="ads" className="text-xs md:text-sm">
-                  <Megaphone className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Reklamlar</span>
-                </TabsTrigger>
-                <TabsTrigger value="backup" className="text-xs md:text-sm">
-                  <HardDrive className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Yedek</span>
-                </TabsTrigger>
-                <TabsTrigger value="messages" className="text-xs md:text-sm">
-                  <Mail className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Mesajlar</span>
-                </TabsTrigger>
-                <TabsTrigger value="pages" className="text-xs md:text-sm">
-                  <FileText className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Sayfalar</span>
-                </TabsTrigger>
-                <TabsTrigger value="upload-excel" className="text-xs md:text-sm">
-                  <Upload className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Toplu Firma Ekle</span>
-                </TabsTrigger>
-                <TabsTrigger value="webmaster" className="text-xs md:text-sm">
-                  <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">Webmaster</span>
-                </TabsTrigger>
-                <TabsTrigger value="ai-settings" className="text-xs md:text-sm">
-                  <Brain className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                  <span className="hidden sm:inline">AI Ayarları</span>
-                </TabsTrigger>
-              </TabsList>
-              
-              {/* Tehlikeli işlemler butonu - Ayrı bir yerde */}
-              <div className="flex items-center">
-                <TabsList className="h-auto">
+            {/* Menü başlıkları */}
+            <div className="mb-6 space-y-4">
+              {/* Firma İşlemleri Grubu */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-1">Firma İşlemleri</h3>
+                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 gap-2">
+                  <TabsTrigger value="firms" className="text-xs md:text-sm">
+                    <List className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Firmalar</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="pending" className="text-xs md:text-sm">
+                    <Clock className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Bekleyenler</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="add-firm" className="text-xs md:text-sm">
+                    <Building2 className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Firma Ekle</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="upload-excel" className="text-xs md:text-sm">
+                    <Upload className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Toplu Ekle</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              {/* İçerik Yönetimi Grubu */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-1">İçerik Yönetimi</h3>
+                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 gap-2">
+                  <TabsTrigger value="categories" className="text-xs md:text-sm">
+                    <FolderTree className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Kategoriler</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="pages" className="text-xs md:text-sm">
+                    <FileText className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Sayfalar</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="messages" className="text-xs md:text-sm">
+                    <Mail className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Mesajlar</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="ads" className="text-xs md:text-sm">
+                    <Megaphone className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Reklamlar</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              {/* Sistem Ayarları Grubu */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-1">Sistem Ayarları</h3>
+                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 gap-2">
+                  <TabsTrigger value="ai-settings" className="text-xs md:text-sm">
+                    <Brain className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">AI Ayarları</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="webmaster" className="text-xs md:text-sm">
+                    <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Webmaster</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="backup" className="text-xs md:text-sm">
+                    <HardDrive className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Yedek</span>
+                  </TabsTrigger>
                   <TabsTrigger 
                     value="clear-data" 
                     className="text-xs md:text-sm border border-destructive/50 data-[state=active]:bg-destructive data-[state=active]:text-destructive-foreground"
                   >
                     <AlertTriangle className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">İçeriği Temizle</span>
-                    <span className="sm:hidden">Temizle</span>
+                    <span className="hidden sm:inline">Temizle</span>
                   </TabsTrigger>
                 </TabsList>
               </div>

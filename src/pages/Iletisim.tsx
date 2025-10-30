@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Iletisim = () => {
   const { toast } = useToast();
@@ -67,10 +68,18 @@ const Iletisim = () => {
 
     setIsSubmitting(true);
 
-    // Simulated API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        });
+
+      if (error) throw error;
+
       toast({
         title: "Mesajınız Gönderildi!",
         description: "En kısa sürede size geri dönüş yapacağız.",
@@ -83,7 +92,16 @@ const Iletisim = () => {
         subject: "",
         message: "",
       });
-    }, 1500);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+      });
+      console.error('Error submitting contact form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -107,7 +125,7 @@ const Iletisim = () => {
 
         <main className="flex-1">
           {/* Hero Section */}
-          <section className="gradient-secondary py-16">
+          <section className="bg-gradient-to-r from-primary to-accent py-16">
             <div className="container mx-auto px-4 text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 Bize Ulaşın

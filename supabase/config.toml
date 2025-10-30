@@ -3,11 +3,14 @@ project_id = "wzpjmnjzfismjozhapmq"
 [functions.generate-firm-description]
 verify_jwt = false
 
+[functions.generate-meta-description]
+verify_jwt = false
+
 [functions.restore-backup]
 verify_jwt = true
 
 [functions.upload-firms-excel]
 verify_jwt = true
 
-[functions.generate-meta-description]
+[functions.sitemap]
 verify_jwt = false
