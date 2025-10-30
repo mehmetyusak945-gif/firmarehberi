@@ -181,6 +181,48 @@ function validateAndTruncate(value: string, maxLength: number): string {
   return trimmed.length > maxLength ? trimmed.substring(0, maxLength) : trimmed
 }
 
+function parseCSVLine(line: string, delimiter: string): string[] {
+  const values: string[] = []
+  let currentValue = ''
+  let inQuotes = false
+  let i = 0
+  
+  while (i < line.length) {
+    const char = line[i]
+    const nextChar = line[i + 1]
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        // Escaped quote
+        currentValue += '"'
+        i += 2
+        continue
+      } else {
+        // Toggle quote mode
+        inQuotes = !inQuotes
+        i++
+        continue
+      }
+    }
+    
+    if (char === delimiter && !inQuotes) {
+      // End of field
+      values.push(currentValue.trim())
+      currentValue = ''
+      i++
+      continue
+    }
+    
+    currentValue += char
+    i++
+  }
+  
+  // Add last value
+  values.push(currentValue.trim())
+  
+  return values
+}
+
 function parseCSV(csvText: string): any[] {
   // Validate file size (10MB limit)
   const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -193,6 +235,11 @@ function parseCSV(csvText: string): any[] {
   if (lines.length < 2) {
     throw new Error('CSV file is empty or has no data rows')
   }
+  
+  // Detect delimiter from header (first line)
+  const header = lines[0]
+  const delimiter = header.includes(';') ? ';' : ','
+  console.log(`Detected delimiter: ${delimiter === ';' ? 'semicolon' : 'comma'}`)
   
   // Skip header row - Sütunlar: ID;İsim;Adres;Telefon;Website;Puan;Kategori
   const dataLines = lines.slice(1)
@@ -218,8 +265,8 @@ function parseCSV(csvText: string): any[] {
   return dataLines
     .filter(line => line.trim())
     .map((line, index) => {
-      // Split by semicolon (Turkish Excel uses semicolon)
-      const values = line.split(';').map(v => v.trim())
+      // Parse CSV line properly handling quotes
+      const values = parseCSVLine(line, delimiter)
       
       if (values.length < 7) {
         console.warn(`Row ${index + 2} has insufficient columns:`, values.length)
