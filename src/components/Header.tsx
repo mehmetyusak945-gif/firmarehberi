@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Building2, Plus, Mail, User } from "lucide-react";
+import { Plus, Mail, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import firmaLogo from "@/assets/firmam-logo.png";
 
 export const Header = () => {
   const { user } = useAuth();
@@ -10,13 +11,8 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover-lift" aria-label="Firma Rehberim Ana Sayfa">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg gradient-primary">
-              <Building2 className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gradient">
-              Firma Rehberim
-            </span>
+          <Link to="/" className="flex items-center space-x-3 hover-lift" aria-label="Firmam.org Ana Sayfa">
+            <img src={firmaLogo} alt="Firmam.org Logo" className="h-10 w-auto" />
           </Link>
 
           {/* Navigation */}

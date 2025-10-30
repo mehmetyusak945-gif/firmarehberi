@@ -80,17 +80,17 @@ const Index = () => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Firma Rehberim",
+    "name": "Firmam.org",
     "description": "Türkiye'nin en kapsamlı firma ve işletme rehberi. Güvenilir firmaları keşfedin.",
-    "url": "https://firma-rehberim.lovable.app"
+    "url": "https://firmam.org"
   };
 
   return (
     <>
       <SEOHead
-        title="Firma Rehberim - Türkiye'nin En Kapsamlı Firma Rehberi"
+        title="Firmam.org - Türkiye'nin En Kapsamlı Firma Rehberi"
         description="Elektrikçi, restoran, tesisatçı ve daha fazlası! Türkiye'nin güvenilir firma rehberinde aradığınız hizmeti kolayca bulun. 60+ onaylı işletme."
-        canonical="https://firma-rehberim.lovable.app/"
+        canonical="https://firmam.org/"
         keywords="firma rehberi, işletme rehberi, elektrikçi, restoran, tesisatçı, lokanta, çeşmeci, sıhhi tesisat, türkiye firmaları"
         schema={schema}
       />

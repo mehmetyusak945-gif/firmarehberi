@@ -202,9 +202,9 @@ const FirmaEkle = () => {
   return (
     <>
       <SEOHead
-        title="Firma Ekle - Firma Rehberim"
+        title="Firma Ekle - Firmam.org"
         description="Firmanızı ücretsiz olarak rehberimize ekleyin. Binlerce potansiyel müşteriye ulaşın. Hızlı onay süreci ile hemen listelenin."
-        canonical="https://firma-rehberim.lovable.app/firma-ekle"
+        canonical="https://firmam.org/firma-ekle"
         keywords="firma ekle, işletme ekle, ücretsiz firma kaydı, firma rehberi"
       />
 

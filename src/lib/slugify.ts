@@ -21,7 +21,8 @@ export const slugify = (text: string): string => {
 };
 
 // Telefon numarası formatlama
-export const formatPhone = (phone: string): string => {
+export const formatPhone = (phone: string | null): string => {
+  if (!phone) return '';
   return phone.replace(/(\d{4})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
 };
 

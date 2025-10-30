@@ -136,17 +136,17 @@ const Category = () => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": `${validCategory.name} Firmaları - Firma Rehberim`,
+    "name": `${validCategory.name} Firmaları - Firmam.org`,
     "description": `${validCategory.name} kategorisinde güvenilir firmalar. ${categoryFirms.length} onaylı işletme.`,
-    "url": `https://firma-rehberim.lovable.app/kategori/${category}`
+    "url": `https://firmam.org/kategori/${category}`
   };
 
   return (
     <>
       <SEOHead
-        title={`${validCategory.name} Firmaları - Firma Rehberim`}
+        title={`${validCategory.name} Firmaları - Firmam.org`}
         description={`${validCategory.name} kategorisinde güvenilir ve kaliteli firmalar. ${categoryFirms.length} onaylı işletme arasından seçim yapın.`}
-        canonical={`https://firma-rehberim.lovable.app/kategori/${category}`}
+        canonical={`https://firmam.org/kategori/${category}`}
         keywords={`${validCategory.name}, ${validCategory.name.toLowerCase()} firmaları, güvenilir ${validCategory.name.toLowerCase()}, firma rehberi`}
         schema={schema}
       />

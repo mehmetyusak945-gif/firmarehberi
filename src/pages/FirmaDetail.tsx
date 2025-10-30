@@ -86,9 +86,9 @@ const FirmaDetail = () => {
   return (
     <>
       <SEOHead
-        title={`${firma.name} - ${firma.category} | Firma Rehberim`}
+        title={`${firma.name} - ${firma.category} | Firmam.org`}
         description={`${firma.name} ${firma.category} hizmeti vermektedir. ${firma.address} adresinde yer alan ${firma.name} için detaylı bilgi ve iletişim.`}
-        canonical={`https://firma-rehberim.lovable.app/firma/${firma.slug}`}
+        canonical={`https://firmam.org/firma/${firma.slug}`}
         ogType="business.business"
         keywords={`${firma.name}, ${firma.category}, ${firma.address}, firma rehberi`}
         schema={schema}

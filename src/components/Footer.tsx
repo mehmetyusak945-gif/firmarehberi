@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Building2, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import firmaLogo from "@/assets/firmam-logo.png";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,13 +11,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo ve Açıklama */}
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center space-x-2 mb-4" aria-label="Firma Rehberim Ana Sayfa">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg gradient-primary">
-                <Building2 className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gradient">
-                Firma Rehberim
-              </span>
+            <Link to="/" className="flex items-center space-x-3 mb-4" aria-label="Firmam.org Ana Sayfa">
+              <img src={firmaLogo} alt="Firmam.org Logo" className="h-10 w-auto" />
             </Link>
             <p className="text-muted-foreground text-sm max-w-md">
               Türkiye'nin en kapsamlı firma rehberi. İhtiyacınız olan hizmeti sunan firmaları kolayca bulun, 
@@ -116,7 +112,7 @@ export const Footer = () => {
 
         {/* Copyright */}
         <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {currentYear} Firma Rehberim. Tüm hakları saklıdır.</p>
+          <p>&copy; {currentYear} Firmam.org. Tüm hakları saklıdır.</p>
         </div>
       </div>
     </footer>

@@ -15,7 +15,7 @@ export const SEOHead = ({
   description,
   canonical,
   ogType = "website",
-  ogImage = "https://firma-rehberim.lovable.app/og-image.jpg",
+  ogImage = "https://firmam.org/og-image.jpg",
   keywords,
   schema
 }: SEOHeadProps) => {

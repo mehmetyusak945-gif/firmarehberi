@@ -96,9 +96,9 @@ const Iletisim = () => {
   return (
     <>
       <SEOHead
-        title="İletişim - Firma Rehberim"
-        description="Firma Rehberim ile iletişime geçin. Sorularınız, önerileriniz veya şikayetleriniz için bize ulaşın. Hızlı yanıt garantisi."
-        canonical="https://firma-rehberim.lovable.app/iletisim"
+        title="İletişim - Firmam.org"
+        description="Firmam.org ile iletişime geçin. Sorularınız, önerileriniz veya şikayetleriniz için bize ulaşın. Hızlı yanıt garantisi."
+        canonical="https://firmam.org/iletisim"
         keywords="iletişim, firma rehberi iletişim, destek"
       />
 
