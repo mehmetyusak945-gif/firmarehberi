@@ -132,7 +132,7 @@ const Index = () => {
                     onClick={() => handleCategoryClick("all")}
                     className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md gradient-accent text-white"
                   >
-                    Tümü ({firms?.length || 0})
+                    Tümü
                   </button>
                   {randomCategories.map(category => (
                     <button
@@ -140,7 +140,7 @@ const Index = () => {
                       onClick={() => handleCategoryClick(category.slug)}
                       className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
                     >
-                      {category.name} ({category.firmCount})
+                      {category.name}
                     </button>
                   ))}
                 </div>
