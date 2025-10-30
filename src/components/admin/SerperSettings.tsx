@@ -5,12 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useSerperSettings, useUpdateSerperSettings } from "@/hooks/useSerperSettings";
-import { Loader2 } from "lucide-react";
+import { Loader2, Key, AlertTriangle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const SerperSettings = () => {
   const { toast } = useToast();
   const { data: settings, isLoading } = useSerperSettings();
   const updateSettings = useUpdateSerperSettings();
+  const [showApiKeyInfo, setShowApiKeyInfo] = useState(false);
 
   const [formData, setFormData] = useState({
     gl: "tr",
@@ -55,15 +66,63 @@ export const SerperSettings = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Serper API Ayarları</CardTitle>
-        <CardDescription>
-          Google Places arama için varsayılan parametreleri yapılandırın
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Serper API Key</CardTitle>
+          <CardDescription>
+            Google Places API için Serper API anahtarınızı yönetin
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
+              <Key className="h-5 w-5 text-primary" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">API Anahtarı Durumu</p>
+                <p className="text-xs text-muted-foreground">
+                  Serper API anahtarınız güvenli bir şekilde saklanmaktadır
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowApiKeyInfo(true)}
+              >
+                <Key className="h-4 w-4 mr-2" />
+                API Key Nasıl Alınır?
+              </Button>
+            </div>
+
+            <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-4">
+              <div className="flex gap-3">
+                <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                    API Key Değiştirme
+                  </p>
+                  <p className="text-xs text-amber-800 dark:text-amber-200">
+                    API anahtarınızı değiştirmek için lütfen Lovable ekibine başvurun. 
+                    Güvenlik nedeniyle API anahtarları doğrudan değiştirilemez.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Serper API Ayarları</CardTitle>
+          <CardDescription>
+            Google Places arama için varsayılan parametreleri yapılandırın
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="gl">Ülke Kodu (gl)</Label>
             <Input
@@ -116,5 +175,35 @@ export const SerperSettings = () => {
         </form>
       </CardContent>
     </Card>
+
+    <AlertDialog open={showApiKeyInfo} onOpenChange={setShowApiKeyInfo}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Serper API Key Nasıl Alınır?</AlertDialogTitle>
+          <AlertDialogDescription className="space-y-3 text-left">
+            <p>
+              1. <a href="https://serper.dev" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                serper.dev
+              </a> adresine gidin
+            </p>
+            <p>
+              2. Ücretsiz bir hesap oluşturun (2,500 ücretsiz arama hakkı)
+            </p>
+            <p>
+              3. Dashboard'dan API anahtarınızı kopyalayın
+            </p>
+            <p>
+              4. Lovable ekibi ile iletişime geçerek API anahtarınızı güvenli bir şekilde ekletin
+            </p>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction onClick={() => setShowApiKeyInfo(false)}>
+            Anladım
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  </div>
   );
 };

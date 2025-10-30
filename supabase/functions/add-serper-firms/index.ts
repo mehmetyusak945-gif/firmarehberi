@@ -68,20 +68,24 @@ function guessCategory(name: string, types: string[], query?: string): string {
 
 // Konum filtreleme - adres belirtilen şehir/ilçeyi içeriyor mu?
 function matchesLocation(address: string, city?: string, district?: string): boolean {
-  if (!address) return true; // Adres yoksa filtrele
+  if (!address) return false; // Adres yoksa filtrele
   
   const addressLower = address.toLowerCase();
   
-  if (district) {
-    const districtLower = district.toLowerCase();
-    if (!addressLower.includes(districtLower)) {
+  // Önce şehir kontrolü - bu zorunlu
+  if (city) {
+    const cityLower = city.toLowerCase();
+    // Şehir adı adreste geçmiyorsa filtrele
+    if (!addressLower.includes(cityLower)) {
       return false;
     }
   }
   
-  if (city) {
-    const cityLower = city.toLowerCase();
-    if (!addressLower.includes(cityLower)) {
+  // İlçe opsiyonel - belirtilmişse kontrol et
+  if (district) {
+    const districtLower = district.toLowerCase();
+    if (!addressLower.includes(districtLower)) {
+      console.log(`District mismatch: looking for "${district}" in "${address}"`);
       return false;
     }
   }
@@ -119,13 +123,15 @@ serve(async (req) => {
       existingCategories?.map(c => [c.slug, c.id]) || []
     );
 
-    // Get existing slugs and external_ids to avoid conflicts
+    // Get existing slugs to avoid conflicts
     const { data: existingFirms } = await supabase
       .from('firms')
-      .select('slug, external_id');
+      .select('slug, external_id, name');
     
     const existingSlugs = new Set(existingFirms?.map(f => f.slug) || []);
-    const existingExternalIds = new Map(existingFirms?.map(f => [f.external_id, f.slug]) || []);
+    const existingExternalIds = new Set(existingFirms?.map(f => f.external_id) || []);
+    // Also check by name to avoid exact duplicates
+    const existingNames = new Set(existingFirms?.map(f => f.name.toLowerCase()) || []);
 
     const results = {
       success: 0,
@@ -136,6 +142,15 @@ serve(async (req) => {
 
     for (const firm of firms) {
       try {
+        // İsim kontrolü - aynı isimde firma varsa atla
+        const firmNameLower = (firm.title || '').toLowerCase();
+        if (existingNames.has(firmNameLower)) {
+          console.log(`Skipping ${firm.title} - firm with same name already exists`);
+          results.failed++;
+          results.errors.push(`${firm.title}: Aynı isimde firma zaten mevcut`);
+          continue;
+        }
+
         // Konum filtrele
         if (!matchesLocation(firm.address, city, district)) {
           console.log(`Skipping ${firm.title} - location mismatch: ${firm.address}`);
@@ -175,29 +190,28 @@ serve(async (req) => {
           }
         }
 
-        // External ID'yi position'dan oluştur (CSV ile aynı mantık)
-        const externalId = firm.position?.toString() || null;
+        // External ID'yi benzersiz yap (timestamp + position)
+        const timestamp = Date.now();
+        const externalId = `serper-${timestamp}-${firm.position || Math.random().toString(36).substr(2, 9)}`;
         
         // Firma slug oluştur (CSV ile birebir aynı mantık)
         const nameSlug = slugify(firm.title || 'firma');
         let finalSlug: string;
         
-        if (externalId) {
-          // External ID varsa: ID-firma-ismi formatı (CSV ile aynı)
-          finalSlug = `${externalId}-${nameSlug}`;
-        } else {
-          // External ID yoksa: sadece isim slug'ı
-          finalSlug = nameSlug;
-          let counter = 0;
-          
-          // Çakışma varsa sayı ekle
-          while (existingSlugs.has(finalSlug)) {
-            counter++;
-            finalSlug = `${nameSlug}-${counter}`;
-          }
+        // External ID + isim slug formatı
+        finalSlug = `${externalId}-${nameSlug}`;
+        
+        // Eğer çakışma varsa sayı ekle
+        let counter = 0;
+        let tempSlug = finalSlug;
+        while (existingSlugs.has(tempSlug)) {
+          counter++;
+          tempSlug = `${finalSlug}-${counter}`;
         }
+        finalSlug = tempSlug;
         
         existingSlugs.add(finalSlug); // Batch içinde çakışmayı önle
+        existingNames.add(firmNameLower); // İsim kontrolü için ekle
         
         // Telefon numarasını mobil ve sabit hat olarak ayır (CSV ile aynı mantık)
         const phoneNumber = firm.phoneNumber || '';
