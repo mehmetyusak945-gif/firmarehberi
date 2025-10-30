@@ -27,6 +27,7 @@ import { WebmasterManagement } from "@/components/admin/WebmasterManagement";
 import { AISettings } from "@/components/admin/AISettings";
 import { SerperSettings } from "@/components/admin/SerperSettings";
 import { SerperSearch } from "@/components/admin/SerperSearch";
+import { Dashboard } from "@/components/admin/Dashboard";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
@@ -36,7 +37,7 @@ const Admin = () => {
   const { toast } = useToast();
   const { data: categories } = useCategories();
   
-  const [activeTab, setActiveTab] = useState("firms");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFormat, setUploadFormat] = useState<'csv' | 'json'>('csv');
@@ -205,6 +206,7 @@ const Admin = () => {
             </header>
 
             <main className="flex-1 container mx-auto px-4 py-8">
+              {activeTab === "dashboard" && <Dashboard />}
               {activeTab === "firms" && <FirmList />}
               {activeTab === "pending" && <PendingFirms />}
               {activeTab === "categories" && <CategoryManagement />}

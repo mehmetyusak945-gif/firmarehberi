@@ -16,6 +16,7 @@ import {
   Settings,
   AlertCircle,
   Merge,
+  LayoutDashboard,
 } from "lucide-react";
 import {
   Sidebar,
@@ -35,6 +36,9 @@ interface AdminSidebarProps {
 }
 
 const menuItems = {
+  overview: [
+    { value: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  ],
   firms: [
     { value: "firms", label: "Firmalar", icon: List },
     { value: "pending", label: "Bekleyenler", icon: Clock },
@@ -67,6 +71,26 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Genel Bakış</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.overview.map((item) => (
+                <SidebarMenuItem key={item.value}>
+                  <SidebarMenuButton
+                    onClick={() => onTabChange(item.value)}
+                    isActive={activeTab === item.value}
+                    className="cursor-pointer"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {state === "expanded" && <span>{item.label}</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         <SidebarGroup>
           <SidebarGroupLabel>Firma İşlemleri</SidebarGroupLabel>
           <SidebarGroupContent>
