@@ -76,7 +76,7 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `${category} kategorisindeki "${name}" firması için dikkat çekici, SEO odaklı ve ziyaretçi çekecek bir açıklama yaz. 3-4 cümle kullan ve son cümlede mutlaka harekete geçirici bir ifade ekle. Türkçe olmalı.`
+              text: `${category} kategorisindeki "${name}" firması için kapsamlı ve bilgilendirici bir açıklama yaz. Firmanın sunduğu hizmetleri, uzmanlık alanlarını ve neden tercih edilmesi gerektiğini detaylı şekilde anlat. En az 5-6 cümle kullan. Türkçe olmalı.`
             }]
           }],
           generationConfig: {
@@ -107,11 +107,11 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: "Sen bir pazarlama ve SEO uzmanısın. Firmaların dikkat çekici, merak uyandıran ve SEO dostu açıklamalarını yazıyorsun. Açıklamalar ilgi çekici olmalı, harekete geçirici olmalı ve ziyaretçileri firmayla iletişime geçmeye teşvik etmeli. 3-4 cümle kullan ve son cümlede mutlaka harekete geçirici bir ifade ekle.",
+              content: "Sen profesyonel bir içerik yazarısın. Firma açıklamalarını detaylı, bilgilendirici ve SEO dostu bir şekilde yazıyorsun. Açıklamalar firmanın sunduğu hizmetleri, uzmanlık alanlarını ve müşterilere sağladığı değeri net bir şekilde anlatmalı. Profesyonel ama samimi bir dil kullan.",
             },
             {
               role: "user",
-              content: `${category} kategorisindeki "${name}" firması için dikkat çekici, SEO odaklı ve ziyaretçi çekecek bir açıklama yaz. Türkçe olmalı.`,
+              content: `${category} kategorisindeki "${name}" firması için kapsamlı ve bilgilendirici bir açıklama yaz. Firmanın sunduğu hizmetleri, uzmanlık alanlarını ve neden tercih edilmesi gerektiğini detaylı şekilde anlat. En az 5-6 cümle kullan. Türkçe olmalı.`,
             },
           ],
           max_completion_tokens: 250,
@@ -139,11 +139,11 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: "Sen bir pazarlama ve SEO uzmanısın. Firmaların dikkat çekici, merak uyandıran ve SEO dostu açıklamalarını yazıyorsun. Açıklamalar ilgi çekici olmalı, harekete geçirici olmalı ve ziyaretçileri firmayla iletişime geçmeye teşvik etmeli. 3-4 cümle kullan ve son cümlede mutlaka harekete geçirici bir ifade ekle (örn: 'Hemen arayın!', 'Detaylar için tıklayın!', 'Fiyat teklifi alın!').",
+              content: "Sen profesyonel bir içerik yazarısın. Firma açıklamalarını detaylı, bilgilendirici ve SEO dostu bir şekilde yazıyorsun. Açıklamalar firmanın sunduğu hizmetleri, uzmanlık alanlarını ve müşterilere sağladığı değeri net bir şekilde anlatmalı. Profesyonel ama samimi bir dil kullan.",
             },
             {
               role: "user",
-              content: `${category} kategorisindeki "${name}" firması için dikkat çekici, SEO odaklı ve ziyaretçi çekecek bir açıklama yaz. Türkçe olmalı.`,
+              content: `${category} kategorisindeki "${name}" firması için kapsamlı ve bilgilendirici bir açıklama yaz. Firmanın sunduğu hizmetleri, uzmanlık alanlarını ve neden tercih edilmesi gerektiğini detaylı şekilde anlat. En az 5-6 cümle kullan. Türkçe olmalı.`,
             },
           ],
         }),
