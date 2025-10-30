@@ -226,7 +226,9 @@ serve(async (req) => {
         let categoryId = categoryMap.get(categorySlug);
         
         if (!categoryId) {
-          const categoryName = categorySlug
+          // Kategori adı olarak query'yi kullan (Türkçe karakterler korunur)
+          // Eğer query yoksa slug'dan oluştur
+          const categoryName = query || categorySlug
             .split('-')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
