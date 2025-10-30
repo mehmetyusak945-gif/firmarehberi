@@ -122,7 +122,12 @@ serve(async (req) => {
     // Remove duplicates by external_id (keep first occurrence)
     const seenIds = new Set<string>()
     const uniqueFirms = firms.filter(firm => {
-      if (!firm.external_id || seenIds.has(firm.external_id)) {
+      // If no external_id, keep the firm
+      if (!firm.external_id) {
+        return true
+      }
+      // If external_id already seen, skip
+      if (seenIds.has(firm.external_id)) {
         return false
       }
       seenIds.add(firm.external_id)
@@ -131,19 +136,37 @@ serve(async (req) => {
 
     console.log(`Removed ${firms.length - uniqueFirms.length} duplicate records`)
 
-    // Prepare firms with category_id
-    const firmsToInsert = uniqueFirms.map(firm => ({
-      external_id: firm.external_id,
-      name: firm.name,
-      slug: slugify(firm.name),
-      address: firm.address || null,
-      phone: firm.phone || null,
-      website: firm.website || null,
-      rating: firm.rating || 0,
-      category_id: categoryMap.get(firm.category) || null,
-      is_approved: true,
-      added_by: null, // Admin import
-    }))
+    // Handle duplicate slugs by adding counter suffix
+    const slugCounts = new Map<string, number>()
+    
+    // Prepare firms with category_id and unique slugs
+    const firmsToInsert = uniqueFirms.map(firm => {
+      const baseSlug = slugify(firm.name)
+      const count = slugCounts.get(baseSlug) || 0
+      let finalSlug = baseSlug
+      
+      if (count > 0) {
+        finalSlug = `${baseSlug}-${count + 1}`
+      }
+      
+      slugCounts.set(baseSlug, count + 1)
+      
+      // Use slug as external_id if external_id is missing
+      const externalId = firm.external_id || finalSlug
+      
+      return {
+        external_id: externalId,
+        name: firm.name,
+        slug: finalSlug,
+        address: firm.address || null,
+        phone: firm.phone || null,
+        website: firm.website || null,
+        rating: firm.rating || 0,
+        category_id: categoryMap.get(firm.category) || null,
+        is_approved: true,
+        added_by: null, // Admin import
+      }
+    })
 
     // Insert or update firms (upsert on external_id)
     const { data, error: insertError } = await supabaseClient
