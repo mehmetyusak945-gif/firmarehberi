@@ -30,6 +30,7 @@ const Admin = () => {
   
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadFormat, setUploadFormat] = useState<'csv' | 'json'>('csv');
   
   const [formData, setFormData] = useState({
     name: "",
@@ -105,11 +106,22 @@ const Admin = () => {
 
     try {
       const text = await file.text();
+      
+      let body: any = { format: uploadFormat }
+      
+      if (uploadFormat === 'json') {
+        try {
+          const jsonData = JSON.parse(text);
+          body.jsonData = Array.isArray(jsonData) ? jsonData : [jsonData];
+        } catch (parseError) {
+          throw new Error('Geçersiz JSON formatı');
+        }
+      } else {
+        body.csvData = text;
+      }
 
       const { data, error } = await supabase.functions.invoke("upload-firms-excel", {
-        body: { 
-          csvData: text
-        },
+        body
       });
 
       if (error) throw error;
@@ -354,18 +366,79 @@ const Admin = () => {
             <TabsContent value="upload-excel">
               <Card>
                 <CardHeader>
-                  <CardTitle>CSV ile Toplu Yükleme</CardTitle>
+                  <CardTitle>Toplu Firma Yükleme</CardTitle>
                   <CardDescription>
-                    CSV dosyanızda şu sütunlar olmalı: ID;İsim;Adres;Telefon;Website;Puan;Kategori
+                    CSV veya JSON formatında toplu firma ekleyin
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    <div className="flex gap-4 mb-4">
+                      <Button
+                        type="button"
+                        variant={uploadFormat === 'csv' ? 'default' : 'outline'}
+                        onClick={() => setUploadFormat('csv')}
+                        className="flex-1"
+                      >
+                        CSV Format
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={uploadFormat === 'json' ? 'default' : 'outline'}
+                        onClick={() => setUploadFormat('json')}
+                        className="flex-1"
+                      >
+                        JSON Format
+                      </Button>
+                    </div>
+
+                    {uploadFormat === 'csv' ? (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">CSV Format Örneği:</p>
+                        <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
+{`ID;İsim;Adres;Telefon;Website;Puan;Kategori
+12345;Örnek Firma;Ankara Cad. No:1;05551234567;https://ornek.com;4.5;Elektrikçi
+67890;Test Firma;İstanbul Sok. No:2;05559876543;;3.8;Tesisatçı`}
+                        </pre>
+                        <p className="text-xs text-muted-foreground">
+                          * Noktalı virgül (;) ile ayrılmış olmalı
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">JSON Format Örneği:</p>
+                        <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
+{`[
+  {
+    "id": "12345",
+    "name": "Örnek Firma",
+    "address": "Ankara Cad. No:1",
+    "phone": "05551234567",
+    "website": "https://ornek.com",
+    "rating": 4.5,
+    "category": "Elektrikçi"
+  },
+  {
+    "id": "67890",
+    "name": "Test Firma",
+    "address": "İstanbul Sok. No:2",
+    "phone": "05559876543",
+    "rating": 3.8,
+    "category": "Tesisatçı"
+  }
+]`}
+                        </pre>
+                        <p className="text-xs text-muted-foreground">
+                          * Türkçe alanlar da desteklenir: isim, adres, telefon, kategori, puan
+                        </p>
+                      </div>
+                    )}
+
                     <div className="border-2 border-dashed rounded-lg p-8 text-center">
                       <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                       <Input
                         type="file"
-                        accept=".csv"
+                        accept={uploadFormat === 'csv' ? '.csv' : '.json'}
                         onChange={handleExcelUpload}
                         disabled={isUploading}
                         className="max-w-xs mx-auto cursor-pointer"
@@ -379,9 +452,6 @@ const Admin = () => {
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      * CSV dosyası noktalı virgül (;) ile ayrılmış olmalıdır.
-                    </p>
                   </div>
                 </CardContent>
               </Card>

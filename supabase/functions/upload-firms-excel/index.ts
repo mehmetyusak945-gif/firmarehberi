@@ -69,16 +69,19 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { csvData } = await req.json()
+    const { csvData, jsonData, format = 'csv' } = await req.json()
 
-    if (!csvData) {
-      throw new Error('CSV data is required')
+    let firms: any[] = []
+
+    if (format === 'json' && jsonData) {
+      console.log('Parsing JSON data...')
+      firms = parseJSON(jsonData)
+    } else if (csvData) {
+      console.log('Parsing CSV data...')
+      firms = parseCSV(csvData)
+    } else {
+      throw new Error('CSV or JSON data is required')
     }
-
-    console.log('Parsing CSV data...')
-
-    // Parse CSV - Sütunlar: ID;İsim;Adres;Telefon;Website;Puan;Kategori
-    const firms = parseCSV(csvData)
 
     console.log(`Parsed ${firms.length} firms from CSV`)
 
@@ -191,6 +194,74 @@ function isValidURL(urlString: string): boolean {
 function validateAndTruncate(value: string, maxLength: number): string {
   const trimmed = value.trim()
   return trimmed.length > maxLength ? trimmed.substring(0, maxLength) : trimmed
+}
+
+function parseJSON(jsonData: any[]): any[] {
+  console.log(`Parsing ${jsonData.length} firms from JSON`)
+  
+  const MAX_LENGTHS = {
+    external_id: 100,
+    name: 255,
+    address: 500,
+    phone: 50,
+    website: 255,
+    category: 100
+  }
+  
+  return jsonData
+    .map((item, index) => {
+      // Validate name (required)
+      const name = validateAndTruncate(item.name || item.isim || '', MAX_LENGTHS.name)
+      if (!name || name.length < 2) {
+        console.warn(`Row ${index + 1}: Name is too short or empty`)
+        return null
+      }
+      
+      // Validate category (required)
+      const category = validateAndTruncate(item.category || item.kategori || '', MAX_LENGTHS.category)
+      if (!category || category.length < 2) {
+        console.warn(`Row ${index + 1}: Category is too short or empty`)
+        return null
+      }
+      
+      // Parse phone
+      let phone = item.phone || item.telefon || null
+      if (phone) {
+        phone = validateAndTruncate(String(phone), MAX_LENGTHS.phone)
+        if (!/^[0-9\s\-\+\(\)]+$/.test(phone)) {
+          console.warn(`Row ${index + 1}: Invalid phone format`)
+          phone = null
+        }
+      }
+      
+      // Parse website
+      let website = item.website || null
+      if (website) {
+        website = validateAndTruncate(String(website), MAX_LENGTHS.website)
+        if (!isValidURL(website)) {
+          console.warn(`Row ${index + 1}: Invalid website URL`)
+          website = null
+        }
+      }
+      
+      // Parse rating
+      let rating = 0
+      if (item.rating || item.puan) {
+        rating = parseFloat(String(item.rating || item.puan).replace(',', '.')) || 0
+        rating = Math.max(0, Math.min(5, rating))
+      }
+      
+      return {
+        external_id: item.id ? validateAndTruncate(String(item.id), MAX_LENGTHS.external_id) : null,
+        name,
+        address: item.address || item.adres ? validateAndTruncate(String(item.address || item.adres), MAX_LENGTHS.address) : null,
+        phone,
+        website,
+        rating,
+        category,
+      }
+    })
+    .filter(firm => firm !== null)
 }
 
 function parseCSVLine(line: string, delimiter: string): string[] {
