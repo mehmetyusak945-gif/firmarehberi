@@ -116,8 +116,20 @@ serve(async (req) => {
       }
     }
 
+    // Remove duplicates by external_id (keep first occurrence)
+    const seenIds = new Set<string>()
+    const uniqueFirms = firms.filter(firm => {
+      if (!firm.external_id || seenIds.has(firm.external_id)) {
+        return false
+      }
+      seenIds.add(firm.external_id)
+      return true
+    })
+
+    console.log(`Removed ${firms.length - uniqueFirms.length} duplicate records`)
+
     // Prepare firms with category_id
-    const firmsToInsert = firms.map(firm => ({
+    const firmsToInsert = uniqueFirms.map(firm => ({
       external_id: firm.external_id,
       name: firm.name,
       slug: slugify(firm.name),
@@ -237,13 +249,16 @@ function parseCSV(csvText: string): any[] {
     lines[0] = lines[0].substring(1)
   }
   
-  // Clean wrapper quotes if entire line is wrapped
+  // Clean wrapper quotes and unescape inner quotes
   lines = lines.map(line => {
-    const trimmed = line.trim()
-    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
-      return trimmed.substring(1, trimmed.length - 1)
+    let cleaned = line.trim()
+    // Remove outer wrapper quotes
+    if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
+      cleaned = cleaned.substring(1, cleaned.length - 1)
     }
-    return trimmed
+    // Replace escaped quotes ("") with single quote (")
+    cleaned = cleaned.replace(/""/g, '"')
+    return cleaned
   })
   
   if (lines.length < 2) {
