@@ -1,0 +1,126 @@
+import { NavLink } from "react-router-dom";
+import {
+  Building2,
+  Upload,
+  List,
+  FolderTree,
+  Megaphone,
+  Clock,
+  HardDrive,
+  Mail,
+  FileText,
+  AlertTriangle,
+  Globe,
+  Brain,
+} from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+
+interface AdminSidebarProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
+
+const menuItems = {
+  firms: [
+    { value: "firms", label: "Firmalar", icon: List },
+    { value: "pending", label: "Bekleyenler", icon: Clock },
+    { value: "add-firm", label: "Firma Ekle", icon: Building2 },
+    { value: "upload-excel", label: "Toplu Ekle", icon: Upload },
+  ],
+  content: [
+    { value: "categories", label: "Kategoriler", icon: FolderTree },
+    { value: "pages", label: "Sayfalar", icon: FileText },
+    { value: "messages", label: "Mesajlar", icon: Mail },
+    { value: "ads", label: "Reklamlar", icon: Megaphone },
+  ],
+  system: [
+    { value: "ai-settings", label: "AI Ayarları", icon: Brain },
+    { value: "webmaster", label: "Webmaster", icon: Globe },
+    { value: "backup", label: "Yedekleme", icon: HardDrive },
+    { value: "clear-data", label: "Veri Temizle", icon: AlertTriangle, danger: true },
+  ],
+};
+
+export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
+  const { state } = useSidebar();
+
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Firma İşlemleri</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.firms.map((item) => (
+                <SidebarMenuItem key={item.value}>
+                  <SidebarMenuButton
+                    onClick={() => onTabChange(item.value)}
+                    isActive={activeTab === item.value}
+                    className="cursor-pointer"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {state === "expanded" && <span>{item.label}</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>İçerik Yönetimi</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.content.map((item) => (
+                <SidebarMenuItem key={item.value}>
+                  <SidebarMenuButton
+                    onClick={() => onTabChange(item.value)}
+                    isActive={activeTab === item.value}
+                    className="cursor-pointer"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {state === "expanded" && <span>{item.label}</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Sistem Ayarları</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.system.map((item) => (
+                <SidebarMenuItem key={item.value}>
+                  <SidebarMenuButton
+                    onClick={() => onTabChange(item.value)}
+                    isActive={activeTab === item.value}
+                    className={`cursor-pointer ${
+                      item.danger
+                        ? "text-destructive hover:text-destructive data-[active=true]:text-destructive-foreground data-[active=true]:bg-destructive"
+                        : ""
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {state === "expanded" && <span>{item.label}</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}

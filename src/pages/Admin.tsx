@@ -10,8 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone, Clock, HardDrive, Mail, FileText, AlertTriangle, Globe, Brain } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2 } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
@@ -24,6 +23,8 @@ import { PageManagement } from "@/components/admin/PageManagement";
 import { DataClear } from "@/components/admin/DataClear";
 import { WebmasterManagement } from "@/components/admin/WebmasterManagement";
 import { AISettings } from "@/components/admin/AISettings";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Admin = () => {
   const { toast } = useToast();
   const { data: categories } = useCategories();
   
+  const [activeTab, setActiveTab] = useState("firms");
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFormat, setUploadFormat] = useState<'csv' | 'json'>('csv');
@@ -177,140 +179,40 @@ const Admin = () => {
         description="Firma yönetim paneli"
       />
 
-      <div className="min-h-screen flex flex-col bg-background">
-        <header className="border-b sticky top-0 bg-background z-10">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold flex items-center">
-              <Building2 className="mr-2" />
-              Yönetim Paneli
-            </h1>
-            <div className="flex gap-2">
-              <Button onClick={handleLogout} variant="outline">
-                <LogOut className="mr-2 h-4 w-4" />
-                Çıkış Yap
-              </Button>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 container mx-auto px-4 py-8">
-          <Tabs defaultValue="firms" className="w-full">
-            {/* Menü başlıkları */}
-            <div className="mb-6 space-y-4">
-              {/* Firma İşlemleri Grubu */}
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-1">Firma İşlemleri</h3>
-                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 gap-2">
-                  <TabsTrigger value="firms" className="text-xs md:text-sm">
-                    <List className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Firmalar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="pending" className="text-xs md:text-sm">
-                    <Clock className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Bekleyenler</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="add-firm" className="text-xs md:text-sm">
-                    <Building2 className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Firma Ekle</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="upload-excel" className="text-xs md:text-sm">
-                    <Upload className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Toplu Ekle</span>
-                  </TabsTrigger>
-                </TabsList>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full bg-background">
+          <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+          
+          <div className="flex-1 flex flex-col">
+            <header className="border-b sticky top-0 bg-background z-10">
+              <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <SidebarTrigger />
+                  <h1 className="text-2xl font-bold flex items-center">
+                    <Building2 className="mr-2" />
+                    Yönetim Paneli
+                  </h1>
+                </div>
+                <Button onClick={handleLogout} variant="outline">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Çıkış Yap
+                </Button>
               </div>
+            </header>
 
-              {/* İçerik Yönetimi Grubu */}
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-1">İçerik Yönetimi</h3>
-                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 gap-2">
-                  <TabsTrigger value="categories" className="text-xs md:text-sm">
-                    <FolderTree className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Kategoriler</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="pages" className="text-xs md:text-sm">
-                    <FileText className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Sayfalar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="messages" className="text-xs md:text-sm">
-                    <Mail className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Mesajlar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="ads" className="text-xs md:text-sm">
-                    <Megaphone className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Reklamlar</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              {/* Sistem Ayarları Grubu */}
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-1">Sistem Ayarları</h3>
-                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 gap-2">
-                  <TabsTrigger value="ai-settings" className="text-xs md:text-sm">
-                    <Brain className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">AI Ayarları</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="webmaster" className="text-xs md:text-sm">
-                    <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Webmaster</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="backup" className="text-xs md:text-sm">
-                    <HardDrive className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Yedek</span>
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="clear-data" 
-                    className="text-xs md:text-sm border border-destructive/50 data-[state=active]:bg-destructive data-[state=active]:text-destructive-foreground"
-                  >
-                    <AlertTriangle className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Temizle</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-            </div>
-
-            <TabsContent value="firms">
-              <FirmList />
-            </TabsContent>
-
-            <TabsContent value="pending">
-              <PendingFirms />
-            </TabsContent>
-
-            <TabsContent value="categories">
-              <CategoryManagement />
-            </TabsContent>
-
-            <TabsContent value="ads">
-              <AdManagement />
-            </TabsContent>
-
-            <TabsContent value="backup">
-              <DatabaseBackup />
-            </TabsContent>
-
-            <TabsContent value="clear-data">
-              <DataClear />
-            </TabsContent>
-
-            <TabsContent value="messages">
-              <ContactMessages />
-            </TabsContent>
-
-            <TabsContent value="pages">
-              <PageManagement />
-            </TabsContent>
-
-            <TabsContent value="webmaster">
-              <WebmasterManagement />
-            </TabsContent>
-
-            <TabsContent value="ai-settings">
-              <AISettings />
-            </TabsContent>
-
-            <TabsContent value="add-firm">
+            <main className="flex-1 container mx-auto px-4 py-8">
+              {activeTab === "firms" && <FirmList />}
+              {activeTab === "pending" && <PendingFirms />}
+              {activeTab === "categories" && <CategoryManagement />}
+              {activeTab === "ads" && <AdManagement />}
+              {activeTab === "backup" && <DatabaseBackup />}
+              {activeTab === "clear-data" && <DataClear />}
+              {activeTab === "messages" && <ContactMessages />}
+              {activeTab === "pages" && <PageManagement />}
+              {activeTab === "webmaster" && <WebmasterManagement />}
+              {activeTab === "ai-settings" && <AISettings />}
+              
+              {activeTab === "add-firm" && (
               <Card>
                 <CardHeader>
                   <CardTitle>Yeni Firma Ekle</CardTitle>
@@ -429,9 +331,9 @@ const Admin = () => {
                   </form>
                 </CardContent>
               </Card>
-            </TabsContent>
+              )}
 
-            <TabsContent value="upload-excel">
+              {activeTab === "upload-excel" && (
               <Card>
                 <CardHeader>
                   <CardTitle>Toplu Firma Yükleme</CardTitle>
@@ -523,10 +425,11 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </main>
-      </div>
+              )}
+            </main>
+          </div>
+        </div>
+      </SidebarProvider>
     </>
   );
 };
