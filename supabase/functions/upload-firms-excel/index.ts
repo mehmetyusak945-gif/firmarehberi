@@ -210,22 +210,31 @@ function parseJSON(jsonData: any[]): any[] {
   
   return jsonData
     .map((item, index) => {
+      // Support both uppercase and lowercase field names
+      const getName = () => item.name || item.Name || item.isim || item.İsim || item['İsim'] || ''
+      const getAddress = () => item.address || item.Address || item.adres || item.Adres || ''
+      const getPhone = () => item.phone || item.Phone || item.telefon || item.Telefon || null
+      const getWebsite = () => item.website || item.Website || null
+      const getRating = () => item.rating || item.Rating || item.puan || item.Puan || null
+      const getCategory = () => item.category || item.Category || item.kategori || item.Kategori || item['Kategori'] || ''
+      const getId = () => item.id || item.ID || null
+      
       // Validate name (required)
-      const name = validateAndTruncate(item.name || item.isim || '', MAX_LENGTHS.name)
+      const name = validateAndTruncate(getName(), MAX_LENGTHS.name)
       if (!name || name.length < 2) {
         console.warn(`Row ${index + 1}: Name is too short or empty`)
         return null
       }
       
       // Validate category (required)
-      const category = validateAndTruncate(item.category || item.kategori || '', MAX_LENGTHS.category)
+      const category = validateAndTruncate(getCategory(), MAX_LENGTHS.category)
       if (!category || category.length < 2) {
         console.warn(`Row ${index + 1}: Category is too short or empty`)
         return null
       }
       
       // Parse phone
-      let phone = item.phone || item.telefon || null
+      let phone = getPhone()
       if (phone) {
         phone = validateAndTruncate(String(phone), MAX_LENGTHS.phone)
         if (!/^[0-9\s\-\+\(\)]+$/.test(phone)) {
@@ -235,26 +244,31 @@ function parseJSON(jsonData: any[]): any[] {
       }
       
       // Parse website
-      let website = item.website || null
+      let website = getWebsite()
       if (website) {
         website = validateAndTruncate(String(website), MAX_LENGTHS.website)
-        if (!isValidURL(website)) {
+        if (website && !isValidURL(website)) {
           console.warn(`Row ${index + 1}: Invalid website URL`)
           website = null
         }
       }
       
-      // Parse rating
+      // Parse rating - handle Turkish comma decimal separator
       let rating = 0
-      if (item.rating || item.puan) {
-        rating = parseFloat(String(item.rating || item.puan).replace(',', '.')) || 0
+      const ratingValue = getRating()
+      if (ratingValue) {
+        const ratingStr = String(ratingValue).replace(',', '.')
+        rating = parseFloat(ratingStr) || 0
         rating = Math.max(0, Math.min(5, rating))
       }
       
+      // Parse address
+      const address = getAddress()
+      
       return {
-        external_id: item.id ? validateAndTruncate(String(item.id), MAX_LENGTHS.external_id) : null,
+        external_id: getId() ? validateAndTruncate(String(getId()), MAX_LENGTHS.external_id) : null,
         name,
-        address: item.address || item.adres ? validateAndTruncate(String(item.address || item.adres), MAX_LENGTHS.address) : null,
+        address: address ? validateAndTruncate(String(address), MAX_LENGTHS.address) : null,
         phone,
         website,
         rating,
