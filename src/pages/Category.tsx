@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
-import { AdBox, AdLeaderboard } from "@/components/ads";
+import { AdBox } from "@/components/ads";
 import { SEOHead } from "@/components/SEOHead";
 import { Pagination } from "@/components/Pagination";
 import { useFirms } from "@/hooks/useFirms";
@@ -248,11 +248,6 @@ const Category = () => {
                 onPageChange={handlePageChange}
               />
             )}
-
-            {/* Leaderboard Reklam */}
-            <div className="mt-12 flex justify-center">
-              <AdLeaderboard />
-            </div>
           </section>
         </main>
 
