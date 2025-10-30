@@ -142,14 +142,17 @@ const Index = () => {
 
           {/* Firma Grid */}
           <section className="container mx-auto px-4 py-12">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2">
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold mb-3">
                 {selectedCategory === "all" 
                   ? "Öne Çıkan Firmalar" 
                   : `${categories?.find(c => c.id === selectedCategory)?.name} Kategorisi`}
               </h2>
-              <p className="text-muted-foreground">
-                {randomFirms?.length || 0} firma listeleniyor
+              <p className="text-lg text-muted-foreground mb-2">
+                Şu anda sitemizde <span className="font-bold text-primary">{firms?.length || 0}</span> firma yer alıyor
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {randomFirms?.length || 0} firma sergileniyor
               </p>
             </div>
 
