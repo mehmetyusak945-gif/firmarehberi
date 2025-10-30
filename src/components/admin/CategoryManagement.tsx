@@ -34,6 +34,7 @@ interface Category {
   name: string;
   slug: string;
   created_at: string;
+  firm_count?: number;
 }
 
 export const CategoryManagement = () => {
@@ -58,7 +59,23 @@ export const CategoryManagement = () => {
         .order("name");
 
       if (error) throw error;
-      setCategories(data || []);
+
+      // Fetch firm counts for each category
+      const categoriesWithCounts = await Promise.all(
+        (data || []).map(async (category) => {
+          const { count } = await supabase
+            .from("firms")
+            .select("*", { count: "exact", head: true })
+            .eq("category_id", category.id);
+          
+          return {
+            ...category,
+            firm_count: count || 0,
+          };
+        })
+      );
+
+      setCategories(categoriesWithCounts);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -225,6 +242,7 @@ export const CategoryManagement = () => {
                   <TableRow>
                     <TableHead>Kategori Adı</TableHead>
                     <TableHead>Slug</TableHead>
+                    <TableHead className="text-center">Firma Sayısı</TableHead>
                     <TableHead className="w-[120px]">İşlem</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -233,6 +251,7 @@ export const CategoryManagement = () => {
                     <TableRow key={category.id}>
                       <TableCell className="font-medium">{category.name}</TableCell>
                       <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+                      <TableCell className="text-center font-medium">{category.firm_count || 0}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Dialog>

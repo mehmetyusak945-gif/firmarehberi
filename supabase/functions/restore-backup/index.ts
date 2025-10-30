@@ -46,10 +46,16 @@ serve(async (req) => {
       )
     }
 
-    // Now use service role key for database operations
+    // Now use service role key for database operations (bypasses RLS)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        }
+      }
     )
 
     const { backupData } = await req.json()
@@ -107,16 +113,23 @@ serve(async (req) => {
       }
     }
 
-    // Insert firms
+    // Insert firms (batch insert in chunks to avoid size limits)
     if (backupData.data.firms && backupData.data.firms.length > 0) {
       console.log(`Inserting ${backupData.data.firms.length} firms...`)
-      const { error: insertFirmsError } = await supabaseClient
-        .from('firms')
-        .insert(backupData.data.firms)
+      
+      // Insert in batches of 100
+      const batchSize = 100
+      for (let i = 0; i < backupData.data.firms.length; i += batchSize) {
+        const batch = backupData.data.firms.slice(i, i + batchSize)
+        const { error: insertFirmsError } = await supabaseClient
+          .from('firms')
+          .insert(batch)
 
-      if (insertFirmsError) {
-        console.error('Error inserting firms:', insertFirmsError)
-        throw insertFirmsError
+        if (insertFirmsError) {
+          console.error(`Error inserting firms batch ${i / batchSize + 1}:`, insertFirmsError)
+          throw insertFirmsError
+        }
+        console.log(`Inserted batch ${i / batchSize + 1} of ${Math.ceil(backupData.data.firms.length / batchSize)}`)
       }
     }
 
