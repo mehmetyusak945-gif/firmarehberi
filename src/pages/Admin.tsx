@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -184,13 +184,6 @@ const Admin = () => {
               Yönetim Paneli
             </h1>
             <div className="flex gap-2">
-              <Button
-                onClick={() => window.open('https://lovable.dev/projects/d11a00a7-84c9-46c6-9f4f-f3a0cc32a34b/backend', '_blank')}
-                variant="outline"
-              >
-                <Database className="mr-2 h-4 w-4" />
-                Backend'i Aç
-              </Button>
               <Button onClick={handleLogout} variant="outline">
                 <LogOut className="mr-2 h-4 w-4" />
                 Çıkış Yap
@@ -319,22 +312,13 @@ const Admin = () => {
 
                       <div className="space-y-2">
                         <Label htmlFor="category">Kategori *</Label>
-                        <Select
+                        <SearchableSelect
                           value={formData.categoryId}
                           onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
-                          required
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Kategori seçin" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories?.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          options={categories?.map((cat) => ({ value: cat.id, label: cat.name })) || []}
+                          placeholder="Kategori seçin"
+                          searchPlaceholder="Kategori ara..."
+                        />
                       </div>
 
                       <div className="space-y-2">

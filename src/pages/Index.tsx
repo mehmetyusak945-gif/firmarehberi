@@ -124,17 +124,20 @@ const Index = () => {
                     onClick={() => handleCategoryClick("all")}
                     className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md gradient-accent text-white"
                   >
-                    Tümü
+                    Tümü ({firms?.length || 0})
                   </button>
-                  {randomCategories.map(category => (
-                    <button
-                      key={category.id}
-                      onClick={() => handleCategoryClick(category.slug)}
-                      className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
-                    >
-                      {category.name}
-                    </button>
-                  ))}
+                  {randomCategories.map(category => {
+                    const firmCount = firms?.filter(f => f.category_id === category.id).length || 0;
+                    return (
+                      <button
+                        key={category.id}
+                        onClick={() => handleCategoryClick(category.slug)}
+                        className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
+                      >
+                        {category.name} ({firmCount})
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -148,11 +151,8 @@ const Index = () => {
                   ? "Öne Çıkan Firmalar" 
                   : `${categories?.find(c => c.id === selectedCategory)?.name} Kategorisi`}
               </h2>
-              <p className="text-lg text-muted-foreground mb-2">
+              <p className="text-lg text-muted-foreground">
                 Şu anda sitemizde <span className="font-bold text-primary">{firms?.length || 0}</span> firma yer alıyor
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {randomFirms?.length || 0} firma sergileniyor
               </p>
             </div>
 

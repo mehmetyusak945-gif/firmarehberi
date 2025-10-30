@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useCategories } from "@/hooks/useCategories";
@@ -176,22 +176,14 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
 
           <div className="space-y-2">
             <Label htmlFor="category">Kategori *</Label>
-            <Select
+            <SearchableSelect
               value={formData.category_id}
               onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+              options={categories?.map((cat) => ({ value: cat.id, label: cat.name })) || []}
+              placeholder="Kategori seçin"
+              searchPlaceholder="Kategori ara..."
               disabled={!isEditing}
-            >
-              <SelectTrigger id="category">
-                <SelectValue placeholder="Kategori seçin" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories?.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            />
           </div>
 
           {/* Kategori Önerisi varsa göster */}
