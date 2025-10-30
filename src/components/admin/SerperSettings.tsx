@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useSerperSettings, useUpdateSerperSettings } from "@/hooks/useSerperSettings";
-import { Loader2, Key, AlertTriangle } from "lucide-react";
+import { Loader2, Key, AlertTriangle, Wallet } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,8 @@ export const SerperSettings = () => {
   const { data: settings, isLoading } = useSerperSettings();
   const updateSettings = useUpdateSerperSettings();
   const [showApiKeyInfo, setShowApiKeyInfo] = useState(false);
+  const [accountInfo, setAccountInfo] = useState<any>(null);
+  const [loadingAccount, setLoadingAccount] = useState(false);
 
   const [formData, setFormData] = useState({
     gl: "tr",
@@ -38,6 +41,33 @@ export const SerperSettings = () => {
       });
     }
   }, [settings]);
+
+  const fetchAccountInfo = async () => {
+    setLoadingAccount(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('serper-account');
+      
+      if (error) throw error;
+      
+      setAccountInfo(data);
+      toast({
+        title: "Başarılı",
+        description: "Hesap bilgileri güncellendi",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Hata",
+        description: error.message || "Hesap bilgileri alınırken bir hata oluştu",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAccount(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccountInfo();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +115,30 @@ export const SerperSettings = () => {
                 </p>
               </div>
             </div>
+
+            {accountInfo && (
+              <div className="flex items-center gap-2 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                <Wallet className="h-5 w-5 text-primary" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium">API Bakiyesi</p>
+                  <p className="text-xs text-muted-foreground">
+                    Kalan Arama Hakkı: <span className="font-semibold text-primary">{accountInfo.credits || 0}</span>
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={fetchAccountInfo}
+                  disabled={loadingAccount}
+                >
+                  {loadingAccount ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Yenile"
+                  )}
+                </Button>
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Button
