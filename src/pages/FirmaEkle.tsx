@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 const FirmaEkle = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { data: categories } = useCategories();
   const { data: userFirmCount } = useUserFirmCount(user?.id);
   
@@ -41,10 +41,10 @@ const FirmaEkle = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (!user) {
-      navigate("/auth");
+    if (!loading && !user) {
+      navigate("/auth", { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -182,6 +182,18 @@ const FirmaEkle = () => {
       setErrors(prev => ({ ...prev, [field]: "" }));
     }
   };
+
+  // Loading durumunda göster
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Eğer kullanıcı zaten firma eklemişse uyarı göster
   if (userFirmCount && userFirmCount >= 1) {

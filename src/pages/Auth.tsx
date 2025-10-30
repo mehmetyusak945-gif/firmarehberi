@@ -17,19 +17,12 @@ export default function Auth() {
   const [fullName, setFullName] = useState("");
 
   useEffect(() => {
+    // Sadece ilk yüklendiğinde session kontrolü yap
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/firma-ekle");
+        navigate("/firma-ekle", { replace: true });
       }
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/firma-ekle");
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -49,6 +42,7 @@ export default function Auth() {
       if (error) throw error;
       
       toast.success("Hesap oluşturuldu! Giriş yapılıyor...");
+      setTimeout(() => navigate("/firma-ekle", { replace: true }), 500);
     } catch (error: any) {
       toast.error(error.message || "Kayıt sırasında bir hata oluştu");
     } finally {
@@ -69,6 +63,7 @@ export default function Auth() {
       if (error) throw error;
       
       toast.success("Giriş başarılı!");
+      setTimeout(() => navigate("/firma-ekle", { replace: true }), 500);
     } catch (error: any) {
       toast.error(error.message || "Giriş yapılırken bir hata oluştu");
     } finally {
