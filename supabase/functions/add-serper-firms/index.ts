@@ -231,19 +231,21 @@ serve(async (req) => {
         const timestamp = Date.now();
         const externalId = `serper-${timestamp}-${firm.position || Math.random().toString(36).substr(2, 9)}`;
         
-        // Firma slug oluştur (CSV ile birebir aynı mantık)
+        // Firma slug oluştur - SEO için il ve ilçe bilgisiyle
         const nameSlug = slugify(firm.title || 'firma');
-        let finalSlug: string;
-        
-        // External ID + isim slug formatı
-        finalSlug = `${externalId}-${nameSlug}`;
+        const locationParts = [];
+        if (city) locationParts.push(slugify(city));
+        if (district) locationParts.push(slugify(district));
+        const locationSuffix = locationParts.length > 0 ? `-${locationParts.join('-')}` : '';
+
+        let finalSlug = `${nameSlug}${locationSuffix}`;
         
         // Eğer çakışma varsa sayı ekle
-        let counter = 0;
+        let counter = 1;
         let tempSlug = finalSlug;
         while (existingSlugs.has(tempSlug)) {
+          tempSlug = `${nameSlug}${locationSuffix}-${counter}`;
           counter++;
-          tempSlug = `${finalSlug}-${counter}`;
         }
         finalSlug = tempSlug;
         
