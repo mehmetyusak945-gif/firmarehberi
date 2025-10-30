@@ -37,7 +37,7 @@ export function useFirms(categoryId?: string) {
             name,
             slug
           )
-        `)
+        `, { count: 'exact' })
         .eq("is_approved", true);
 
       if (categoryId) {
@@ -46,9 +46,10 @@ export function useFirms(categoryId?: string) {
 
       query = query.order("created_at", { ascending: false });
 
-      const { data, error } = await query;
+      const { data, error, count } = await query;
 
       if (error) throw error;
+      console.log('Total approved firms:', count);
       return data as Firm[];
     },
   });
