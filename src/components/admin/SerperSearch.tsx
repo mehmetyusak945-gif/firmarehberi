@@ -21,8 +21,10 @@ interface SerperPlace {
 export const SerperSearch = () => {
   const { toast } = useToast();
   const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [page, setPage] = useState(1);
+  const [country, setCountry] = useState("Turkey");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [maxPages, setMaxPages] = useState(1);
   const [results, setResults] = useState<SerperPlace[]>([]);
   const [selectedFirms, setSelectedFirms] = useState<Set<number>>(new Set());
   const [isSearching, setIsSearching] = useState(false);
@@ -43,8 +45,16 @@ export const SerperSearch = () => {
     setSelectedFirms(new Set());
 
     try {
+      const location = [district, city, country].filter(Boolean).join(", ");
+      
       const { data, error } = await supabase.functions.invoke("serper-search", {
-        body: { query, location: location || undefined, page },
+        body: { 
+          query, 
+          location: location || undefined, 
+          maxPages,
+          city: city || undefined,
+          district: district || undefined
+        },
       });
 
       if (error) throw error;
@@ -106,7 +116,10 @@ export const SerperSearch = () => {
       const { data, error } = await supabase.functions.invoke("add-serper-firms", {
         body: { 
           firms: firmsToAdd,
-          userId: user?.id 
+          userId: user?.id,
+          query,
+          city: city || undefined,
+          district: district || undefined
         },
       });
 
@@ -142,7 +155,7 @@ export const SerperSearch = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="query">Arama Terimi *</Label>
                 <Input
@@ -154,23 +167,47 @@ export const SerperSearch = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">Konum (Opsiyonel)</Label>
+                <Label htmlFor="maxPages">Kaç Sayfa Çekilecek *</Label>
                 <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="örn: Alanya, Antalya, Turkey"
+                  id="maxPages"
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={maxPages}
+                  onChange={(e) => setMaxPages(parseInt(e.target.value) || 1)}
+                  placeholder="örn: 10"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="country">Ülke</Label>
+                <Input
+                  id="country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  placeholder="örn: Turkey"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="page">Sayfa</Label>
+                <Label htmlFor="city">İl (Opsiyonel)</Label>
                 <Input
-                  id="page"
-                  type="number"
-                  min="1"
-                  value={page}
-                  onChange={(e) => setPage(parseInt(e.target.value) || 1)}
+                  id="city"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="örn: Antalya"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="district">İlçe (Opsiyonel)</Label>
+                <Input
+                  id="district"
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  placeholder="örn: Alanya"
                 />
               </div>
             </div>

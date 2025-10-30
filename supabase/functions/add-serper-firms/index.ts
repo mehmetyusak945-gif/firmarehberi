@@ -25,7 +25,7 @@ function slugify(text: string): string {
 }
 
 // Kategori adından kategori slug'ı tahmin et
-function guessCategory(name: string, types: string[]): string {
+function guessCategory(name: string, types: string[], query?: string): string {
   const nameLower = name.toLowerCase();
   const typesStr = types.join(' ').toLowerCase();
   
@@ -58,7 +58,44 @@ function guessCategory(name: string, types: string[]): string {
     }
   }
 
+  // Eğer eşleşme yoksa ve query varsa, query'den kategori oluştur
+  if (query) {
+    return slugify(query);
+  }
+
   return 'diger'; // Default category
+}
+
+// Telefon numarasının mobil mi sabit hat mı olduğunu kontrol et
+function isMobilePhone(phone: string): boolean {
+  if (!phone) return false;
+  // Türkiye mobil operatörleri: 50x, 51x, 52x, 53x, 54x, 55x, 56x
+  const cleaned = phone.replace(/\D/g, '');
+  const turkishMobile = /^(90)?(5[0-9]{2})/;
+  return turkishMobile.test(cleaned);
+}
+
+// Konum filtreleme - adres belirtilen şehir/ilçeyi içeriyor mu?
+function matchesLocation(address: string, city?: string, district?: string): boolean {
+  if (!address) return true; // Adres yoksa filtrele
+  
+  const addressLower = address.toLowerCase();
+  
+  if (district) {
+    const districtLower = district.toLowerCase();
+    if (!addressLower.includes(districtLower)) {
+      return false;
+    }
+  }
+  
+  if (city) {
+    const cityLower = city.toLowerCase();
+    if (!addressLower.includes(cityLower)) {
+      return false;
+    }
+  }
+  
+  return true;
 }
 
 serve(async (req) => {
@@ -67,7 +104,7 @@ serve(async (req) => {
   }
 
   try {
-    const { firms, userId } = await req.json();
+    const { firms, userId, query, city, district } = await req.json();
     
     if (!firms || !Array.isArray(firms) || firms.length === 0) {
       return new Response(
@@ -75,6 +112,8 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log(`Processing ${firms.length} firms with query: ${query}, city: ${city}, district: ${district}`);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -98,10 +137,19 @@ serve(async (req) => {
 
     for (const firm of firms) {
       try {
+        // Konum filtrele
+        if (!matchesLocation(firm.address, city, district)) {
+          console.log(`Skipping ${firm.title} - location mismatch: ${firm.address}`);
+          results.failed++;
+          results.errors.push(`${firm.title}: Konum eşleşmedi (${firm.address})`);
+          continue;
+        }
+
         // Kategori slug'ı tahmin et
         const categorySlug = guessCategory(
           firm.title || '',
-          firm.types || []
+          firm.types || [],
+          query
         );
 
         // Kategori yoksa oluştur
@@ -131,6 +179,10 @@ serve(async (req) => {
         // Firma slug oluştur
         const firmSlug = slugify(firm.title || 'firma');
         
+        // Telefon numarasını mobil ve sabit hat olarak ayır
+        const phoneNumber = firm.phoneNumber || '';
+        const isMobile = isMobilePhone(phoneNumber);
+        
         // Firma ekle (otomatik onaylı)
         const { error: firmError } = await supabase
           .from('firms')
@@ -138,8 +190,8 @@ serve(async (req) => {
             name: firm.title || 'İsimsiz Firma',
             slug: firmSlug,
             address: firm.address || null,
-            landline_phone: firm.phoneNumber || null,
-            mobile_phone: null,
+            landline_phone: isMobile ? null : phoneNumber,
+            mobile_phone: isMobile ? phoneNumber : null,
             website: firm.website || null,
             email: null,
             description: null,

@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { query, location, page = 1 } = await req.json();
+    const { query, location, maxPages = 1 } = await req.json();
     
     if (!query) {
       return new Response(
@@ -40,32 +40,53 @@ serve(async (req) => {
     const hl = settings?.hl || 'tr';
     const defaultLocation = settings?.location || 'Turkey';
 
-    // Call Serper API
-    const response = await fetch('https://google.serper.dev/places', {
-      method: 'POST',
-      headers: {
-        'X-API-KEY': SERPER_API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        q: query,
-        location: location || defaultLocation,
-        gl,
-        hl,
-        page,
-      }),
-    });
+    // Collect results from multiple pages
+    const allPlaces: any[] = [];
+    const pagesToFetch = Math.min(Math.max(1, maxPages), 20); // Limit to 20 pages max
+    
+    console.log(`Fetching ${pagesToFetch} pages for query: ${query}`);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Serper API error:', response.status, errorText);
-      throw new Error(`Serper API error: ${response.status}`);
+    for (let page = 1; page <= pagesToFetch; page++) {
+      console.log(`Fetching page ${page}...`);
+      
+      const response = await fetch('https://google.serper.dev/places', {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': SERPER_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          q: query,
+          location: location || defaultLocation,
+          gl,
+          hl,
+          page,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Serper API error on page ${page}:`, response.status, errorText);
+        continue; // Skip this page but continue with others
+      }
+
+      const data = await response.json();
+      
+      if (data.places && Array.isArray(data.places)) {
+        allPlaces.push(...data.places);
+        console.log(`Page ${page}: Found ${data.places.length} places`);
+      }
+
+      // Small delay to avoid rate limiting
+      if (page < pagesToFetch) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
     }
 
-    const data = await response.json();
+    console.log(`Total places collected: ${allPlaces.length}`);
 
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify({ places: allPlaces }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
