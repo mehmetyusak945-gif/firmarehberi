@@ -102,29 +102,22 @@ export const DatabaseBackup = () => {
         throw new Error("Geçersiz yedek dosyası formatı");
       }
 
-      // Delete existing data
-      await Promise.all([
-        supabase.from("firms").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
-        supabase.from("categories").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
-        supabase.from("ad_codes").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
-      ]);
+      // Call edge function to restore backup (uses service role key to bypass RLS)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/restore-backup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ backupData }),
+      });
 
-      // Insert backup data
-      const results = await Promise.all([
-        backupData.data.categories?.length > 0 
-          ? supabase.from("categories").insert(backupData.data.categories)
-          : Promise.resolve({ error: null }),
-        backupData.data.firms?.length > 0
-          ? supabase.from("firms").insert(backupData.data.firms)
-          : Promise.resolve({ error: null }),
-        backupData.data.ad_codes?.length > 0
-          ? supabase.from("ad_codes").insert(backupData.data.ad_codes)
-          : Promise.resolve({ error: null }),
-      ]);
+      const result = await response.json();
 
-      const errors = results.filter(r => r.error);
-      if (errors.length > 0) {
-        throw new Error(errors.map(e => e.error?.message).join(", "));
+      if (!response.ok) {
+        throw new Error(result.error || 'Yedek geri yüklenirken bir hata oluştu');
       }
 
       toast({
