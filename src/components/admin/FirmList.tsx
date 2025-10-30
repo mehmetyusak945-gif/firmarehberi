@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Search, Eye, ExternalLink } from "lucide-react";
+import { Loader2, Search, Eye, ExternalLink, Sparkles } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { FirmDetailModal } from "./FirmDetailModal";
 
@@ -25,6 +25,7 @@ interface Firm {
   slug: string;
   is_approved: boolean;
   created_at: string;
+  ai_description: string | null;
 }
 
 export const FirmList = () => {
@@ -211,6 +212,7 @@ export const FirmList = () => {
                   <TableHead>Firma Adı</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead>Telefon</TableHead>
+                  <TableHead className="w-[50px]">AI</TableHead>
                   <TableHead>Durum</TableHead>
                   <TableHead className="w-[150px]">İşlem</TableHead>
                 </TableRow>
@@ -218,7 +220,7 @@ export const FirmList = () => {
               <TableBody>
                 {paginatedFirms.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       Firma bulunamadı
                     </TableCell>
                   </TableRow>
@@ -228,6 +230,13 @@ export const FirmList = () => {
                       <TableCell className="font-medium">{firm.name}</TableCell>
                       <TableCell>{getCategoryName(firm.category_id)}</TableCell>
                       <TableCell>{firm.landline_phone || firm.mobile_phone || "-"}</TableCell>
+                      <TableCell>
+                        <div title={firm.ai_description ? "AI açıklaması oluşturuldu" : "AI açıklaması yok"}>
+                          <Sparkles 
+                            className={`h-4 w-4 ${firm.ai_description ? "text-primary" : "text-muted-foreground"}`}
+                          />
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Switch
