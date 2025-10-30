@@ -30,16 +30,9 @@ const Index = () => {
     return firms.filter(firma => firma.category_id === selectedCategory);
   }, [firms, selectedCategory]);
 
-  if (firmsLoading || categoriesLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   // Grid için karışık içerik (firma + reklam) - 16 alan: 12 firma + 4 reklam
   const gridItems = useMemo(() => {
+    if (!filteredFirms) return [];
     const items: Array<{ type: "firma" | "ad"; data?: any; id: string }> = [];
     const firmsToShow = filteredFirms.slice(0, 12); // İlk 12 firma
     
@@ -74,6 +67,14 @@ const Index = () => {
 
     return items;
   }, [filteredFirms]);
+
+  if (firmsLoading || categoriesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   // Schema.org yapısal veri
   const schema = {
