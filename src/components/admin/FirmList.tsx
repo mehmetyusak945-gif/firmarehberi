@@ -7,9 +7,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Search, Eye, ExternalLink, Sparkles } from "lucide-react";
+import { Loader2, Search, Eye, ExternalLink, Sparkles, Trash2 } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { FirmDetailModal } from "./FirmDetailModal";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Firm {
   id: string;
@@ -40,6 +51,9 @@ export const FirmList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [selectedFirmIds, setSelectedFirmIds] = useState<Set<string>>(new Set());
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchFirms();
@@ -149,6 +163,55 @@ export const FirmList = () => {
     setCurrentPage(1); // Reset to first page
   };
 
+  const handleSelectAll = () => {
+    if (selectedFirmIds.size === paginatedFirms.length) {
+      setSelectedFirmIds(new Set());
+    } else {
+      setSelectedFirmIds(new Set(paginatedFirms.map(f => f.id)));
+    }
+  };
+
+  const handleToggleSelect = (firmId: string) => {
+    const newSelected = new Set(selectedFirmIds);
+    if (newSelected.has(firmId)) {
+      newSelected.delete(firmId);
+    } else {
+      newSelected.add(firmId);
+    }
+    setSelectedFirmIds(newSelected);
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedFirmIds.size === 0) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("firms")
+        .delete()
+        .in("id", Array.from(selectedFirmIds));
+
+      if (error) throw error;
+
+      toast({
+        title: "Başarılı!",
+        description: `${selectedFirmIds.size} firma silindi.`,
+      });
+
+      setSelectedFirmIds(new Set());
+      setIsDeleteDialogOpen(false);
+      await fetchFirms();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message,
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -164,6 +227,23 @@ export const FirmList = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {/* Delete Selected */}
+          {selectedFirmIds.size > 0 && (
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <span className="text-sm font-medium">
+                {selectedFirmIds.size} firma seçildi
+              </span>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setIsDeleteDialogOpen(true)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Seçilenleri Sil
+              </Button>
+            </div>
+          )}
+
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="relative flex-1">
@@ -209,6 +289,12 @@ export const FirmList = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[50px]">
+                    <Checkbox
+                      checked={selectedFirmIds.size === paginatedFirms.length && paginatedFirms.length > 0}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead>Firma Adı</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead>Telefon</TableHead>
@@ -220,13 +306,19 @@ export const FirmList = () => {
               <TableBody>
                 {paginatedFirms.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Firma bulunamadı
                     </TableCell>
                   </TableRow>
                 ) : (
                   paginatedFirms.map((firm) => (
                     <TableRow key={firm.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedFirmIds.has(firm.id)}
+                          onCheckedChange={() => handleToggleSelect(firm.id)}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">{firm.name}</TableCell>
                       <TableCell>{getCategoryName(firm.category_id)}</TableCell>
                       <TableCell>{firm.landline_phone || firm.mobile_phone || "-"}</TableCell>
@@ -308,6 +400,34 @@ export const FirmList = () => {
         onClose={handleCloseModal}
         onUpdate={handleFirmUpdate}
       />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Firmaları Sil</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedFirmIds.size} firmayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>İptal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSelected}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Siliniyor...
+                </>
+              ) : (
+                "Sil"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };
