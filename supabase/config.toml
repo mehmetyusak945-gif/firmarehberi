@@ -24,3 +24,6 @@ verify_jwt = true
 [functions.serper-account]
 verify_jwt = true
 
+[functions.fix-category-names]
+verify_jwt = true
+

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Trash2, Pencil, Search } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, Search, CheckCircle } from "lucide-react";
 import { slugify } from "@/lib/slugify";
 import {
   AlertDialog,
@@ -47,6 +47,7 @@ export const CategoryManagement = () => {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editCategoryName, setEditCategoryName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFixing, setIsFixing] = useState(false);
 
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) return categories;
@@ -187,6 +188,42 @@ export const CategoryManagement = () => {
     }
   };
 
+  const handleFixCategories = async () => {
+    setIsFixing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('fix-category-names');
+
+      if (error) throw error;
+
+      if (data?.results) {
+        const updated = data.summary.updated;
+        const unchanged = data.summary.unchanged;
+        const errors = data.summary.errors;
+
+        toast({
+          title: "Kontrol Tamamlandı!",
+          description: `${updated} kategori güncellendi, ${unchanged} kategori zaten doğruydu${errors > 0 ? `, ${errors} kategoride hata oluştu` : ''}.`,
+        });
+
+        // Show details if there were updates
+        if (updated > 0) {
+          const updatedItems = data.results.filter((r: any) => r.status === "updated");
+          console.log("Updated categories:", updatedItems);
+        }
+
+        await fetchCategories();
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message || "Kategoriler kontrol edilirken bir hata oluştu.",
+      });
+    } finally {
+      setIsFixing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -241,14 +278,34 @@ export const CategoryManagement = () => {
         <CardHeader>
           <div className="flex items-center justify-between gap-4">
             <CardTitle>Mevcut Kategoriler ({categories.length})</CardTitle>
-            <div className="relative w-64">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Kategori ara..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
-              />
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleFixCategories}
+                disabled={isFixing}
+                variant="outline"
+                className="whitespace-nowrap"
+              >
+                {isFixing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Kontrol Ediliyor...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                    Kategorileri Kontrol Et
+                  </>
+                )}
+              </Button>
+              <div className="relative w-64">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Kategori ara..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
             </div>
           </div>
         </CardHeader>
