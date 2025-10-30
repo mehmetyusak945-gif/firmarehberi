@@ -113,25 +113,13 @@ function matchesLocation(address: string, city?: string, district?: string): boo
   
   const addressLower = address.toLowerCase();
   
-  // Türkçe karakter normalizasyonu
-  const turkishMap: { [key: string]: string } = {
-    'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c',
-    'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'
-  };
-  
-  const normalizeTurkish = (text: string) => {
-    return text.split('').map(c => turkishMap[c] || c).join('').toLowerCase();
-  };
-  
-  const normalizedAddress = normalizeTurkish(address);
-  
   // Şehir kontrolü - daha esnek
   if (city) {
-    const normalizedCity = normalizeTurkish(city);
+    const cityLower = city.toLowerCase();
     
     // İstanbul için özel kontrol - posta kodu ile de kontrol et (34xxx = İstanbul)
-    if (normalizedCity === 'istanbul') {
-      const hasIstanbul = normalizedAddress.includes('istanbul');
+    if (cityLower === 'istanbul' || cityLower === 'i̇stanbul') {
+      const hasIstanbul = addressLower.includes('istanbul') || addressLower.includes('i̇stanbul');
       const hasIstanbulPostalCode = /\b34\d{3}\b/.test(address);
       
       if (!hasIstanbul && !hasIstanbulPostalCode) {
@@ -140,7 +128,7 @@ function matchesLocation(address: string, city?: string, district?: string): boo
       }
     } else {
       // Diğer şehirler için normal kontrol
-      if (!normalizedAddress.includes(normalizedCity)) {
+      if (!addressLower.includes(cityLower)) {
         console.log(`City mismatch: looking for "${city}" in "${address}"`);
         return false;
       }
@@ -151,9 +139,9 @@ function matchesLocation(address: string, city?: string, district?: string): boo
   // Google Places yakındaki ilçelerdeki firmaları da döndürebilir
   // O yüzden ilçe kontrolünü gevşek tutuyoruz
   if (district) {
-    const normalizedDistrict = normalizeTurkish(district);
+    const districtLower = district.toLowerCase();
     // İlçe kontrolü yapmıyoruz, sadece log alıyoruz
-    if (!normalizedAddress.includes(normalizedDistrict)) {
+    if (!addressLower.includes(districtLower)) {
       console.log(`District info: "${district}" not in "${address}" but accepting (Google may return nearby)`);
     }
   }
