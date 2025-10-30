@@ -3,30 +3,30 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { AdBox, AdLeaderboard } from "@/components/ads";
-import { getFirmaBySlug, getRandomFirms } from "@/data/mockFirms";
-import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight } from "lucide-react";
+import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight, Loader2 } from "lucide-react";
 import { formatPhone } from "@/lib/slugify";
 import { useEffect, useState } from "react";
+import { useFirmBySlug } from "@/hooks/useFirms";
 
 const FirmaDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const firma = slug ? getFirmaBySlug(slug) : undefined;
+  const { data: firma, isLoading } = useFirmBySlug(slug || "");
   const [aiDescription, setAiDescription] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(true);
 
   useEffect(() => {
     // AI ile firma açıklaması oluşturma simülasyonu
     // Gerçek implementasyonda burada Lovable AI çağrısı yapılacak
-    if (firma) {
+    if (firma && firma.categories) {
       setIsLoadingAI(true);
       // Simulated AI response
       setTimeout(() => {
         setAiDescription(
-          `${firma.name}, ${firma.category} kategorisinde hizmet veren profesyonel bir firmadır. ` +
+          `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır. ` +
           `${firma.address} adresinde faaliyet gösteren ${firma.name}, müşteri memnuniyetini ön planda tutarak ` +
-          `kaliteli ve güvenilir hizmet sunmaktadır. ${firma.rating} yıldız değerlendirme puanı ile ` +
-          `bölgesindeki en beğenilen işletmeler arasında yer almaktadır. Deneyimli kadrosu ve modern ekipmanları ` +
-          `ile ${firma.category} alanında ihtiyaç duyduğunuz her türlü hizmeti profesyonel bir şekilde gerçekleştirmektedir. ` +
+          `kaliteli ve güvenilir hizmet sunmaktadır. ${firma.rating ? `${firma.rating} yıldız değerlendirme puanı ile ` +
+          `bölgesindeki en beğenilen işletmeler arasında yer almaktadır.` : ''} Deneyimli kadrosu ve modern ekipmanları ` +
+          `ile ${firma.categories?.name} alanında ihtiyaç duyduğunuz her türlü hizmeti profesyonel bir şekilde gerçekleştirmektedir. ` +
           `Müşteri odaklı yaklaşımı ve rekabetçi fiyatları ile tercih edilen ${firma.name}, ` +
           `sizlere en iyi hizmeti sunmak için çalışmaktadır.`
         );
@@ -35,11 +35,19 @@ const FirmaDetail = () => {
     }
   }, [firma]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   if (!firma) {
     return (
       <>
         <SEOHead
-          title="Firma Bulunamadı - Firma Rehberim"
+          title="Firma Bulunamadı - Firmam.org"
           description="Aradığınız firma bulunamadı."
         />
         <div className="min-h-screen flex flex-col">
@@ -86,11 +94,11 @@ const FirmaDetail = () => {
   return (
     <>
       <SEOHead
-        title={`${firma.name} - ${firma.category} | Firmam.org`}
-        description={`${firma.name} ${firma.category} hizmeti vermektedir. ${firma.address} adresinde yer alan ${firma.name} için detaylı bilgi ve iletişim.`}
+        title={`${firma.name} - ${firma.categories?.name || 'Firma'} | Firmam.org`}
+        description={`${firma.name} ${firma.categories?.name || ''} hizmeti vermektedir. ${firma.address || ''} adresinde yer alan ${firma.name} için detaylı bilgi ve iletişim.`}
         canonical={`https://firmam.org/firma/${firma.slug}`}
         ogType="business.business"
-        keywords={`${firma.name}, ${firma.category}, ${firma.address}, firma rehberi`}
+        keywords={`${firma.name}, ${firma.categories?.name || ''}, ${firma.address || ''}, firma rehberi`}
         schema={schema}
       />
 
@@ -108,8 +116,8 @@ const FirmaDetail = () => {
               </li>
               <ChevronRight className="h-4 w-4" />
               <li>
-                <Link to={`/?kategori=${firma.category.toLowerCase()}`} className="hover:text-primary transition-fast">
-                  {firma.category}
+                <Link to={`/kategori/${firma.categories?.slug}`} className="hover:text-primary transition-fast">
+                  {firma.categories?.name}
                 </Link>
               </li>
               <ChevronRight className="h-4 w-4" />
@@ -128,18 +136,22 @@ const FirmaDetail = () => {
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm mb-3">
-                          {firma.category}
+                          {firma.categories?.name}
                         </span>
                         <h1 className="text-3xl md:text-4xl font-bold mb-2">
                           {firma.name}
                         </h1>
                       </div>
-                      <div className="flex items-center space-x-1 bg-accent text-accent-foreground px-3 py-2 rounded-lg shadow-lg">
-                        <Star className="h-5 w-5 fill-current" />
-                        <span className="text-lg font-bold">{firma.rating}</span>
-                      </div>
+                      {firma.rating && (
+                        <div className="flex items-center space-x-1 bg-accent text-accent-foreground px-3 py-2 rounded-lg shadow-lg">
+                          <Star className="h-5 w-5 fill-current" />
+                          <span className="text-lg font-bold">{firma.rating}</span>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-white/90 text-lg">{firma.description}</p>
+                    {firma.description && (
+                      <p className="text-white/90 text-lg">{firma.description}</p>
+                    )}
                   </div>
 
                   {/* İçerik */}
@@ -182,23 +194,25 @@ const FirmaDetail = () => {
                       </div>
 
                       {/* Web Sitesi */}
-                      <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
-                        <Globe className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-1">Web Sitesi</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{firma.website}</p>
-                          <a 
-                            href={`https://${firma.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-md w-full md:w-auto"
-                            aria-label={`${firma.name} web sitesini ziyaret et`}
-                          >
-                            <Globe className="h-4 w-4 mr-2" />
-                            Siteyi Ziyaret Et
-                          </a>
+                      {firma.website && (
+                        <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
+                          <Globe className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <h3 className="font-semibold mb-1">Web Sitesi</h3>
+                            <p className="text-sm text-muted-foreground mb-3">{firma.website}</p>
+                            <a 
+                              href={firma.website.startsWith('http') ? firma.website : `https://${firma.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-md w-full md:w-auto"
+                              aria-label={`${firma.name} web sitesini ziyaret et`}
+                            >
+                              <Globe className="h-4 w-4 mr-2" />
+                              Siteyi Ziyaret Et
+                            </a>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Adres */}
                       <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">

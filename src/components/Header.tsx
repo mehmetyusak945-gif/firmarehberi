@@ -12,7 +12,7 @@ export const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover-lift" aria-label="Firmam.org Ana Sayfa">
-            <img src={firmaLogo} alt="Firmam.org Logo" className="h-10 w-auto" />
+            <img src={firmaLogo} alt="Firmam.org Logo" className="h-8 w-auto" />
           </Link>
 
           {/* Navigation */}
