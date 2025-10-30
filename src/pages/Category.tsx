@@ -41,6 +41,7 @@ const Category = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>("random");
+  const [randomSeed, setRandomSeed] = useState(Math.random());
 
   // Kategoriye göre firmaları filtrele
   const categoryFirms = useMemo(() => {
@@ -95,9 +96,14 @@ const Category = () => {
         return firms.sort((a, b) => (a.rating || 0) - (b.rating || 0));
       case "random":
       default:
-        return firms.sort(() => Math.random() - 0.5);
+        // Stable random sort using seed
+        return firms.sort((a, b) => {
+          const hashA = a.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+          const hashB = b.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+          return ((hashA + randomSeed) % 1) - ((hashB + randomSeed) % 1);
+        });
     }
-  }, [categoryFirms, sortOption]);
+  }, [categoryFirms, sortOption, randomSeed]);
 
   // Sayfalama
   const totalPages = Math.ceil(sortedFirms.length / ITEMS_PER_PAGE);
@@ -112,8 +118,13 @@ const Category = () => {
     // 16 pozisyon oluştur (4x4 grid)
     const positions = Array.from({ length: 16 }, (_, i) => i);
     
-    // Rastgele 4 pozisyon seç reklam için
-    const shuffled = [...positions].sort(() => Math.random() - 0.5);
+    // Stable random positions using page number as seed
+    const seed = currentPage * 12345;
+    const shuffled = [...positions].sort((a, b) => {
+      const hashA = (a + seed) % 16;
+      const hashB = (b + seed) % 16;
+      return hashA - hashB;
+    });
     const adPositions = new Set(shuffled.slice(0, 4));
     
     let firmaIndex = 0;
@@ -137,7 +148,7 @@ const Category = () => {
     });
 
     return items;
-  }, [paginatedFirms]);
+  }, [paginatedFirms, currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -146,7 +157,10 @@ const Category = () => {
 
   const handleSortChange = (value: SortOption) => {
     setSortOption(value);
-    setCurrentPage(1); // Reset to first page when sorting changes
+    setCurrentPage(1);
+    if (value === "random") {
+      setRandomSeed(Math.random()); // New random seed when switching to random sort
+    }
   };
 
   // Schema.org yapısal veri
