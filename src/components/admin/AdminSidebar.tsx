@@ -14,6 +14,7 @@ import {
   Brain,
   Search,
   Settings,
+  AlertCircle,
 } from "lucide-react";
 import {
   Sidebar,
@@ -47,6 +48,7 @@ const menuItems = {
     { value: "categories", label: "Kategoriler", icon: FolderTree },
     { value: "pages", label: "Sayfalar", icon: FileText },
     { value: "messages", label: "Mesajlar", icon: Mail },
+    { value: "firm-reports", label: "Firma Bildirimleri", icon: AlertCircle },
     { value: "ads", label: "Reklamlar", icon: Megaphone },
   ],
   system: [

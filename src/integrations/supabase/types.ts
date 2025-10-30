@@ -125,6 +125,47 @@ export type Database = {
         }
         Relationships: []
       }
+      firm_reports: {
+        Row: {
+          created_at: string
+          description: string
+          firm_id: string
+          id: string
+          reporter_name: string
+          reporter_phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          firm_id: string
+          id?: string
+          reporter_name: string
+          reporter_phone: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          firm_id?: string
+          id?: string
+          reporter_name?: string
+          reporter_phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "firm_reports_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       firms: {
         Row: {
           added_by: string | null

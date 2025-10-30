@@ -21,6 +21,7 @@ import { DatabaseBackup } from "@/components/admin/DatabaseBackup";
 import { ContactMessages } from "@/components/admin/ContactMessages";
 import { PageManagement } from "@/components/admin/PageManagement";
 import { DataClear } from "@/components/admin/DataClear";
+import { FirmReports } from "@/components/admin/FirmReports";
 import { WebmasterManagement } from "@/components/admin/WebmasterManagement";
 import { AISettings } from "@/components/admin/AISettings";
 import { SerperSettings } from "@/components/admin/SerperSettings";
@@ -210,6 +211,7 @@ const Admin = () => {
               {activeTab === "backup" && <DatabaseBackup />}
               {activeTab === "clear-data" && <DataClear />}
               {activeTab === "messages" && <ContactMessages />}
+              {activeTab === "firm-reports" && <FirmReports />}
               {activeTab === "pages" && <PageManagement />}
               {activeTab === "webmaster" && <WebmasterManagement />}
               {activeTab === "ai-settings" && <AISettings />}

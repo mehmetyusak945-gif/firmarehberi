@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { AdBox, AdLeaderboard } from "@/components/ads";
+import { FirmReportDialog } from "@/components/FirmReportDialog";
 import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight, Loader2, MessageSquare } from "lucide-react";
 import { formatPhone } from "@/lib/slugify";
 import { useEffect, useState } from "react";
@@ -341,6 +342,11 @@ const FirmaDetail = () => {
                 {/* Reklam Alanı 2 */}
                 <div className="sticky top-20 space-y-6">
                   <AdBox />
+                  
+                  {/* Bildirim Butonu */}
+                  <div className="w-[300px]">
+                    <FirmReportDialog firmId={firma.id} firmName={firma.name} />
+                  </div>
                   
                   {/* CTA Card - 300x250 */}
                   <div className="bg-card rounded-xl border shadow-md w-[300px] h-[250px] flex flex-col p-4">
