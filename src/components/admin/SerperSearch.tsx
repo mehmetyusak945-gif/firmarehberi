@@ -79,12 +79,12 @@ export const SerperSearch = () => {
     }
   };
 
-  const handleToggleSelect = (position: number) => {
+  const handleToggleSelect = (index: number) => {
     const newSelected = new Set(selectedFirms);
-    if (newSelected.has(position)) {
-      newSelected.delete(position);
+    if (newSelected.has(index)) {
+      newSelected.delete(index);
     } else {
-      newSelected.add(position);
+      newSelected.add(index);
     }
     setSelectedFirms(newSelected);
   };
@@ -93,7 +93,7 @@ export const SerperSearch = () => {
     if (selectedFirms.size === results.length) {
       setSelectedFirms(new Set());
     } else {
-      setSelectedFirms(new Set(results.map(r => r.position)));
+      setSelectedFirms(new Set(results.map((_, index) => index)));
     }
   };
 
@@ -111,7 +111,7 @@ export const SerperSearch = () => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const firmsToAdd = results.filter(r => selectedFirms.has(r.position));
+      const firmsToAdd = results.filter((_, index) => selectedFirms.has(index));
 
       const { data, error } = await supabase.functions.invoke("add-serper-firms", {
         body: { 
@@ -267,14 +267,14 @@ export const SerperSearch = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {results.map((place) => (
+              {results.map((place, index) => (
                 <div
-                  key={place.position}
+                  key={index}
                   className="flex items-start gap-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                 >
                   <Checkbox
-                    checked={selectedFirms.has(place.position)}
-                    onCheckedChange={() => handleToggleSelect(place.position)}
+                    checked={selectedFirms.has(index)}
+                    onCheckedChange={() => handleToggleSelect(index)}
                   />
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-sm">{place.title}</h4>

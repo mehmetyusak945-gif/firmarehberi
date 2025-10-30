@@ -24,35 +24,72 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-// Kategori adından kategori slug'ı tahmin et
+// Kategori adından kategori slug'ı tahmin et - Google Places types'a göre
 function guessCategory(name: string, types: string[], query?: string): string {
   const nameLower = name.toLowerCase();
   const typesStr = types.join(' ').toLowerCase();
   
-  // Yaygın kategori eşleştirmeleri
+  // Google Places types'a göre genişletilmiş kategori eşleştirmeleri
   const categoryMap: { [key: string]: string[] } = {
-    'restoran': ['restoran', 'restaurant', 'yemek', 'lokanta', 'food'],
-    'kafe': ['kafe', 'cafe', 'kahve', 'coffee'],
-    'otel': ['otel', 'hotel', 'konaklama', 'lodging'],
-    'market': ['market', 'supermarket', 'bakkal', 'grocery'],
-    'eczane': ['eczane', 'pharmacy', 'ilac'],
-    'hastane': ['hastane', 'hospital', 'saglik', 'health', 'klinik', 'clinic'],
-    'okul': ['okul', 'school', 'egitim', 'education'],
-    'spor-salonu': ['spor', 'gym', 'fitness', 'health_club'],
-    'kuafor': ['kuafor', 'berber', 'hair', 'beauty', 'guzellik'],
-    'oto-tamir': ['oto', 'car_repair', 'araba', 'tamir', 'mechanic'],
-    'telefon-tamircisi': ['telefon', 'phone', 'gsm', 'mobile', 'electronics'],
-    'avukat': ['avukat', 'lawyer', 'hukuk', 'legal'],
-    'doktor': ['doktor', 'doctor', 'dr'],
-    'dis-hekimi': ['dis', 'dentist', 'dental'],
-    'muhasebe': ['muhasebe', 'accounting', 'muhasebecilik'],
-    'emlak': ['emlak', 'real_estate', 'gayrimenkul'],
-    'banka': ['banka', 'bank', 'atm'],
+    'restoran': ['restaurant', 'restoran', 'yemek', 'lokanta', 'food', 'meal_delivery', 'meal_takeaway'],
+    'kafe': ['cafe', 'kafe', 'kahve', 'coffee', 'coffee_shop'],
+    'otel': ['lodging', 'otel', 'hotel', 'konaklama', 'motel', 'resort'],
+    'market': ['supermarket', 'market', 'bakkal', 'grocery', 'grocery_or_supermarket', 'convenience_store'],
+    'eczane': ['pharmacy', 'eczane', 'ilac', 'drugstore'],
+    'hastane': ['hospital', 'hastane', 'saglik', 'health', 'doctor', 'clinic', 'medical'],
+    'okul': ['school', 'okul', 'egitim', 'education', 'university', 'primary_school', 'secondary_school'],
+    'spor-salonu': ['gym', 'spor', 'fitness', 'health_club', 'fitness_center'],
+    'kuafor': ['hair_care', 'kuafor', 'berber', 'hair', 'beauty', 'beauty_salon', 'guzellik', 'barber'],
+    'oto-tamir': ['car_repair', 'oto', 'araba', 'tamir', 'mechanic', 'auto_repair'],
+    'telefon-tamircisi': ['electronics_store', 'telefon', 'phone', 'gsm', 'mobile', 'electronics', 'cell_phone_store'],
+    'avukat': ['lawyer', 'avukat', 'hukuk', 'legal', 'attorney'],
+    'doktor': ['doctor', 'doktor', 'dr', 'physician'],
+    'dis-hekimi': ['dentist', 'dis', 'dental', 'dis_hekimi'],
+    'muhasebe': ['accounting', 'muhasebe', 'muhasebecilik', 'accountant'],
+    'emlak': ['real_estate_agency', 'emlak', 'gayrimenkul', 'real_estate'],
+    'banka': ['bank', 'banka', 'atm', 'finance'],
+    'alisveris-merkezi': ['shopping_mall', 'alisveris', 'avm', 'mall', 'shopping_center'],
+    'kuyumcu': ['jewelry_store', 'kuyumcu', 'jewelry', 'jeweler'],
+    'pastane': ['bakery', 'pastane', 'firin', 'patisserie'],
+    'otopark': ['parking', 'otopark', 'park'],
+    'sinema': ['movie_theater', 'sinema', 'cinema'],
+    'kütüphane': ['library', 'kütüphane', 'kutuphane'],
+    'müze': ['museum', 'müze', 'muze'],
+    'park': ['park', 'park'],
+    'benzin-istasyonu': ['gas_station', 'benzin', 'fuel', 'petrol'],
+    'oto-yikama': ['car_wash', 'oto_yikama', 'yikama'],
+    'veteriner': ['veterinary_care', 'veteriner', 'vet'],
+    'evcil-hayvan': ['pet_store', 'evcil', 'pet'],
+    'cicekci': ['florist', 'cicekci', 'cicek', 'flower'],
+    'ayakkabi': ['shoe_store', 'ayakkabi'],
+    'giyim': ['clothing_store', 'giyim', 'butik', 'fashion'],
+    'mobilya': ['furniture_store', 'mobilya', 'furniture'],
+    'ev-esyalari': ['home_goods_store', 'ev_esyalari', 'home'],
+    'berber': ['barber', 'berber'],
+    'guzellik-salonu': ['beauty_salon', 'guzellik', 'beauty'],
+    'spa': ['spa', 'spa', 'massage'],
+    'sigara': ['tobacco_shop', 'sigara', 'tobacco'],
+    'kirtasiye': ['book_store', 'kirtasiye', 'stationery'],
+    'cami': ['mosque', 'cami'],
+    'kilise': ['church', 'kilise'],
+    'postane': ['post_office', 'postane', 'ptt'],
+    'belediye': ['local_government_office', 'belediye', 'government'],
+    'polis': ['police', 'polis', 'karakol'],
   };
 
+  // Önce types'ta eşleşme ara (daha doğru sonuç verir)
   for (const [category, keywords] of Object.entries(categoryMap)) {
     for (const keyword of keywords) {
-      if (nameLower.includes(keyword) || typesStr.includes(keyword)) {
+      if (typesStr.includes(keyword)) {
+        return category;
+      }
+    }
+  }
+
+  // Types'ta bulamazsa isme bak
+  for (const [category, keywords] of Object.entries(categoryMap)) {
+    for (const keyword of keywords) {
+      if (nameLower.includes(keyword)) {
         return category;
       }
     }
