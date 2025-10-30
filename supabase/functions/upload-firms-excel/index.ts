@@ -230,7 +230,21 @@ function parseCSV(csvText: string): any[] {
     throw new Error('CSV file too large. Maximum size is 10MB.')
   }
 
-  const lines = csvText.trim().split('\n')
+  let lines = csvText.trim().split('\n')
+  
+  // Remove BOM if present
+  if (lines[0].charCodeAt(0) === 0xFEFF) {
+    lines[0] = lines[0].substring(1)
+  }
+  
+  // Clean wrapper quotes if entire line is wrapped
+  lines = lines.map(line => {
+    const trimmed = line.trim()
+    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+      return trimmed.substring(1, trimmed.length - 1)
+    }
+    return trimmed
+  })
   
   if (lines.length < 2) {
     throw new Error('CSV file is empty or has no data rows')
