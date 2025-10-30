@@ -11,9 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Upload, LogOut, Loader2 } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
+import { FirmList } from "@/components/admin/FirmList";
+import { CategoryManagement } from "@/components/admin/CategoryManagement";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -151,19 +153,50 @@ const Admin = () => {
               <Building2 className="mr-2" />
               Yönetim Paneli
             </h1>
-            <Button onClick={handleLogout} variant="outline">
-              <LogOut className="mr-2 h-4 w-4" />
-              Çıkış Yap
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => window.open('https://lovable.dev/projects/d11a00a7-84c9-46c6-9f4f-f3a0cc32a34b/backend', '_blank')}
+                variant="outline"
+              >
+                <Database className="mr-2 h-4 w-4" />
+                Backend'i Aç
+              </Button>
+              <Button onClick={handleLogout} variant="outline">
+                <LogOut className="mr-2 h-4 w-4" />
+                Çıkış Yap
+              </Button>
+            </div>
           </div>
         </header>
 
         <main className="flex-1 container mx-auto px-4 py-8">
-          <Tabs defaultValue="add-firm" className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
-              <TabsTrigger value="add-firm">Firma Ekle</TabsTrigger>
-              <TabsTrigger value="upload-excel">CSV Yükle</TabsTrigger>
+          <Tabs defaultValue="firms" className="w-full">
+            <TabsList className="grid w-full max-w-2xl grid-cols-4">
+              <TabsTrigger value="firms">
+                <List className="mr-2 h-4 w-4" />
+                Firmalar
+              </TabsTrigger>
+              <TabsTrigger value="add-firm">
+                <Building2 className="mr-2 h-4 w-4" />
+                Firma Ekle
+              </TabsTrigger>
+              <TabsTrigger value="categories">
+                <FolderTree className="mr-2 h-4 w-4" />
+                Kategoriler
+              </TabsTrigger>
+              <TabsTrigger value="upload-excel">
+                <Upload className="mr-2 h-4 w-4" />
+                CSV Yükle
+              </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="firms">
+              <FirmList />
+            </TabsContent>
+
+            <TabsContent value="categories">
+              <CategoryManagement />
+            </TabsContent>
 
             <TabsContent value="add-firm">
               <Card>
