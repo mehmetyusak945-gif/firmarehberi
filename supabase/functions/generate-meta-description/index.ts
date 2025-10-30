@@ -69,11 +69,11 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı bir meta açıklama oluştur. Firma ismini ve kategoriyi mutlaka içermeli, harekete geçirici bir ifade içermeli. Sadece meta açıklamayı döndür.`
+              text: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı, dikkat çekici ve tıklanmayı teşvik edecek bir meta açıklama oluştur. Firma ismini ve kategoriyi mutlaka içermeli. Sadece meta açıklamayı döndür.`
             }]
           }],
           generationConfig: {
-            temperature: 0.8,
+            temperature: 0.9,
             maxOutputTokens: 100,
           }
         }),
@@ -91,6 +91,50 @@ serve(async (req) => {
 
       const data = await response.json()
       metaDescription = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+    } else if (provider === "openai" && aiSettings?.api_key) {
+      // Direct OpenAI API call
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${aiSettings.api_key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            {
+              role: 'system',
+              content: `Sen profesyonel bir SEO ve pazarlama uzmanısın. Görevin yerel işletmeler için dikkat çekici, SEO odaklı meta açıklamaları oluşturmak.
+
+KURALLAR:
+- Meta açıklama tam olarak 130-155 karakter arasında olmalı
+- Firma ismini ve kategoriyi mutlaka içermeli
+- Merak uyandırıcı ve harekete geçirici olmalı
+- Tıklanmayı teşvik etmeli
+- Doğal ve akıcı Türkçe kullan
+- Sadece meta açıklamayı döndür, başka hiçbir şey yazma`
+            },
+            {
+              role: 'user',
+              content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı, dikkat çekici meta açıklama oluştur.`
+            }
+          ],
+          max_completion_tokens: 100,
+        }),
+      })
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          console.error('Rate limit exceeded')
+          throw new Error('AI hizmetinde yoğunluk var, lütfen daha sonra tekrar deneyin')
+        }
+        const errorText = await response.text()
+        console.error('OpenAI API error:', response.status, errorText)
+        throw new Error('AI hizmetinde bir hata oluştu')
+      }
+
+      const data = await response.json()
+      metaDescription = data.choices?.[0]?.message?.content?.trim() || '';
     } else {
       // Use Lovable AI Gateway
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')
@@ -109,22 +153,23 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: `Sen profesyonel bir SEO uzmanısın. Görevin yerel işletmeler için SEO odaklı meta açıklamaları oluşturmak. 
+              content: `Sen profesyonel bir SEO ve pazarlama uzmanısın. Görevin yerel işletmeler için dikkat çekici, SEO odaklı meta açıklamaları oluşturmak. 
 
 KURALLAR:
 - Meta açıklama tam olarak 130-155 karakter arasında olmalı
 - Firma ismini ve kategoriyi mutlaka içermeli
-- Harekete geçirici (call-to-action) bir ifade içermeli
+- Merak uyandırıcı ve harekete geçirici olmalı
+- Tıklanmayı teşvik etmeli (click-bait tarzı ama abartısız)
 - Doğal ve akıcı Türkçe kullan
 - Anahtar kelimeleri doğal bir şekilde yerleştir
 - Sadece meta açıklamayı döndür, başka hiçbir şey yazma`
             },
             {
               role: 'user',
-              content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı bir meta açıklama oluştur.`
+              content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı, dikkat çekici meta açıklama oluştur.`
             }
           ],
-          temperature: 0.8,
+          temperature: 0.9,
           max_tokens: 100,
         }),
       })

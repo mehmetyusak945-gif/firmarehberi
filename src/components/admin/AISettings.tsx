@@ -30,7 +30,7 @@ export const AISettings = () => {
       await updateSettings.mutateAsync({
         provider,
         model,
-        api_key: provider === "google" ? apiKey : null,
+        api_key: (provider === "google" || provider === "openai") ? apiKey : null,
       });
 
       toast({
@@ -61,7 +61,7 @@ export const AISettings = () => {
         <CardTitle>AI Ayarları</CardTitle>
         <CardDescription>
           Firma açıklamaları ve meta açıklamalar için kullanılacak AI modelini seçin.
-          Lovable kullanarak otomatik ödeme yapabilir veya kendi Google API keyinizi kullanabilirsiniz.
+          Lovable kullanarak otomatik ödeme yapabilir veya kendi API keyinizi kullanabilirsiniz.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -73,13 +73,16 @@ export const AISettings = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="lovable">Lovable AI (Önerilen)</SelectItem>
-              <SelectItem value="google">Google (Kendi API Key)</SelectItem>
+              <SelectItem value="google">Google Gemini (Kendi API Key)</SelectItem>
+              <SelectItem value="openai">OpenAI ChatGPT (Kendi API Key)</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-sm text-muted-foreground">
             {provider === "lovable" 
               ? "Lovable AI otomatik olarak yapılandırılır ve kullanım bazlı ücretlendirilir."
-              : "Kendi Google API keyinizi kullanarak ödemeleri kendiniz takip edebilirsiniz."}
+              : provider === "google"
+              ? "Kendi Google API keyinizi kullanarak ödemeleri kendiniz takip edebilirsiniz."
+              : "Kendi OpenAI API keyinizi kullanarak ödemeleri kendiniz takip edebilirsiniz."}
           </p>
         </div>
 
@@ -99,33 +102,47 @@ export const AISettings = () => {
                   <SelectItem value="openai/gpt-5-mini">GPT-5 Mini (Dengeli)</SelectItem>
                   <SelectItem value="openai/gpt-5">GPT-5 (En Güçlü)</SelectItem>
                 </>
-              ) : (
+              ) : provider === "google" ? (
                 <>
                   <SelectItem value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</SelectItem>
                   <SelectItem value="gemini-2.0-flash-exp">Gemini 2.0 Flash</SelectItem>
                   <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
                   <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
                 </>
+              ) : (
+                <>
+                  <SelectItem value="gpt-5-2025-08-07">GPT-5 ($5/1M input, $15/1M output)</SelectItem>
+                  <SelectItem value="gpt-5-mini-2025-08-07">GPT-5 Mini ($0.40/1M input, $1.20/1M output)</SelectItem>
+                  <SelectItem value="gpt-5-nano-2025-08-07">GPT-5 Nano ($0.10/1M input, $0.30/1M output)</SelectItem>
+                  <SelectItem value="gpt-4.1-2025-04-14">GPT-4.1 ($2.50/1M input, $10/1M output)</SelectItem>
+                  <SelectItem value="gpt-4.1-mini-2025-04-14">GPT-4.1 Mini ($0.30/1M input, $1/1M output)</SelectItem>
+                </>
               )}
             </SelectContent>
           </Select>
           <p className="text-sm text-muted-foreground">
-            Lite modeller daha hızlı ve ucuz, Pro modeller daha kaliteli sonuçlar verir.
+            {provider === "openai" 
+              ? "Fiyatlar 1 milyon token başına. Nano/Mini modeller daha ucuz, tam modeller daha kaliteli."
+              : "Lite modeller daha hızlı ve ucuz, Pro modeller daha kaliteli sonuçlar verir."}
           </p>
         </div>
 
-        {provider === "google" && (
+        {(provider === "google" || provider === "openai") && (
           <div className="space-y-2">
-            <Label htmlFor="apiKey">Google API Key</Label>
+            <Label htmlFor="apiKey">
+              {provider === "google" ? "Google API Key" : "OpenAI API Key"}
+            </Label>
             <Input
               id="apiKey"
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="AIza..."
+              placeholder={provider === "google" ? "AIza..." : "sk-..."}
             />
             <p className="text-sm text-muted-foreground">
-              Google Cloud Console'dan bir API key oluşturun ve Generative Language API'yi etkinleştirin.
+              {provider === "google" 
+                ? "Google Cloud Console'dan bir API key oluşturun ve Generative Language API'yi etkinleştirin."
+                : "OpenAI Platform'dan bir API key oluşturun. platform.openai.com/api-keys"}
             </p>
           </div>
         )}

@@ -52,6 +52,9 @@ serve(async (req) => {
     if (provider === "google" && aiSettings?.api_key) {
       apiKey = aiSettings.api_key;
       apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + model.replace("google/", "") + ":generateContent";
+    } else if (provider === "openai" && aiSettings?.api_key) {
+      apiKey = aiSettings.api_key;
+      apiUrl = "https://api.openai.com/v1/chat/completions";
     } else {
       // Use Lovable AI
       apiKey = Deno.env.get("LOVABLE_API_KEY")!;
@@ -73,12 +76,12 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `${category} kategorisindeki "${name}" firması için kısa ve profesyonel bir açıklama yaz. Açıklama 2-3 cümle olmalı ve firmanın hizmetlerini vurgulamalı. Türkçe olmalı.`
+              text: `${category} kategorisindeki "${name}" firması için dikkat çekici, SEO odaklı ve ziyaretçi çekecek bir açıklama yaz. 3-4 cümle kullan ve son cümlede mutlaka harekete geçirici bir ifade ekle. Türkçe olmalı.`
             }]
           }],
           generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 200,
+            temperature: 0.8,
+            maxOutputTokens: 250,
           }
         }),
       });
@@ -91,6 +94,38 @@ serve(async (req) => {
 
       const data = await response.json();
       description = data.candidates?.[0]?.content?.parts?.[0]?.text || "Kaliteli hizmet sunan güvenilir bir firma.";
+    } else if (provider === "openai" && aiSettings?.api_key) {
+      // Direct OpenAI API call
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            {
+              role: "system",
+              content: "Sen bir pazarlama ve SEO uzmanısın. Firmaların dikkat çekici, merak uyandıran ve SEO dostu açıklamalarını yazıyorsun. Açıklamalar ilgi çekici olmalı, harekete geçirici olmalı ve ziyaretçileri firmayla iletişime geçmeye teşvik etmeli. 3-4 cümle kullan ve son cümlede mutlaka harekete geçirici bir ifade ekle.",
+            },
+            {
+              role: "user",
+              content: `${category} kategorisindeki "${name}" firması için dikkat çekici, SEO odaklı ve ziyaretçi çekecek bir açıklama yaz. Türkçe olmalı.`,
+            },
+          ],
+          max_completion_tokens: 250,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("OpenAI API error:", response.status, errorText);
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      description = data.choices?.[0]?.message?.content || "Kaliteli hizmet sunan güvenilir bir firma.";
     } else {
       // Use Lovable AI Gateway
       const response = await fetch(apiUrl, {
@@ -104,11 +139,11 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: "Sen bir firma açıklaması yazan profesyonel bir yazarsın. Kısa, özlü ve ilgi çekici açıklamalar yazarsın. Açıklamalar 2-3 cümle olmalı ve firmanın hizmetlerini vurgulamalı.",
+              content: "Sen bir pazarlama ve SEO uzmanısın. Firmaların dikkat çekici, merak uyandıran ve SEO dostu açıklamalarını yazıyorsun. Açıklamalar ilgi çekici olmalı, harekete geçirici olmalı ve ziyaretçileri firmayla iletişime geçmeye teşvik etmeli. 3-4 cümle kullan ve son cümlede mutlaka harekete geçirici bir ifade ekle (örn: 'Hemen arayın!', 'Detaylar için tıklayın!', 'Fiyat teklifi alın!').",
             },
             {
               role: "user",
-              content: `${category} kategorisindeki "${name}" firması için kısa ve profesyonel bir açıklama yaz. Türkçe olmalı.`,
+              content: `${category} kategorisindeki "${name}" firması için dikkat çekici, SEO odaklı ve ziyaretçi çekecek bir açıklama yaz. Türkçe olmalı.`,
             },
           ],
         }),
