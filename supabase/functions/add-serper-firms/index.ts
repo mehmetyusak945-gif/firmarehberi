@@ -105,42 +105,56 @@ function guessCategory(name: string, types: string[], query?: string): string {
 
 // Konum filtreleme - adres belirtilen şehir/ilçeyi içeriyor mu?
 function matchesLocation(address: string, city?: string, district?: string): boolean {
-  // Adres yoksa ama şehir/ilçe de belirtilmemişse kabul et
+  // Adres yoksa
   if (!address) {
+    // Şehir veya ilçe belirtilmemişse kabul et
     return !city && !district;
   }
   
   const addressLower = address.toLowerCase();
   
-  // Şehir belirtilmişse kontrol et
+  // Türkçe karakter normalizasyonu
+  const turkishMap: { [key: string]: string } = {
+    'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c',
+    'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'
+  };
+  
+  const normalizeTurkish = (text: string) => {
+    return text.split('').map(c => turkishMap[c] || c).join('').toLowerCase();
+  };
+  
+  const normalizedAddress = normalizeTurkish(address);
+  
+  // Şehir kontrolü - daha esnek
   if (city) {
-    const cityLower = city.toLowerCase();
-    // Türkçe karakter dönüşümü yap
-    const turkishMap: { [key: string]: string } = {
-      'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c',
-      'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'
-    };
-    
-    const normalizeTurkish = (text: string) => {
-      return text.split('').map(c => turkishMap[c] || c).join('').toLowerCase();
-    };
-    
-    const normalizedAddress = normalizeTurkish(address);
     const normalizedCity = normalizeTurkish(city);
     
-    // Şehir adı adreste geçmiyorsa filtrele
-    if (!normalizedAddress.includes(normalizedCity)) {
-      console.log(`City mismatch: looking for "${city}" in "${address}"`);
-      return false;
+    // İstanbul için özel kontrol - posta kodu ile de kontrol et (34xxx = İstanbul)
+    if (normalizedCity === 'istanbul') {
+      const hasIstanbul = normalizedAddress.includes('istanbul');
+      const hasIstanbulPostalCode = /\b34\d{3}\b/.test(address);
+      
+      if (!hasIstanbul && !hasIstanbulPostalCode) {
+        console.log(`City mismatch: looking for "${city}" in "${address}"`);
+        return false;
+      }
+    } else {
+      // Diğer şehirler için normal kontrol
+      if (!normalizedAddress.includes(normalizedCity)) {
+        console.log(`City mismatch: looking for "${city}" in "${address}"`);
+        return false;
+      }
     }
   }
   
-  // İlçe opsiyonel - belirtilmişse kontrol et
+  // İlçe kontrolü - OPSIYONEL ve daha esnek
+  // Google Places yakındaki ilçelerdeki firmaları da döndürebilir
+  // O yüzden ilçe kontrolünü gevşek tutuyoruz
   if (district) {
-    const districtLower = district.toLowerCase();
-    if (!addressLower.includes(districtLower)) {
-      console.log(`District mismatch: looking for "${district}" in "${address}"`);
-      return false;
+    const normalizedDistrict = normalizeTurkish(district);
+    // İlçe kontrolü yapmıyoruz, sadece log alıyoruz
+    if (!normalizedAddress.includes(normalizedDistrict)) {
+      console.log(`District info: "${district}" not in "${address}" but accepting (Google may return nearby)`);
     }
   }
   
