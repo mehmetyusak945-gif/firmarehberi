@@ -23,6 +23,29 @@ const FirmaDetail = () => {
       setIsLoadingAI(true);
 
       try {
+        // Generate AI description
+        const { data: descData, error: descError } = await supabase.functions.invoke(
+          'generate-firm-description',
+          {
+            body: {
+              name: firma.name,
+              category: firma.categories.name,
+              firmId: firma.id,
+            },
+          }
+        );
+
+        if (!descError && descData?.description) {
+          setAiDescription(descData.description);
+        } else {
+          // Fallback description
+          setAiDescription(
+            `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır. ` +
+            `${firma.address} adresinde faaliyet gösteren ${firma.name}, müşteri memnuniyetini ön planda tutarak ` +
+            `kaliteli ve güvenilir hizmet sunmaktadır.`
+          );
+        }
+
         // Generate meta description with AI
         const { data: metaData, error: metaError } = await supabase.functions.invoke(
           'generate-meta-description',
@@ -30,6 +53,7 @@ const FirmaDetail = () => {
             body: {
               firmName: firma.name,
               categoryName: firma.categories.name,
+              firmId: firma.id,
             },
           }
         );
@@ -42,20 +66,12 @@ const FirmaDetail = () => {
             `${firma.name} - ${firma.categories.name} hizmetleri için güvenilir çözüm ortağınız. Detaylı bilgi ve iletişim için hemen inceleyin!`
           );
         }
-
-        // Generate firm description
-        setAiDescription(
-          `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır. ` +
-          `${firma.address} adresinde faaliyet gösteren ${firma.name}, müşteri memnuniyetini ön planda tutarak ` +
-          `kaliteli ve güvenilir hizmet sunmaktadır. ${firma.rating ? `${firma.rating} yıldız değerlendirme puanı ile ` +
-          `bölgesindeki en beğenilen işletmeler arasında yer almaktadır.` : ''} Deneyimli kadrosu ve modern ekipmanları ` +
-          `ile ${firma.categories?.name} alanında ihtiyaç duyduğunuz her türlü hizmeti profesyonel bir şekilde gerçekleştirmektedir. ` +
-          `Müşteri odaklı yaklaşımı ve rekabetçi fiyatları ile tercih edilen ${firma.name}, ` +
-          `sizlere en iyi hizmeti sunmak için çalışmaktadır.`
-        );
       } catch (error) {
         console.error('Error generating content:', error);
-        // Fallback meta description
+        // Fallback descriptions
+        setAiDescription(
+          `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır.`
+        );
         setMetaDescription(
           `${firma.name} - ${firma.categories.name} hizmetleri. İletişim bilgileri ve detaylar için tıklayın.`
         );

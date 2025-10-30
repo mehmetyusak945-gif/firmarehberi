@@ -11,7 +11,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone, Clock, HardDrive, Mail, FileText, AlertTriangle, Globe } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone, Clock, HardDrive, Mail, FileText, AlertTriangle, Globe, Brain } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
@@ -23,6 +23,7 @@ import { ContactMessages } from "@/components/admin/ContactMessages";
 import { PageManagement } from "@/components/admin/PageManagement";
 import { DataClear } from "@/components/admin/DataClear";
 import { WebmasterManagement } from "@/components/admin/WebmasterManagement";
+import { AISettings } from "@/components/admin/AISettings";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -236,6 +237,10 @@ const Admin = () => {
                   <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
                   <span className="hidden sm:inline">Webmaster</span>
                 </TabsTrigger>
+                <TabsTrigger value="ai-settings" className="text-xs md:text-sm">
+                  <Brain className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                  <span className="hidden sm:inline">AI Ayarları</span>
+                </TabsTrigger>
               </TabsList>
               
               {/* Tehlikeli işlemler butonu - Ayrı bir yerde */}
@@ -287,6 +292,10 @@ const Admin = () => {
 
             <TabsContent value="webmaster">
               <WebmasterManagement />
+            </TabsContent>
+
+            <TabsContent value="ai-settings">
+              <AISettings />
             </TabsContent>
 
             <TabsContent value="add-firm">

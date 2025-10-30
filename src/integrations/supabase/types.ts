@@ -41,6 +41,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_settings: {
+        Row: {
+          api_key: string | null
+          created_at: string | null
+          id: string
+          model: string
+          provider: string
+          updated_at: string | null
+        }
+        Insert: {
+          api_key?: string | null
+          created_at?: string | null
+          id?: string
+          model?: string
+          provider?: string
+          updated_at?: string | null
+        }
+        Update: {
+          api_key?: string | null
+          created_at?: string | null
+          id?: string
+          model?: string
+          provider?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string | null
@@ -102,6 +129,8 @@ export type Database = {
         Row: {
           added_by: string | null
           address: string | null
+          ai_description: string | null
+          ai_meta_description: string | null
           category_id: string | null
           created_at: string | null
           description: string | null
@@ -121,6 +150,8 @@ export type Database = {
         Insert: {
           added_by?: string | null
           address?: string | null
+          ai_description?: string | null
+          ai_meta_description?: string | null
           category_id?: string | null
           created_at?: string | null
           description?: string | null
@@ -140,6 +171,8 @@ export type Database = {
         Update: {
           added_by?: string | null
           address?: string | null
+          ai_description?: string | null
+          ai_meta_description?: string | null
           category_id?: string | null
           created_at?: string | null
           description?: string | null

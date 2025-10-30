@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,31 +12,104 @@ serve(async (req) => {
   }
 
   try {
-    const { firmName, categoryName } = await req.json()
+    const { firmName, categoryName, firmId } = await req.json()
 
     if (!firmName || !categoryName) {
       throw new Error('Firma ismi ve kategori gerekli')
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured')
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Check if meta description already exists in database
+    if (firmId) {
+      const { data: existingFirm } = await supabase
+        .from("firms")
+        .select("ai_meta_description")
+        .eq("id", firmId)
+        .single();
+
+      if (existingFirm?.ai_meta_description) {
+        return new Response(
+          JSON.stringify({ 
+            metaDescription: existingFirm.ai_meta_description,
+            length: existingFirm.ai_meta_description.length 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200 
+          }
+        );
+      }
     }
+
+    // Get AI settings
+    const { data: aiSettings } = await supabase
+      .from("ai_settings")
+      .select("*")
+      .single();
+
+    const provider = aiSettings?.provider || "lovable";
+    const model = aiSettings?.model || "google/gemini-2.5-flash-lite";
 
     console.log(`Generating meta description for: ${firmName} - ${categoryName}`)
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: `Sen profesyonel bir SEO uzmanısın. Görevin yerel işletmeler için SEO odaklı meta açıklamaları oluşturmak. 
+    let metaDescription: string;
+
+    if (provider === "google" && aiSettings?.api_key) {
+      // Direct Google API call
+      const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + model.replace("google/", "") + ":generateContent";
+      const response = await fetch(apiUrl + "?key=" + aiSettings.api_key, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı bir meta açıklama oluştur. Firma ismini ve kategoriyi mutlaka içermeli, harekete geçirici bir ifade içermeli. Sadece meta açıklamayı döndür.`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.8,
+            maxOutputTokens: 100,
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          console.error('Rate limit exceeded')
+          throw new Error('AI hizmetinde yoğunluk var, lütfen daha sonra tekrar deneyin')
+        }
+        const errorText = await response.text()
+        console.error('Google API error:', response.status, errorText)
+        throw new Error('AI hizmetinde bir hata oluştu')
+      }
+
+      const data = await response.json()
+      metaDescription = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+    } else {
+      // Use Lovable AI Gateway
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')
+      if (!LOVABLE_API_KEY) {
+        throw new Error('LOVABLE_API_KEY not configured')
+      }
+
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            {
+              role: 'system',
+              content: `Sen profesyonel bir SEO uzmanısın. Görevin yerel işletmeler için SEO odaklı meta açıklamaları oluşturmak. 
 
 KURALLAR:
 - Meta açıklama tam olarak 130-155 karakter arasında olmalı
@@ -44,33 +118,34 @@ KURALLAR:
 - Doğal ve akıcı Türkçe kullan
 - Anahtar kelimeleri doğal bir şekilde yerleştir
 - Sadece meta açıklamayı döndür, başka hiçbir şey yazma`
-          },
-          {
-            role: 'user',
-            content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı bir meta açıklama oluştur.`
-          }
-        ],
-        temperature: 0.8,
-        max_tokens: 100,
-      }),
-    })
+            },
+            {
+              role: 'user',
+              content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı bir meta açıklama oluştur.`
+            }
+          ],
+          temperature: 0.8,
+          max_tokens: 100,
+        }),
+      })
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        console.error('Rate limit exceeded')
-        throw new Error('AI hizmetinde yoğunluk var, lütfen daha sonra tekrar deneyin')
+      if (!response.ok) {
+        if (response.status === 429) {
+          console.error('Rate limit exceeded')
+          throw new Error('AI hizmetinde yoğunluk var, lütfen daha sonra tekrar deneyin')
+        }
+        if (response.status === 402) {
+          console.error('Payment required')
+          throw new Error('AI kredisi yetersiz')
+        }
+        const errorText = await response.text()
+        console.error('AI gateway error:', response.status, errorText)
+        throw new Error('AI hizmetinde bir hata oluştu')
       }
-      if (response.status === 402) {
-        console.error('Payment required')
-        throw new Error('AI kredisi yetersiz')
-      }
-      const errorText = await response.text()
-      console.error('AI gateway error:', response.status, errorText)
-      throw new Error('AI hizmetinde bir hata oluştu')
+
+      const data = await response.json()
+      metaDescription = data.choices?.[0]?.message?.content?.trim() || '';
     }
-
-    const data = await response.json()
-    const metaDescription = data.choices?.[0]?.message?.content?.trim()
 
     if (!metaDescription) {
       throw new Error('Meta açıklama oluşturulamadı')
@@ -89,6 +164,14 @@ KURALLAR:
     }
 
     console.log(`Generated meta description (${finalDescription.length} chars): ${finalDescription}`)
+
+    // Save meta description to database if firmId is provided
+    if (firmId && finalDescription) {
+      await supabase
+        .from("firms")
+        .update({ ai_meta_description: finalDescription })
+        .eq("id", firmId);
+    }
 
     return new Response(
       JSON.stringify({ 

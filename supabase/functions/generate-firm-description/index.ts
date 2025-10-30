@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,42 +12,125 @@ serve(async (req) => {
   }
 
   try {
-    const { name, category } = await req.json();
+    const { name, category, firmId } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Check if description already exists in database
+    if (firmId) {
+      const { data: existingFirm } = await supabase
+        .from("firms")
+        .select("ai_description")
+        .eq("id", firmId)
+        .single();
+
+      if (existingFirm?.ai_description) {
+        return new Response(
+          JSON.stringify({ description: existingFirm.ai_description }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: "Sen bir firma açıklaması yazan profesyonel bir yazarsın. Kısa, özlü ve ilgi çekici açıklamalar yazarsın. Açıklamalar 2-3 cümle olmalı ve firmanın hizmetlerini vurgulamalı.",
-          },
-          {
-            role: "user",
-            content: `${category} kategorisindeki "${name}" firması için kısa ve profesyonel bir açıklama yaz. Türkçe olmalı.`,
-          },
-        ],
-      }),
-    });
+    // Get AI settings
+    const { data: aiSettings } = await supabase
+      .from("ai_settings")
+      .select("*")
+      .single();
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("AI API error:", response.status, errorText);
-      throw new Error(`AI API error: ${response.status}`);
+    const provider = aiSettings?.provider || "lovable";
+    const model = aiSettings?.model || "google/gemini-2.5-flash-lite";
+
+    let apiKey: string;
+    let apiUrl: string;
+
+    if (provider === "google" && aiSettings?.api_key) {
+      apiKey = aiSettings.api_key;
+      apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + model.replace("google/", "") + ":generateContent";
+    } else {
+      // Use Lovable AI
+      apiKey = Deno.env.get("LOVABLE_API_KEY")!;
+      if (!apiKey) {
+        throw new Error("LOVABLE_API_KEY is not configured");
+      }
+      apiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
     }
 
-    const data = await response.json();
-    const description = data.choices?.[0]?.message?.content || "Kaliteli hizmet sunan güvenilir bir firma.";
+    let description: string;
+
+    if (provider === "google" && aiSettings?.api_key) {
+      // Direct Google API call
+      const response = await fetch(apiUrl + "?key=" + apiKey, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `${category} kategorisindeki "${name}" firması için kısa ve profesyonel bir açıklama yaz. Açıklama 2-3 cümle olmalı ve firmanın hizmetlerini vurgulamalı. Türkçe olmalı.`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 200,
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Google API error:", response.status, errorText);
+        throw new Error(`Google API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      description = data.candidates?.[0]?.content?.parts?.[0]?.text || "Kaliteli hizmet sunan güvenilir bir firma.";
+    } else {
+      // Use Lovable AI Gateway
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            {
+              role: "system",
+              content: "Sen bir firma açıklaması yazan profesyonel bir yazarsın. Kısa, özlü ve ilgi çekici açıklamalar yazarsın. Açıklamalar 2-3 cümle olmalı ve firmanın hizmetlerini vurgulamalı.",
+            },
+            {
+              role: "user",
+              content: `${category} kategorisindeki "${name}" firması için kısa ve profesyonel bir açıklama yaz. Türkçe olmalı.`,
+            },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("AI API error:", response.status, errorText);
+        throw new Error(`AI API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      description = data.choices?.[0]?.message?.content || "Kaliteli hizmet sunan güvenilir bir firma.";
+    }
+
+    // Save description to database if firmId is provided
+    if (firmId && description) {
+      await supabase
+        .from("firms")
+        .update({ ai_description: description })
+        .eq("id", firmId);
+    }
 
     return new Response(
       JSON.stringify({ description }),
