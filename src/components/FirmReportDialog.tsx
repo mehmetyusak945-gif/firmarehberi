@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle } from "lucide-react";
+import { Flag, Loader2 } from "lucide-react";
 
 interface FirmReportDialogProps {
   firmId: string;
@@ -71,8 +71,11 @@ export const FirmReportDialog = ({ firmId, firmName }: FirmReportDialogProps) =>
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full gap-2">
-          <AlertCircle className="h-4 w-4" />
+        <Button 
+          variant="outline" 
+          className="w-full border-destructive/50 text-destructive hover:bg-destructive hover:text-destructive-foreground gap-2"
+        >
+          <Flag className="h-4 w-4" />
           İşletme Hakkında Bildirim Gönder
         </Button>
       </DialogTrigger>
@@ -129,7 +132,14 @@ export const FirmReportDialog = ({ firmId, firmName }: FirmReportDialogProps) =>
               İptal
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Gönderiliyor..." : "Bildirim Gönder"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Gönderiliyor...
+                </>
+              ) : (
+                "Bildirim Gönder"
+              )}
             </Button>
           </div>
         </form>

@@ -119,7 +119,7 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
         rating: formData.rating ? parseFloat(formData.rating) : null,
         category_id: finalCategoryId,
         suggested_category: null, // Kategori atandıktan sonra öneriyi temizle
-        slug: slugify(formData.name.trim()),
+        // slug asla değişmemeli - SEO için kritik
         is_approved: true, // Kaydet dediğinde otomatik onayla
       };
 

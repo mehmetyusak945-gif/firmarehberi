@@ -343,11 +343,6 @@ const FirmaDetail = () => {
                 <div className="sticky top-20 space-y-6">
                   <AdBox />
                   
-                  {/* Bildirim Butonu */}
-                  <div className="w-[300px]">
-                    <FirmReportDialog firmId={firma.id} firmName={firma.name} />
-                  </div>
-                  
                   {/* CTA Card - 300x250 */}
                   <div className="bg-card rounded-xl border shadow-md w-[300px] h-[250px] flex flex-col p-4">
                     <h3 className="font-bold text-base mb-2">Firmanızı Ekleyin</h3>
@@ -363,6 +358,11 @@ const FirmaDetail = () => {
                   </div>
 
                   <AdBox />
+                  
+                  {/* Bildirim Butonu - En Altta */}
+                  <div className="w-[300px]">
+                    <FirmReportDialog firmId={firma.id} firmName={firma.name} />
+                  </div>
                 </div>
               </aside>
             </div>
