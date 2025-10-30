@@ -136,23 +136,51 @@ serve(async (req) => {
 
     console.log(`Removed ${firms.length - uniqueFirms.length} duplicate records`)
 
+    // Get existing slugs from database to avoid conflicts
+    const { data: existingFirms } = await supabaseClient
+      .from('firms')
+      .select('slug, external_id')
+    
+    const existingSlugs = new Set(existingFirms?.map(f => f.slug) || [])
+    const existingExternalIds = new Map(existingFirms?.map(f => [f.external_id, f.slug]) || [])
+    
     // Handle duplicate slugs by adding counter suffix
     const slugCounts = new Map<string, number>()
     
     // Prepare firms with category_id and unique slugs
     const firmsToInsert = uniqueFirms.map(firm => {
       const baseSlug = slugify(firm.name)
-      const count = slugCounts.get(baseSlug) || 0
-      let finalSlug = baseSlug
       
-      if (count > 0) {
-        finalSlug = `${baseSlug}-${count + 1}`
+      // If this external_id already exists, use its existing slug
+      const externalId = firm.external_id || baseSlug
+      if (existingExternalIds.has(externalId)) {
+        const existingSlug = existingExternalIds.get(externalId)!
+        return {
+          external_id: externalId,
+          name: firm.name,
+          slug: existingSlug,
+          address: firm.address || null,
+          phone: firm.phone || null,
+          website: firm.website || null,
+          rating: firm.rating || 0,
+          category_id: categoryMap.get(firm.category) || null,
+          is_approved: true,
+          added_by: null,
+        }
       }
       
-      slugCounts.set(baseSlug, count + 1)
+      // Generate unique slug for new firms
+      let finalSlug = baseSlug
+      let counter = slugCounts.get(baseSlug) || 0
       
-      // Use slug as external_id if external_id is missing
-      const externalId = firm.external_id || finalSlug
+      // Keep incrementing until we find a unique slug
+      while (existingSlugs.has(finalSlug)) {
+        counter++
+        finalSlug = `${baseSlug}-${counter}`
+      }
+      
+      slugCounts.set(baseSlug, counter + 1)
+      existingSlugs.add(finalSlug) // Add to set to avoid conflicts within batch
       
       return {
         external_id: externalId,
@@ -164,7 +192,7 @@ serve(async (req) => {
         rating: firm.rating || 0,
         category_id: categoryMap.get(firm.category) || null,
         is_approved: true,
-        added_by: null, // Admin import
+        added_by: null,
       }
     })
 
