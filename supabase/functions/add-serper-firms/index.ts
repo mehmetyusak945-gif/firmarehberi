@@ -66,15 +66,6 @@ function guessCategory(name: string, types: string[], query?: string): string {
   return 'diger'; // Default category
 }
 
-// Telefon numarasının mobil mi sabit hat mı olduğunu kontrol et
-function isMobilePhone(phone: string): boolean {
-  if (!phone) return false;
-  // Türkiye mobil operatörleri: 50x, 51x, 52x, 53x, 54x, 55x, 56x
-  const cleaned = phone.replace(/\D/g, '');
-  const turkishMobile = /^(90)?(5[0-9]{2})/;
-  return turkishMobile.test(cleaned);
-}
-
 // Konum filtreleme - adres belirtilen şehir/ilçeyi içeriyor mu?
 function matchesLocation(address: string, city?: string, district?: string): boolean {
   if (!address) return true; // Adres yoksa filtrele
@@ -128,6 +119,14 @@ serve(async (req) => {
       existingCategories?.map(c => [c.slug, c.id]) || []
     );
 
+    // Get existing slugs and external_ids to avoid conflicts
+    const { data: existingFirms } = await supabase
+      .from('firms')
+      .select('slug, external_id');
+    
+    const existingSlugs = new Set(existingFirms?.map(f => f.slug) || []);
+    const existingExternalIds = new Map(existingFirms?.map(f => [f.external_id, f.slug]) || []);
+
     const results = {
       success: 0,
       failed: 0,
@@ -145,14 +144,14 @@ serve(async (req) => {
           continue;
         }
 
-        // Kategori slug'ı tahmin et
+        // Kategori slug'ı tahmin et veya query'den oluştur
         const categorySlug = guessCategory(
           firm.title || '',
           firm.types || [],
           query
         );
 
-        // Kategori yoksa oluştur
+        // Kategori yoksa oluştur (CSV ile aynı mantık)
         let categoryId = categoryMap.get(categorySlug);
         
         if (!categoryId) {
@@ -176,30 +175,61 @@ serve(async (req) => {
           }
         }
 
-        // Firma slug oluştur
-        const firmSlug = slugify(firm.title || 'firma');
+        // External ID'yi position'dan oluştur (CSV ile aynı mantık)
+        const externalId = firm.position?.toString() || null;
         
-        // Telefon numarasını mobil ve sabit hat olarak ayır
+        // Firma slug oluştur (CSV ile birebir aynı mantık)
+        const nameSlug = slugify(firm.title || 'firma');
+        let finalSlug: string;
+        
+        if (externalId) {
+          // External ID varsa: ID-firma-ismi formatı (CSV ile aynı)
+          finalSlug = `${externalId}-${nameSlug}`;
+        } else {
+          // External ID yoksa: sadece isim slug'ı
+          finalSlug = nameSlug;
+          let counter = 0;
+          
+          // Çakışma varsa sayı ekle
+          while (existingSlugs.has(finalSlug)) {
+            counter++;
+            finalSlug = `${nameSlug}-${counter}`;
+          }
+        }
+        
+        existingSlugs.add(finalSlug); // Batch içinde çakışmayı önle
+        
+        // Telefon numarasını mobil ve sabit hat olarak ayır (CSV ile aynı mantık)
         const phoneNumber = firm.phoneNumber || '';
-        const isMobile = isMobilePhone(phoneNumber);
+        let landline_phone = null;
+        let mobile_phone = null;
         
-        // Firma ekle (otomatik onaylı)
+        if (phoneNumber) {
+          const cleanPhone = phoneNumber.replace(/\D/g, '');
+          if (cleanPhone.startsWith('05')) {
+            mobile_phone = phoneNumber;
+          } else {
+            landline_phone = phoneNumber;
+          }
+        }
+        
+        // Firma ekle (CSV ile birebir aynı yapı)
         const { error: firmError } = await supabase
           .from('firms')
           .insert({
+            external_id: externalId || finalSlug, // CSV ile aynı mantık
             name: firm.title || 'İsimsiz Firma',
-            slug: firmSlug,
+            slug: finalSlug,
             address: firm.address || null,
-            landline_phone: isMobile ? null : phoneNumber,
-            mobile_phone: isMobile ? phoneNumber : null,
+            landline_phone: landline_phone,
+            mobile_phone: mobile_phone,
             website: firm.website || null,
             email: null,
             description: null,
-            rating: firm.rating || null,
+            rating: firm.rating || 0, // CSV'de default 0
             category_id: categoryId,
-            is_approved: true, // Otomatik onaylı
+            is_approved: true,
             added_by: userId || null,
-            external_id: firm.position?.toString() || null,
           });
 
         if (firmError) {
