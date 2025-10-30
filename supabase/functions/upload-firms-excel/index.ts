@@ -86,7 +86,8 @@ serve(async (req) => {
     console.log(`Parsed ${firms.length} firms from CSV`)
 
     // Get or create categories and prepare firms
-    const categoryMap = new Map<string, string>()
+    const categoryMap = new Map<string, string>() // name -> id
+    const categorySlugMap = new Map<string, string>() // slug -> id
     const uniqueCategories = [...new Set(firms.map(f => f.category))]
 
     console.log(`Found ${uniqueCategories.length} unique categories`)
@@ -98,23 +99,36 @@ serve(async (req) => {
 
     existingCategories?.forEach(cat => {
       categoryMap.set(cat.name, cat.id)
+      categorySlugMap.set(cat.slug, cat.id)
     })
 
-    // Create new categories if needed
+    // Create new categories if needed (check by slug to avoid duplicates)
     for (const categoryName of uniqueCategories) {
-      if (!categoryMap.has(categoryName)) {
+      const categorySlug = slugify(categoryName)
+      
+      // Check if category already exists by slug
+      if (categorySlugMap.has(categorySlug)) {
+        // Use existing category
+        const existingId = categorySlugMap.get(categorySlug)!
+        categoryMap.set(categoryName, existingId)
+        console.log(`Using existing category: ${categoryName} (slug: ${categorySlug})`)
+      } else if (!categoryMap.has(categoryName)) {
+        // Create new category
         const { data: newCategory, error: catError } = await supabaseClient
           .from('categories')
           .insert({ 
             name: categoryName, 
-            slug: slugify(categoryName) 
+            slug: categorySlug
           })
           .select()
           .single()
 
         if (!catError && newCategory) {
           categoryMap.set(categoryName, newCategory.id)
-          console.log(`Created new category: ${categoryName}`)
+          categorySlugMap.set(categorySlug, newCategory.id)
+          console.log(`Created new category: ${categoryName} (slug: ${categorySlug})`)
+        } else if (catError) {
+          console.error(`Error creating category ${categoryName}:`, catError)
         }
       }
     }

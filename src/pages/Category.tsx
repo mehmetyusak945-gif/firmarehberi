@@ -24,20 +24,20 @@ const ITEMS_PER_PAGE = 12;
 const Category = () => {
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
-  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   
   // Kategoriyi doğrula
   const validCategory = categories?.find(
     (c) => c.slug === category
   );
 
-  const { data: firms, isLoading: firmsLoading } = useFirms(validCategory?.id);
+  const { data: firms, isLoading: firmsLoading, error: firmsError } = useFirms(validCategory?.id);
 
   useEffect(() => {
-    if (!categoriesLoading && !validCategory) {
+    if (!categoriesLoading && categories && !validCategory) {
       navigate("/404");
     }
-  }, [validCategory, categoriesLoading, navigate]);
+  }, [validCategory, categoriesLoading, categories, navigate]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>("random");
@@ -46,6 +46,19 @@ const Category = () => {
   const categoryFirms = useMemo(() => {
     return firms || [];
   }, [firms]);
+
+  if (categoriesError || firmsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Bir hata oluştu</p>
+          <button onClick={() => navigate("/")} className="text-primary hover:underline">
+            Ana sayfaya dön
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (firmsLoading || categoriesLoading) {
     return (
@@ -56,7 +69,11 @@ const Category = () => {
   }
 
   if (!validCategory) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
   }
 
   // Sıralama
