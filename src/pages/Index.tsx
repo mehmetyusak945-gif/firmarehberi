@@ -157,7 +157,11 @@ const Index = () => {
                   : `${categories?.find(c => c.id === selectedCategory)?.name} Kategorisi`}
               </h2>
               <p className="text-lg text-muted-foreground">
-                Şu anda sitemizde <span className="font-bold text-primary">{firms?.length || 0}</span> firma yer alıyor
+                Şu anda sitemizde <span className="font-bold text-primary">
+                  {typeof window !== 'undefined' && (window as any).__TOTAL_FIRMS_COUNT__ 
+                    ? (window as any).__TOTAL_FIRMS_COUNT__ 
+                    : firms?.length || 0}
+                </span> firma yer alıyor
               </p>
             </div>
 

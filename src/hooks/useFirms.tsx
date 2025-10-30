@@ -28,6 +28,12 @@ export function useFirms(categoryId?: string) {
   return useQuery({
     queryKey: ["firms", categoryId],
     queryFn: async () => {
+      // First get the total count
+      const { count: totalCount } = await supabase
+        .from("firms")
+        .select("*", { count: 'exact', head: true })
+        .eq("is_approved", true);
+
       let query = supabase
         .from("firms")
         .select(`
@@ -37,8 +43,9 @@ export function useFirms(categoryId?: string) {
             name,
             slug
           )
-        `, { count: 'exact' })
-        .eq("is_approved", true);
+        `)
+        .eq("is_approved", true)
+        .limit(10000); // Yüksek limit
 
       if (categoryId) {
         query = query.eq("category_id", categoryId);
@@ -46,10 +53,17 @@ export function useFirms(categoryId?: string) {
 
       query = query.order("created_at", { ascending: false });
 
-      const { data, error, count } = await query;
+      const { data, error } = await query;
 
       if (error) throw error;
-      console.log('Total approved firms:', count);
+      
+      console.log('Total approved firms:', totalCount);
+      
+      // Store count in a global variable for use in components
+      if (typeof window !== 'undefined') {
+        (window as any).__TOTAL_FIRMS_COUNT__ = totalCount;
+      }
+      
       return data as Firm[];
     },
   });
