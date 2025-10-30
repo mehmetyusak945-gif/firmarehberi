@@ -14,14 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       firms: {
         Row: {
           added_by: string | null
           address: string | null
-          category: string
+          category_id: string | null
           created_at: string | null
           description: string | null
           email: string | null
+          external_id: string | null
           id: string
           is_approved: boolean | null
           name: string
@@ -34,10 +56,11 @@ export type Database = {
         Insert: {
           added_by?: string | null
           address?: string | null
-          category: string
+          category_id?: string | null
           created_at?: string | null
           description?: string | null
           email?: string | null
+          external_id?: string | null
           id?: string
           is_approved?: boolean | null
           name: string
@@ -50,10 +73,11 @@ export type Database = {
         Update: {
           added_by?: string | null
           address?: string | null
-          category?: string
+          category_id?: string | null
           created_at?: string | null
           description?: string | null
           email?: string | null
+          external_id?: string | null
           id?: string
           is_approved?: boolean | null
           name?: string
@@ -69,6 +93,13 @@ export type Database = {
             columns: ["added_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "firms_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -135,6 +166,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      user_firm_count: { Args: { user_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"

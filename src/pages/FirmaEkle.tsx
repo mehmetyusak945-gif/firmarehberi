@@ -1,19 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { AdBanner } from "@/components/AdBanner";
-import { categories } from "@/data/mockFirms";
+import { useCategories } from "@/hooks/useCategories";
+import { useUserFirmCount } from "@/hooks/useFirms";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, CheckCircle } from "lucide-react";
+import { Building2, CheckCircle, AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { slugify } from "@/lib/slugify";
+import { useNavigate } from "react-router-dom";
 
 const FirmaEkle = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: categories } = useCategories();
+  const { data: userFirmCount } = useUserFirmCount(user?.id);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -22,11 +32,17 @@ const FirmaEkle = () => {
     address: "",
     phone: "",
     website: "",
-    category: "",
+    categoryId: "",
     description: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user, navigate]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -53,7 +69,7 @@ const FirmaEkle = () => {
       newErrors.website = "Geçerli bir web sitesi adresi giriniz (örn: example.com)";
     }
 
-    if (!formData.category) {
+    if (!formData.categoryId) {
       newErrors.category = "Kategori seçimi zorunludur";
     }
 
@@ -72,6 +88,25 @@ const FirmaEkle = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Firma eklemek için giriş yapmalısınız.",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    if (userFirmCount && userFirmCount >= 1) {
+      toast({
+        variant: "destructive",
+        title: "Limit Aşıldı",
+        description: "Her kullanıcı maksimum 1 firma ekleyebilir.",
+      });
+      return;
+    }
+
     if (!validateForm()) {
       toast({
         variant: "destructive",
@@ -83,9 +118,21 @@ const FirmaEkle = () => {
 
     setIsSubmitting(true);
 
-    // Simulated API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const { error } = await supabase.from("firms").insert({
+        name: formData.name,
+        address: formData.address,
+        phone: formData.phone,
+        website: formData.website || null,
+        category_id: formData.categoryId,
+        description: formData.description,
+        slug: slugify(formData.name),
+        added_by: user.id,
+        is_approved: false, // Normal kullanıcılar için onay beklemeli
+      });
+
+      if (error) throw error;
+
       setIsSuccess(true);
       
       toast({
@@ -99,13 +146,21 @@ const FirmaEkle = () => {
         address: "",
         phone: "",
         website: "",
-        category: "",
+        categoryId: "",
         description: "",
       });
 
       // Success mesajını 5 saniye sonra kaldır
       setTimeout(() => setIsSuccess(false), 5000);
-    }, 2000);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message || "Firma eklenirken hata oluştu",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -115,6 +170,34 @@ const FirmaEkle = () => {
       setErrors(prev => ({ ...prev, [field]: "" }));
     }
   };
+
+  // Eğer kullanıcı zaten firma eklemişse uyarı göster
+  if (userFirmCount && userFirmCount >= 1) {
+    return (
+      <>
+        <SEOHead
+          title="Firma Ekle - Firma Rehberim"
+          description="Firmanızı ücretsiz olarak rehberimize ekleyin."
+        />
+        <div className="min-h-screen flex flex-col bg-background">
+          <Header />
+          <main className="flex-1 container mx-auto px-4 py-12">
+            <div className="max-w-2xl mx-auto text-center">
+              <AlertCircle className="h-16 w-16 text-warning mx-auto mb-4" />
+              <h1 className="text-3xl font-bold mb-4">Limit Aşıldı</h1>
+              <p className="text-lg text-muted-foreground mb-8">
+                Her kullanıcı maksimum 1 firma ekleyebilir. Zaten bir firma eklediniz.
+              </p>
+              <Button onClick={() => navigate("/")} variant="default">
+                Ana Sayfaya Dön
+              </Button>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -235,14 +318,14 @@ const FirmaEkle = () => {
                     <Label htmlFor="category">
                       Kategori <span className="text-destructive">*</span>
                     </Label>
-                    <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
+                    <Select value={formData.categoryId} onValueChange={(value) => handleChange("categoryId", value)}>
                       <SelectTrigger className={errors.category ? "border-destructive" : ""}>
                         <SelectValue placeholder="Kategori seçin" />
                       </SelectTrigger>
                       <SelectContent className="bg-background z-50">
-                        {categories.map(category => (
-                          <SelectItem key={category} value={category}>
-                            {category}
+                        {categories?.map(category => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
