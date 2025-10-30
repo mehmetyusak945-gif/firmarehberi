@@ -11,6 +11,7 @@ import FirmaEkle from "./pages/FirmaEkle";
 import Iletisim from "./pages/Iletisim";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import Page from "./pages/Page";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/iletisim" element={<Iletisim />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/:slug" element={<Page />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
