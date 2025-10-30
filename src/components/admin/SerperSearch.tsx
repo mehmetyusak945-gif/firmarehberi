@@ -283,6 +283,15 @@ export const SerperSearch = () => {
                         {place.address}
                       </p>
                     )}
+                    {place.types && place.types.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {place.types.slice(0, 3).map((type, i) => (
+                          <span key={i} className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
+                            {type.replace(/_/g, ' ')}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2 mt-1 text-xs text-muted-foreground">
                       {place.phoneNumber && <span>📞 {place.phoneNumber}</span>}
                       {place.rating && <span>⭐ {place.rating}</span>}
