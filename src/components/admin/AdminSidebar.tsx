@@ -15,6 +15,7 @@ import {
   Search,
   Settings,
   AlertCircle,
+  Merge,
 } from "lucide-react";
 import {
   Sidebar,
@@ -46,6 +47,7 @@ const menuItems = {
   ],
   content: [
     { value: "categories", label: "Kategoriler", icon: FolderTree },
+    { value: "category-merge", label: "Kategori Birleştir", icon: Merge },
     { value: "pages", label: "Sayfalar", icon: FileText },
     { value: "messages", label: "Mesajlar", icon: Mail },
     { value: "firm-reports", label: "Firma Bildirimleri", icon: AlertCircle },

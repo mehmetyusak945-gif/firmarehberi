@@ -23,12 +23,20 @@ const Index = () => {
     }
   };
 
-  // Rastgele 16 kategori seç
+  // Rastgele 16 kategori seç ve firma sayılarını hesapla
   const randomCategories = useMemo(() => {
     if (!categories || categories.length === 0) return [];
-    const shuffled = [...categories].sort(() => Math.random() - 0.5);
+    
+    // Her kategorinin firma sayısını hesapla
+    const categoriesWithCount = categories.map(category => ({
+      ...category,
+      firmCount: firms?.filter(f => f.category_id === category.id).length || 0
+    }));
+    
+    // Rastgele sırala ve ilk 16'sını al
+    const shuffled = [...categoriesWithCount].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 16);
-  }, [categories]);
+  }, [categories, firms]);
 
   // Filtrelenmiş firmalar - rastgele 12 adet
   const randomFirms = useMemo(() => {
@@ -126,18 +134,15 @@ const Index = () => {
                   >
                     Tümü ({firms?.length || 0})
                   </button>
-                  {randomCategories.map(category => {
-                    const firmCount = firms?.filter(f => f.category_id === category.id).length || 0;
-                    return (
-                      <button
-                        key={category.id}
-                        onClick={() => handleCategoryClick(category.slug)}
-                        className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
-                      >
-                        {category.name} ({firmCount})
-                      </button>
-                    );
-                  })}
+                  {randomCategories.map(category => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategoryClick(category.slug)}
+                      className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
+                    >
+                      {category.name} ({category.firmCount})
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

@@ -15,6 +15,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
 import { CategoryManagement } from "@/components/admin/CategoryManagement";
+import { CategoryMerge } from "@/components/admin/CategoryMerge";
 import { AdManagement } from "@/components/admin/AdManagement";
 import { PendingFirms } from "@/components/admin/PendingFirms";
 import { DatabaseBackup } from "@/components/admin/DatabaseBackup";
@@ -207,6 +208,7 @@ const Admin = () => {
               {activeTab === "firms" && <FirmList />}
               {activeTab === "pending" && <PendingFirms />}
               {activeTab === "categories" && <CategoryManagement />}
+              {activeTab === "category-merge" && <CategoryMerge />}
               {activeTab === "ads" && <AdManagement />}
               {activeTab === "backup" && <DatabaseBackup />}
               {activeTab === "clear-data" && <DataClear />}
