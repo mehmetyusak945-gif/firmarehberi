@@ -7,20 +7,43 @@ import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight, Loader2, MessageSq
 import { formatPhone } from "@/lib/slugify";
 import { useEffect, useState } from "react";
 import { useFirmBySlug } from "@/hooks/useFirms";
+import { supabase } from "@/integrations/supabase/client";
 
 const FirmaDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: firma, isLoading } = useFirmBySlug(slug || "");
   const [aiDescription, setAiDescription] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(true);
+  const [metaDescription, setMetaDescription] = useState<string>("");
 
   useEffect(() => {
-    // AI ile firma açıklaması oluşturma simülasyonu
-    // Gerçek implementasyonda burada Lovable AI çağrısı yapılacak
-    if (firma && firma.categories) {
+    const generateContent = async () => {
+      if (!firma || !firma.categories) return;
+
       setIsLoadingAI(true);
-      // Simulated AI response
-      setTimeout(() => {
+
+      try {
+        // Generate meta description with AI
+        const { data: metaData, error: metaError } = await supabase.functions.invoke(
+          'generate-meta-description',
+          {
+            body: {
+              firmName: firma.name,
+              categoryName: firma.categories.name,
+            },
+          }
+        );
+
+        if (!metaError && metaData?.metaDescription) {
+          setMetaDescription(metaData.metaDescription);
+        } else {
+          // Fallback meta description
+          setMetaDescription(
+            `${firma.name} - ${firma.categories.name} hizmetleri için güvenilir çözüm ortağınız. Detaylı bilgi ve iletişim için hemen inceleyin!`
+          );
+        }
+
+        // Generate firm description
         setAiDescription(
           `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır. ` +
           `${firma.address} adresinde faaliyet gösteren ${firma.name}, müşteri memnuniyetini ön planda tutarak ` +
@@ -30,9 +53,18 @@ const FirmaDetail = () => {
           `Müşteri odaklı yaklaşımı ve rekabetçi fiyatları ile tercih edilen ${firma.name}, ` +
           `sizlere en iyi hizmeti sunmak için çalışmaktadır.`
         );
+      } catch (error) {
+        console.error('Error generating content:', error);
+        // Fallback meta description
+        setMetaDescription(
+          `${firma.name} - ${firma.categories.name} hizmetleri. İletişim bilgileri ve detaylar için tıklayın.`
+        );
+      } finally {
         setIsLoadingAI(false);
-      }, 1500);
-    }
+      }
+    };
+
+    generateContent();
   }, [firma]);
 
   if (isLoading) {
@@ -95,7 +127,7 @@ const FirmaDetail = () => {
     <>
       <SEOHead
         title={`${firma.name} - ${firma.categories?.name || 'Firma'} | Firmam.org`}
-        description={firma.description ? (firma.description.length > 155 ? firma.description.substring(0, 155) + '...' : firma.description) : `${firma.name} ${firma.categories?.name || ''} hizmeti vermektedir.`}
+        description={metaDescription || (firma.description ? (firma.description.length > 155 ? firma.description.substring(0, 155) + '...' : firma.description) : `${firma.name} ${firma.categories?.name || ''} hizmeti vermektedir.`)}
         canonical={`https://firmam.org/firma/${firma.slug}`}
         ogType="business.business"
         keywords={`${firma.name}, ${firma.categories?.name || ''}, ${firma.address || ''}, firma rehberi`}
