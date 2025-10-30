@@ -222,17 +222,17 @@ serve(async (req) => {
           query
         );
 
+        // Kategori adı olarak query'yi kullan (Türkçe karakterler korunur)
+        // Eğer query yoksa slug'dan oluştur
+        const categoryName = query || categorySlug
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+
         // Kategori yoksa oluştur (CSV ile aynı mantık)
         let categoryId = categoryMap.get(categorySlug);
         
         if (!categoryId) {
-          // Kategori adı olarak query'yi kullan (Türkçe karakterler korunur)
-          // Eğer query yoksa slug'dan oluştur
-          const categoryName = query || categorySlug
-            .split('-')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-
           const { data: newCategory, error: categoryError } = await supabase
             .from('categories')
             .insert({ name: categoryName, slug: categorySlug })
@@ -240,7 +240,22 @@ serve(async (req) => {
             .single();
 
           if (categoryError) {
-            console.error('Category creation error:', categoryError);
+            // Kategori zaten varsa, mevcut kategoriyi kullan
+            if (categoryError.code === '23505') {
+              console.log(`Category ${categoryName} already exists, fetching existing category`);
+              const { data: existingCategory } = await supabase
+                .from('categories')
+                .select('id')
+                .eq('slug', categorySlug)
+                .single();
+              
+              if (existingCategory) {
+                categoryId = existingCategory.id;
+                categoryMap.set(categorySlug, categoryId);
+              }
+            } else {
+              console.error('Category creation error:', categoryError);
+            }
           } else if (newCategory) {
             categoryId = newCategory.id;
             categoryMap.set(categorySlug, categoryId);
@@ -291,7 +306,7 @@ serve(async (req) => {
         }
         
         // Firma ekle (CSV ile birebir aynı yapı)
-        const { error: firmError } = await supabase
+        const { data: insertedFirm, error: firmError } = await supabase
           .from('firms')
           .insert({
             external_id: externalId || finalSlug, // CSV ile aynı mantık
@@ -307,14 +322,60 @@ serve(async (req) => {
             category_id: categoryId,
             is_approved: true,
             added_by: userId || null,
-          });
+          })
+          .select('id, name, slug')
+          .single();
 
         if (firmError) {
           console.error('Firm insertion error:', firmError);
           results.failed++;
           results.errors.push(`${firm.title}: ${firmError.message}`);
-        } else {
+        } else if (insertedFirm) {
           results.success++;
+          
+          // AI açıklamalarını oluştur
+          try {
+            // Firma açıklaması oluştur
+            const descResponse = await fetch(`${supabaseUrl}/functions/v1/generate-firm-description`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseKey}`,
+              },
+              body: JSON.stringify({
+                firmId: insertedFirm.id,
+                firmName: insertedFirm.name,
+                categoryName: categoryName || 'Diğer',
+              }),
+            });
+
+            if (!descResponse.ok) {
+              console.error('Failed to generate firm description:', await descResponse.text());
+            }
+
+            // Meta açıklama oluştur
+            const metaResponse = await fetch(`${supabaseUrl}/functions/v1/generate-meta-description`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseKey}`,
+              },
+              body: JSON.stringify({
+                firmId: insertedFirm.id,
+                firmName: insertedFirm.name,
+                categoryName: categoryName || 'Diğer',
+              }),
+            });
+
+            if (!metaResponse.ok) {
+              console.error('Failed to generate meta description:', await metaResponse.text());
+            }
+
+            console.log(`AI descriptions generated for ${insertedFirm.name}`);
+          } catch (aiError) {
+            console.error('Error generating AI descriptions:', aiError);
+            // AI hatası firma eklenmesini engellemesin
+          }
         }
       } catch (error) {
         console.error('Error processing firm:', error);
