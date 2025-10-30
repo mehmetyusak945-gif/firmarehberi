@@ -20,7 +20,8 @@ interface Firm {
   website: string | null;
   description: string | null;
   rating: number | null;
-  category_id: string;
+  category_id: string | null;
+  suggested_category: string | null;
   slug: string;
 }
 
@@ -45,6 +46,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
     description: "",
     rating: "",
     category_id: "",
+    suggested_category: "",
+    new_category_name: "",
   });
 
   useEffect(() => {
@@ -58,6 +61,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
         description: firm.description || "",
         rating: firm.rating?.toString() || "",
         category_id: firm.category_id || "",
+        suggested_category: firm.suggested_category || "",
+        new_category_name: "",
       });
       setIsEditing(false);
     }
@@ -68,6 +73,31 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
 
     setIsSaving(true);
     try {
+      let finalCategoryId = formData.category_id;
+
+      // Eğer yeni kategori oluşturma seçilmişse
+      if (formData.new_category_name.trim()) {
+        const categorySlug = slugify(formData.new_category_name.trim());
+        
+        // Yeni kategoriyi oluştur
+        const { data: newCategory, error: categoryError } = await supabase
+          .from("categories")
+          .insert({
+            name: formData.new_category_name.trim(),
+            slug: categorySlug,
+          })
+          .select()
+          .single();
+
+        if (categoryError) throw categoryError;
+        finalCategoryId = newCategory.id;
+
+        toast({
+          title: "Kategori Oluşturuldu!",
+          description: `"${formData.new_category_name}" kategorisi başarıyla oluşturuldu.`,
+        });
+      }
+
       const updateData: any = {
         name: formData.name.trim(),
         address: formData.address.trim() || null,
@@ -76,7 +106,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
         website: formData.website.trim() || null,
         description: formData.description.trim() || null,
         rating: formData.rating ? parseFloat(formData.rating) : null,
-        category_id: formData.category_id,
+        category_id: finalCategoryId,
+        suggested_category: null, // Kategori atandıktan sonra öneriyi temizle
         slug: slugify(formData.name.trim()),
       };
 
@@ -116,6 +147,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
         description: firm.description || "",
         rating: firm.rating?.toString() || "",
         category_id: firm.category_id || "",
+        suggested_category: firm.suggested_category || "",
+        new_category_name: "",
       });
     }
     setIsEditing(false);
@@ -160,6 +193,32 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
               </SelectContent>
             </Select>
           </div>
+
+          {/* Kategori Önerisi varsa göster */}
+          {formData.suggested_category && (
+            <div className="space-y-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <Label className="text-yellow-800 dark:text-yellow-200">
+                Kullanıcı Kategori Önerisi
+              </Label>
+              <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                "{formData.suggested_category}"
+              </p>
+              {isEditing && (
+                <div className="space-y-2 mt-2">
+                  <Label htmlFor="new_category">Yeni Kategori Olarak Oluştur</Label>
+                  <Input
+                    id="new_category"
+                    value={formData.new_category_name}
+                    onChange={(e) => setFormData({ ...formData, new_category_name: e.target.value })}
+                    placeholder={formData.suggested_category}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Bu alanı doldurursanız yeni bir kategori oluşturulacak ve firma bu kategoriye atanacaktır.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="address">Adres</Label>

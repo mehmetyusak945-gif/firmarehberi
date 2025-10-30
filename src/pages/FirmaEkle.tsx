@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEOHead } from "@/components/SEOHead";
-import { AdBanner } from "@/components/AdBanner";
+import { AdBox } from "@/components/ads";
 import { useCategories } from "@/hooks/useCategories";
 import { useUserFirmCount } from "@/hooks/useFirms";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,9 +30,11 @@ const FirmaEkle = () => {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    phone: "",
+    landline_phone: "",
+    mobile_phone: "",
     website: "",
     categoryId: "",
+    suggested_category: "",
     description: "",
   });
 
@@ -59,18 +61,24 @@ const FirmaEkle = () => {
       newErrors.address = "Lütfen detaylı adres giriniz";
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Telefon numarası zorunludur";
-    } else if (!/^[0-9\s\-\+\(\)]+$/.test(formData.phone)) {
-      newErrors.phone = "Geçerli bir telefon numarası giriniz";
+    if (!formData.landline_phone.trim()) {
+      newErrors.landline_phone = "Sabit telefon numarası zorunludur";
+    } else if (!/^[0-9\s\-\+\(\)]+$/.test(formData.landline_phone)) {
+      newErrors.landline_phone = "Geçerli bir telefon numarası giriniz";
+    }
+
+    if (!formData.mobile_phone.trim()) {
+      newErrors.mobile_phone = "Mobil telefon numarası zorunludur";
+    } else if (!/^[0-9\s\-\+\(\)]+$/.test(formData.mobile_phone)) {
+      newErrors.mobile_phone = "Geçerli bir telefon numarası giriniz";
     }
 
     if (formData.website && !/^[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}/.test(formData.website)) {
       newErrors.website = "Geçerli bir web sitesi adresi giriniz (örn: example.com)";
     }
 
-    if (!formData.categoryId) {
-      newErrors.category = "Kategori seçimi zorunludur";
+    if (!formData.categoryId && !formData.suggested_category.trim()) {
+      newErrors.category = "Kategori seçimi veya kategori önerisi zorunludur";
     }
 
     if (!formData.description.trim()) {
@@ -122,9 +130,11 @@ const FirmaEkle = () => {
       const { error } = await supabase.from("firms").insert({
         name: formData.name,
         address: formData.address,
-        phone: formData.phone,
+        landline_phone: formData.landline_phone,
+        mobile_phone: formData.mobile_phone,
         website: formData.website || null,
-        category_id: formData.categoryId,
+        category_id: formData.categoryId || null,
+        suggested_category: formData.suggested_category || null,
         description: formData.description,
         slug: slugify(formData.name),
         added_by: user.id,
@@ -144,9 +154,11 @@ const FirmaEkle = () => {
       setFormData({
         name: "",
         address: "",
-        phone: "",
+        landline_phone: "",
+        mobile_phone: "",
         website: "",
         categoryId: "",
+        suggested_category: "",
         description: "",
       });
 
@@ -278,39 +290,63 @@ const FirmaEkle = () => {
                     )}
                   </div>
 
-                  {/* Telefon ve Web Sitesi */}
+                  {/* Telefon Numaraları */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="phone">
-                        Telefon Numarası <span className="text-destructive">*</span>
+                      <Label htmlFor="landline_phone">
+                        Sabit Telefon <span className="text-destructive">*</span>
                       </Label>
                       <Input
-                        id="phone"
+                        id="landline_phone"
                         type="tel"
-                        value={formData.phone}
-                        onChange={(e) => handleChange("phone", e.target.value)}
+                        value={formData.landline_phone}
+                        onChange={(e) => handleChange("landline_phone", e.target.value)}
                         placeholder="0212 555 01 01"
-                        className={errors.phone ? "border-destructive" : ""}
+                        className={errors.landline_phone ? "border-destructive" : ""}
                       />
-                      {errors.phone && (
-                        <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+                      {errors.landline_phone && (
+                        <p className="text-sm text-destructive mt-1">{errors.landline_phone}</p>
                       )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Format: 0XXX XXX XX XX
+                      </p>
                     </div>
 
                     <div>
-                      <Label htmlFor="website">Web Sitesi</Label>
+                      <Label htmlFor="mobile_phone">
+                        Mobil Telefon <span className="text-destructive">*</span>
+                      </Label>
                       <Input
-                        id="website"
-                        type="text"
-                        value={formData.website}
-                        onChange={(e) => handleChange("website", e.target.value)}
-                        placeholder="www.firma.com"
-                        className={errors.website ? "border-destructive" : ""}
+                        id="mobile_phone"
+                        type="tel"
+                        value={formData.mobile_phone}
+                        onChange={(e) => handleChange("mobile_phone", e.target.value)}
+                        placeholder="0532 123 45 67"
+                        className={errors.mobile_phone ? "border-destructive" : ""}
                       />
-                      {errors.website && (
-                        <p className="text-sm text-destructive mt-1">{errors.website}</p>
+                      {errors.mobile_phone && (
+                        <p className="text-sm text-destructive mt-1">{errors.mobile_phone}</p>
                       )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Format: 05XX XXX XX XX (WhatsApp için kullanılacak)
+                      </p>
                     </div>
+                  </div>
+
+                  {/* Web Sitesi */}
+                  <div>
+                    <Label htmlFor="website">Web Sitesi</Label>
+                    <Input
+                      id="website"
+                      type="text"
+                      value={formData.website}
+                      onChange={(e) => handleChange("website", e.target.value)}
+                      placeholder="www.firma.com"
+                      className={errors.website ? "border-destructive" : ""}
+                    />
+                    {errors.website && (
+                      <p className="text-sm text-destructive mt-1">{errors.website}</p>
+                    )}
                   </div>
 
                   {/* Kategori */}
@@ -333,6 +369,22 @@ const FirmaEkle = () => {
                     {errors.category && (
                       <p className="text-sm text-destructive mt-1">{errors.category}</p>
                     )}
+                  </div>
+
+                  {/* Kategori Önerisi */}
+                  <div>
+                    <Label htmlFor="suggested_category">
+                      Kategori Önerisi (Kategori listede yoksa)
+                    </Label>
+                    <Input
+                      id="suggested_category"
+                      value={formData.suggested_category}
+                      onChange={(e) => handleChange("suggested_category", e.target.value)}
+                      placeholder="Örn: Cam Balkon"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Eğer firmanızın kategorisi listede yoksa, önerinizi buraya yazabilirsiniz.
+                    </p>
                   </div>
 
                   {/* Açıklama */}
@@ -378,7 +430,7 @@ const FirmaEkle = () => {
               {/* Sidebar - Reklam */}
               <div className="lg:col-span-1">
                 <div className="sticky top-20 space-y-6">
-                  <AdBanner size="medium" />
+                  <AdBox />
                   
                   <div className="bg-card rounded-xl border p-6 shadow-md">
                     <h3 className="font-bold mb-3">Neden Firma Eklemeliyim?</h3>
@@ -402,7 +454,7 @@ const FirmaEkle = () => {
                     </ul>
                   </div>
 
-                  <AdBanner size="rectangle" />
+                  <AdBox />
                 </div>
               </div>
             </div>

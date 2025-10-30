@@ -114,6 +114,7 @@ export type Database = {
           name: string
           rating: number | null
           slug: string
+          suggested_category: string | null
           updated_at: string | null
           website: string | null
         }
@@ -132,6 +133,7 @@ export type Database = {
           name: string
           rating?: number | null
           slug: string
+          suggested_category?: string | null
           updated_at?: string | null
           website?: string | null
         }
@@ -150,6 +152,7 @@ export type Database = {
           name?: string
           rating?: number | null
           slug?: string
+          suggested_category?: string | null
           updated_at?: string | null
           website?: string | null
         }
@@ -252,6 +255,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webmaster_settings: {
+        Row: {
+          bing_webmaster_meta: string | null
+          created_at: string | null
+          google_analytics_code: string | null
+          google_search_console_meta: string | null
+          id: string
+          updated_at: string | null
+          yandex_webmaster_meta: string | null
+        }
+        Insert: {
+          bing_webmaster_meta?: string | null
+          created_at?: string | null
+          google_analytics_code?: string | null
+          google_search_console_meta?: string | null
+          id?: string
+          updated_at?: string | null
+          yandex_webmaster_meta?: string | null
+        }
+        Update: {
+          bing_webmaster_meta?: string | null
+          created_at?: string | null
+          google_analytics_code?: string | null
+          google_search_console_meta?: string | null
+          id?: string
+          updated_at?: string | null
+          yandex_webmaster_meta?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -21,6 +21,7 @@ interface Firm {
   description: string | null;
   rating: number | null;
   category_id: string;
+  suggested_category: string | null;
   slug: string;
   is_approved: boolean;
   created_at: string;

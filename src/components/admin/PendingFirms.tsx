@@ -25,12 +25,13 @@ interface PendingFirm {
   landline_phone: string | null;
   mobile_phone: string | null;
   website: string | null;
-  category_id: string;
+  category_id: string | null;
+  suggested_category: string | null;
   description: string | null;
   created_at: string;
   categories: {
     name: string;
-  };
+  } | null;
 }
 
 export const PendingFirms = () => {
@@ -55,6 +56,7 @@ export const PendingFirms = () => {
           mobile_phone,
           website,
           category_id,
+          suggested_category,
           description,
           created_at,
           categories (
@@ -153,7 +155,7 @@ export const PendingFirms = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Firma Adı</TableHead>
-                    <TableHead>Kategori</TableHead>
+                    <TableHead>Kategori / Öneri</TableHead>
                     <TableHead>Telefon</TableHead>
                     <TableHead>Tarih</TableHead>
                     <TableHead className="w-[180px]">İşlem</TableHead>
@@ -163,7 +165,16 @@ export const PendingFirms = () => {
                   {firms.map((firm) => (
                     <TableRow key={firm.id}>
                       <TableCell className="font-medium">{firm.name}</TableCell>
-                      <TableCell>{firm.categories.name}</TableCell>
+                      <TableCell>
+                        <div>
+                          {firm.categories?.name || "-"}
+                          {firm.suggested_category && (
+                            <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                              Öneri: {firm.suggested_category}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>{firm.landline_phone || firm.mobile_phone || "-"}</TableCell>
                       <TableCell>
                         {new Date(firm.created_at).toLocaleDateString("tr-TR")}

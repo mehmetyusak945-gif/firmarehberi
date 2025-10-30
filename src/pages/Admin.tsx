@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone, Clock, HardDrive, Mail, FileText, AlertTriangle } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone, Clock, HardDrive, Mail, FileText, AlertTriangle, Globe } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
@@ -22,6 +22,7 @@ import { DatabaseBackup } from "@/components/admin/DatabaseBackup";
 import { ContactMessages } from "@/components/admin/ContactMessages";
 import { PageManagement } from "@/components/admin/PageManagement";
 import { DataClear } from "@/components/admin/DataClear";
+import { WebmasterManagement } from "@/components/admin/WebmasterManagement";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -201,7 +202,7 @@ const Admin = () => {
         <main className="flex-1 container mx-auto px-4 py-8">
           <Tabs defaultValue="firms" className="w-full">
             <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <TabsList className="grid w-full max-w-5xl grid-cols-3 md:grid-cols-9 gap-2">
+              <TabsList className="grid w-full max-w-5xl grid-cols-3 md:grid-cols-10 gap-2">
                 <TabsTrigger value="firms" className="text-xs md:text-sm">
                   <List className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
                   <span className="hidden sm:inline">Firmalar</span>
@@ -237,6 +238,10 @@ const Admin = () => {
                 <TabsTrigger value="upload-excel" className="text-xs md:text-sm">
                   <Upload className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
                   <span className="hidden sm:inline">Toplu Firma Ekle</span>
+                </TabsTrigger>
+                <TabsTrigger value="webmaster" className="text-xs md:text-sm">
+                  <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                  <span className="hidden sm:inline">Webmaster</span>
                 </TabsTrigger>
               </TabsList>
               
@@ -285,6 +290,10 @@ const Admin = () => {
 
             <TabsContent value="pages">
               <PageManagement />
+            </TabsContent>
+
+            <TabsContent value="webmaster">
+              <WebmasterManagement />
             </TabsContent>
 
             <TabsContent value="add-firm">
