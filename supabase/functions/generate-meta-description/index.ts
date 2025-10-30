@@ -69,7 +69,7 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı, dikkat çekici ve tıklanmayı teşvik edecek bir meta açıklama oluştur. Firma ismini ve kategoriyi mutlaka içermeli. Sadece meta açıklamayı döndür.`
+              text: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. ZORUNLU: 130-155 karakter arası. Firma adı ve kategori içermeli. Türkçe.`
             }]
           }],
           generationConfig: {
@@ -104,20 +104,12 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: `Sen profesyonel bir SEO ve pazarlama uzmanısın. Görevin yerel işletmeler için dikkat çekici, SEO odaklı meta açıklamaları oluşturmak.
-
-KURALLAR:
-- Meta açıklama tam olarak 130-155 karakter arasında olmalı
-- Firma ismini ve kategoriyi mutlaka içermeli
-- Merak uyandırıcı ve harekete geçirici olmalı
-- Tıklanmayı teşvik etmeli
-- Doğal ve akıcı Türkçe kullan
-- Sadece meta açıklamayı döndür, başka hiçbir şey yazma`
+              content: "Sen bir SEO uzmanısın. Meta description yazıyorsun. MUTLAKA 130-155 karakter arasında olmalı. Firma adı ve kategori içermeli, açıklayıcı ve net olmalı.",
             },
             {
               role: 'user',
-              content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı, dikkat çekici meta açıklama oluştur.`
-            }
+              content: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. ZORUNLU: 130-155 karakter arası. Türkçe.`,
+            },
           ],
           max_completion_tokens: 100,
         }),
@@ -153,21 +145,12 @@ KURALLAR:
           messages: [
             {
               role: 'system',
-              content: `Sen profesyonel bir SEO ve pazarlama uzmanısın. Görevin yerel işletmeler için dikkat çekici, SEO odaklı meta açıklamaları oluşturmak. 
-
-KURALLAR:
-- Meta açıklama tam olarak 130-155 karakter arasında olmalı
-- Firma ismini ve kategoriyi mutlaka içermeli
-- Merak uyandırıcı ve harekete geçirici olmalı
-- Tıklanmayı teşvik etmeli (click-bait tarzı ama abartısız)
-- Doğal ve akıcı Türkçe kullan
-- Anahtar kelimeleri doğal bir şekilde yerleştir
-- Sadece meta açıklamayı döndür, başka hiçbir şey yazma`
+              content: "Sen bir SEO uzmanısın. Meta description yazıyorsun. MUTLAKA 130-155 karakter arasında olmalı. Firma adı ve kategori içermeli, açıklayıcı ve net olmalı.",
             },
             {
               role: 'user',
-              content: `Firma: ${firmName}\nKategori: ${categoryName}\n\nBu firma için 130-155 karakter arası SEO odaklı, dikkat çekici meta açıklama oluştur.`
-            }
+              content: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. ZORUNLU: 130-155 karakter arası. Türkçe.`,
+            },
           ],
           temperature: 0.9,
           max_tokens: 100,
