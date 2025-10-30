@@ -15,7 +15,8 @@ interface Firm {
   id: string;
   name: string;
   address: string | null;
-  phone: string | null;
+  landline_phone: string | null;
+  mobile_phone: string | null;
   website: string | null;
   description: string | null;
   rating: number | null;
@@ -73,7 +74,8 @@ export const FirmList = () => {
     if (searchTerm) {
       filtered = filtered.filter((firm) =>
         firm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        firm.phone?.includes(searchTerm)
+        firm.landline_phone?.includes(searchTerm) ||
+        firm.mobile_phone?.includes(searchTerm)
       );
     }
 
@@ -224,7 +226,7 @@ export const FirmList = () => {
                     <TableRow key={firm.id}>
                       <TableCell className="font-medium">{firm.name}</TableCell>
                       <TableCell>{getCategoryName(firm.category_id)}</TableCell>
-                      <TableCell>{firm.phone || "-"}</TableCell>
+                      <TableCell>{firm.landline_phone || firm.mobile_phone || "-"}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Switch

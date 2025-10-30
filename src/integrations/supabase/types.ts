@@ -109,8 +109,9 @@ export type Database = {
           external_id: string | null
           id: string
           is_approved: boolean | null
+          landline_phone: string | null
+          mobile_phone: string | null
           name: string
-          phone: string | null
           rating: number | null
           slug: string
           updated_at: string | null
@@ -126,8 +127,9 @@ export type Database = {
           external_id?: string | null
           id?: string
           is_approved?: boolean | null
+          landline_phone?: string | null
+          mobile_phone?: string | null
           name: string
-          phone?: string | null
           rating?: number | null
           slug: string
           updated_at?: string | null
@@ -143,8 +145,9 @@ export type Database = {
           external_id?: string | null
           id?: string
           is_approved?: boolean | null
+          landline_phone?: string | null
+          mobile_phone?: string | null
           name?: string
-          phone?: string | null
           rating?: number | null
           slug?: string
           updated_at?: string | null

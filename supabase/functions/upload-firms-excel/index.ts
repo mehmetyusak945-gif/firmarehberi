@@ -149,45 +149,53 @@ serve(async (req) => {
     
     // Prepare firms with category_id and unique slugs
     const firmsToInsert = uniqueFirms.map(firm => {
-      const baseSlug = slugify(firm.name)
+      // Generate slug: external_id-firma-ismi
+      const nameSlug = slugify(firm.name)
+      let finalSlug: string
       
-      // If this external_id already exists, use its existing slug
-      const externalId = firm.external_id || baseSlug
-      if (existingExternalIds.has(externalId)) {
-        const existingSlug = existingExternalIds.get(externalId)!
-        return {
-          external_id: externalId,
-          name: firm.name,
-          slug: existingSlug,
-          address: firm.address || null,
-          phone: firm.phone || null,
-          website: firm.website || null,
-          rating: firm.rating || 0,
-          category_id: categoryMap.get(firm.category) || null,
-          is_approved: true,
-          added_by: null,
+      if (firm.external_id) {
+        // If external_id exists, slug format: ID-firma-ismi
+        finalSlug = `${firm.external_id}-${nameSlug}`
+      } else {
+        // If no external_id, use name slug and check for conflicts
+        finalSlug = nameSlug
+        let counter = slugCounts.get(nameSlug) || 0
+        
+        // Keep incrementing until we find a unique slug
+        while (existingSlugs.has(finalSlug)) {
+          counter++
+          finalSlug = `${nameSlug}-${counter}`
+        }
+        
+        slugCounts.set(nameSlug, counter + 1)
+      }
+      
+      existingSlugs.add(finalSlug) // Add to set to avoid conflicts within batch
+      
+      // Determine if phone is landline or mobile
+      // Turkish landline starts with 0 + area code (e.g., 0216, 0312)
+      // Mobile starts with 05 (e.g., 0532, 0535)
+      let landline_phone = null
+      let mobile_phone = null
+      
+      if (firm.phone) {
+        const cleanPhone = firm.phone.replace(/\D/g, '')
+        if (cleanPhone.startsWith('05')) {
+          mobile_phone = firm.phone
+        } else {
+          landline_phone = firm.phone
         }
       }
       
-      // Generate unique slug for new firms
-      let finalSlug = baseSlug
-      let counter = slugCounts.get(baseSlug) || 0
-      
-      // Keep incrementing until we find a unique slug
-      while (existingSlugs.has(finalSlug)) {
-        counter++
-        finalSlug = `${baseSlug}-${counter}`
-      }
-      
-      slugCounts.set(baseSlug, counter + 1)
-      existingSlugs.add(finalSlug) // Add to set to avoid conflicts within batch
+      const externalId = firm.external_id || finalSlug
       
       return {
         external_id: externalId,
         name: firm.name,
         slug: finalSlug,
         address: firm.address || null,
-        phone: firm.phone || null,
+        landline_phone: landline_phone,
+        mobile_phone: mobile_phone,
         website: firm.website || null,
         rating: firm.rating || 0,
         category_id: categoryMap.get(firm.category) || null,
@@ -284,7 +292,7 @@ function parseJSON(jsonData: any[]): any[] {
         return null
       }
       
-      // Parse phone
+      // Parse phone - determine if landline or mobile
       let phone = getPhone()
       if (phone) {
         phone = validateAndTruncate(String(phone), MAX_LENGTHS.phone)
@@ -316,11 +324,26 @@ function parseJSON(jsonData: any[]): any[] {
       // Parse address
       const address = getAddress()
       
+      // Determine landline vs mobile
+      let landline_phone = null
+      let mobile_phone = null
+      
+      if (phone) {
+        const cleanPhone = phone.replace(/\D/g, '')
+        if (cleanPhone.startsWith('05')) {
+          mobile_phone = phone
+        } else {
+          landline_phone = phone
+        }
+      }
+      
       return {
         external_id: getId() ? validateAndTruncate(String(getId()), MAX_LENGTHS.external_id) : null,
         name,
         address: address ? validateAndTruncate(String(address), MAX_LENGTHS.address) : null,
-        phone,
+        phone, // Keep for internal processing
+        landline_phone,
+        mobile_phone,
         website,
         rating,
         category,

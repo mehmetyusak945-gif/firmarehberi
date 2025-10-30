@@ -36,10 +36,12 @@ const Admin = () => {
     name: "",
     categoryId: "",
     address: "",
-    phone: "",
+    landline_phone: "",
+    mobile_phone: "",
     website: "",
     email: "",
     description: "",
+    external_id: "",
   });
 
   useEffect(() => {
@@ -58,15 +60,22 @@ const Admin = () => {
     setIsLoading(true);
 
     try {
+      // Generate slug: ID-firma-ismi or just firma-ismi if no ID
+      const slug = formData.external_id 
+        ? `${formData.external_id}-${slugify(formData.name)}`
+        : slugify(formData.name);
+
       const { error } = await supabase.from("firms").insert({
         name: formData.name,
         category_id: formData.categoryId,
         address: formData.address,
-        phone: formData.phone,
+        landline_phone: formData.landline_phone,
+        mobile_phone: formData.mobile_phone,
         website: formData.website,
         email: formData.email,
         description: formData.description,
-        slug: slugify(formData.name),
+        external_id: formData.external_id || null,
+        slug: slug,
         added_by: user?.id,
         is_approved: true,
       });
@@ -82,10 +91,12 @@ const Admin = () => {
         name: "",
         categoryId: "",
         address: "",
-        phone: "",
+        landline_phone: "",
+        mobile_phone: "",
         website: "",
         email: "",
         description: "",
+        external_id: "",
       });
     } catch (error: any) {
       toast({
@@ -297,12 +308,34 @@ const Admin = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Telefon</Label>
+                        <Label htmlFor="external_id">Firma ID (Opsiyonel)</Label>
                         <Input
-                          id="phone"
+                          id="external_id"
+                          value={formData.external_id}
+                          onChange={(e) => setFormData({ ...formData, external_id: e.target.value })}
+                          placeholder="Google Maps ID veya benzersiz ID"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="landline_phone">Sabit Telefon</Label>
+                        <Input
+                          id="landline_phone"
                           type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          value={formData.landline_phone}
+                          onChange={(e) => setFormData({ ...formData, landline_phone: e.target.value })}
+                          placeholder="0216 123 45 67"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="mobile_phone">Mobil Telefon</Label>
+                        <Input
+                          id="mobile_phone"
+                          type="tel"
+                          value={formData.mobile_phone}
+                          onChange={(e) => setFormData({ ...formData, mobile_phone: e.target.value })}
+                          placeholder="0532 123 45 67"
                         />
                       </div>
 

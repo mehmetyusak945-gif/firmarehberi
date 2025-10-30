@@ -6,7 +6,8 @@ export interface Firm {
   name: string;
   slug: string;
   address: string | null;
-  phone: string | null;
+  landline_phone: string | null;
+  mobile_phone: string | null;
   website: string | null;
   email: string | null;
   description: string | null;

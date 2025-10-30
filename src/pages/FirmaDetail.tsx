@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { AdBox, AdLeaderboard } from "@/components/ads";
-import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight, Loader2 } from "lucide-react";
+import { MapPin, Phone, Globe, Star, ArrowLeft, ChevronRight, Loader2, MessageSquare } from "lucide-react";
 import { formatPhone } from "@/lib/slugify";
 import { useEffect, useState } from "react";
 import { useFirmBySlug } from "@/hooks/useFirms";
@@ -81,7 +81,7 @@ const FirmaDetail = () => {
       "@type": "PostalAddress",
       "streetAddress": firma.address
     },
-    "telephone": firma.phone,
+    "telephone": firma.landline_phone || firma.mobile_phone,
     "url": firma.website,
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -176,22 +176,55 @@ const FirmaDetail = () => {
 
                     {/* İletişim Bilgileri & CTA Butonlar */}
                     <section className="space-y-6 mb-8">
-                      {/* Telefon */}
-                      <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
-                        <Phone className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-1">Telefon</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{formatPhone(firma.phone)}</p>
-                          <a 
-                            href={`tel:${firma.phone}`}
-                            className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-success text-white hover:bg-success/90 shadow-md w-full md:w-auto"
-                            aria-label={`${firma.name} firmasını ara`}
-                          >
-                            <Phone className="h-4 w-4 mr-2" />
-                            Hemen Ara
-                          </a>
+                      {/* Sabit Telefon */}
+                      {firma.landline_phone && (
+                        <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
+                          <Phone className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <h3 className="font-semibold mb-1">Sabit Telefon</h3>
+                            <p className="text-sm text-muted-foreground mb-3">{formatPhone(firma.landline_phone)}</p>
+                            <a 
+                              href={`tel:${firma.landline_phone}`}
+                              className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-success text-white hover:bg-success/90 shadow-md w-full md:w-auto"
+                              aria-label={`${firma.name} firmasını ara`}
+                            >
+                              <Phone className="h-4 w-4 mr-2" />
+                              Hemen Ara
+                            </a>
+                          </div>
                         </div>
-                      </div>
+                      )}
+
+                      {/* Mobil Telefon */}
+                      {firma.mobile_phone && (
+                        <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
+                          <Phone className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <h3 className="font-semibold mb-1">Mobil Telefon</h3>
+                            <p className="text-sm text-muted-foreground mb-3">{formatPhone(firma.mobile_phone)}</p>
+                            <div className="flex flex-wrap gap-2">
+                              <a 
+                                href={`tel:${firma.mobile_phone}`}
+                                className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-success text-white hover:bg-success/90 shadow-md"
+                                aria-label={`${firma.name} firmasını ara`}
+                              >
+                                <Phone className="h-4 w-4 mr-2" />
+                                Hemen Ara
+                              </a>
+                              <a 
+                                href={`https://wa.me/90${firma.mobile_phone.replace(/\D/g, '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-base bg-[#25D366] text-white hover:bg-[#25D366]/90 shadow-md"
+                                aria-label={`${firma.name} firmasına WhatsApp ile ulaş`}
+                              >
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                                WhatsApp
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Web Sitesi */}
                       {firma.website && (

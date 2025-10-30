@@ -22,7 +22,8 @@ interface PendingFirm {
   id: string;
   name: string;
   address: string;
-  phone: string;
+  landline_phone: string | null;
+  mobile_phone: string | null;
   website: string | null;
   category_id: string;
   description: string | null;
@@ -50,7 +51,8 @@ export const PendingFirms = () => {
           id,
           name,
           address,
-          phone,
+          landline_phone,
+          mobile_phone,
           website,
           category_id,
           description,
@@ -162,7 +164,7 @@ export const PendingFirms = () => {
                     <TableRow key={firm.id}>
                       <TableCell className="font-medium">{firm.name}</TableCell>
                       <TableCell>{firm.categories.name}</TableCell>
-                      <TableCell>{firm.phone}</TableCell>
+                      <TableCell>{firm.landline_phone || firm.mobile_phone || "-"}</TableCell>
                       <TableCell>
                         {new Date(firm.created_at).toLocaleDateString("tr-TR")}
                       </TableCell>

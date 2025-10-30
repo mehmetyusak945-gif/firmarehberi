@@ -15,7 +15,8 @@ interface Firm {
   id: string;
   name: string;
   address: string | null;
-  phone: string | null;
+  landline_phone: string | null;
+  mobile_phone: string | null;
   website: string | null;
   description: string | null;
   rating: number | null;
@@ -38,7 +39,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    phone: "",
+    landline_phone: "",
+    mobile_phone: "",
     website: "",
     description: "",
     rating: "",
@@ -50,7 +52,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
       setFormData({
         name: firm.name || "",
         address: firm.address || "",
-        phone: firm.phone || "",
+        landline_phone: firm.landline_phone || "",
+        mobile_phone: firm.mobile_phone || "",
         website: firm.website || "",
         description: firm.description || "",
         rating: firm.rating?.toString() || "",
@@ -68,7 +71,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
       const updateData: any = {
         name: formData.name.trim(),
         address: formData.address.trim() || null,
-        phone: formData.phone.trim() || null,
+        landline_phone: formData.landline_phone.trim() || null,
+        mobile_phone: formData.mobile_phone.trim() || null,
         website: formData.website.trim() || null,
         description: formData.description.trim() || null,
         rating: formData.rating ? parseFloat(formData.rating) : null,
@@ -106,7 +110,8 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
       setFormData({
         name: firm.name || "",
         address: firm.address || "",
-        phone: firm.phone || "",
+        landline_phone: firm.landline_phone || "",
+        mobile_phone: firm.mobile_phone || "",
         website: firm.website || "",
         description: firm.description || "",
         rating: firm.rating?.toString() || "",
@@ -169,30 +174,41 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Telefon</Label>
+              <Label htmlFor="landline_phone">Sabit Telefon</Label>
               <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                id="landline_phone"
+                value={formData.landline_phone}
+                onChange={(e) => setFormData({ ...formData, landline_phone: e.target.value })}
                 disabled={!isEditing}
-                placeholder="0532 123 45 67"
+                placeholder="0216 123 45 67"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rating">Puan</Label>
+              <Label htmlFor="mobile_phone">Mobil Telefon</Label>
               <Input
-                id="rating"
-                type="number"
-                min="0"
-                max="5"
-                step="0.1"
-                value={formData.rating}
-                onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                id="mobile_phone"
+                value={formData.mobile_phone}
+                onChange={(e) => setFormData({ ...formData, mobile_phone: e.target.value })}
                 disabled={!isEditing}
-                placeholder="5.0"
+                placeholder="0532 123 45 67"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="rating">Puan</Label>
+            <Input
+              id="rating"
+              type="number"
+              min="0"
+              max="5"
+              step="0.1"
+              value={formData.rating}
+              onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+              disabled={!isEditing}
+              placeholder="5.0"
+            />
           </div>
 
           <div className="space-y-2">
