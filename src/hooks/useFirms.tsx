@@ -11,6 +11,8 @@ export interface Firm {
   website: string | null;
   email: string | null;
   description: string | null;
+  ai_description: string | null;
+  ai_meta_description: string | null;
   rating: number | null;
   is_approved: boolean;
   category_id: string | null;

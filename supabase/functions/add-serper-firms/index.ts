@@ -332,50 +332,7 @@ serve(async (req) => {
           results.errors.push(`${firm.title}: ${firmError.message}`);
         } else if (insertedFirm) {
           results.success++;
-          
-          // AI açıklamalarını oluştur
-          try {
-            // Firma açıklaması oluştur
-            const descResponse = await fetch(`${supabaseUrl}/functions/v1/generate-firm-description`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseKey}`,
-              },
-              body: JSON.stringify({
-                firmId: insertedFirm.id,
-                firmName: insertedFirm.name,
-                categoryName: categoryName || 'Diğer',
-              }),
-            });
-
-            if (!descResponse.ok) {
-              console.error('Failed to generate firm description:', await descResponse.text());
-            }
-
-            // Meta açıklama oluştur
-            const metaResponse = await fetch(`${supabaseUrl}/functions/v1/generate-meta-description`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseKey}`,
-              },
-              body: JSON.stringify({
-                firmId: insertedFirm.id,
-                firmName: insertedFirm.name,
-                categoryName: categoryName || 'Diğer',
-              }),
-            });
-
-            if (!metaResponse.ok) {
-              console.error('Failed to generate meta description:', await metaResponse.text());
-            }
-
-            console.log(`AI descriptions generated for ${insertedFirm.name}`);
-          } catch (aiError) {
-            console.error('Error generating AI descriptions:', aiError);
-            // AI hatası firma eklenmesini engellemesin
-          }
+          console.log(`Firm added: ${insertedFirm.name} (AI descriptions will be generated on first visit)`);
         }
       } catch (error) {
         console.error('Error processing firm:', error);

@@ -24,48 +24,62 @@ const FirmaDetail = () => {
       setIsLoadingAI(true);
 
       try {
-        // Generate AI description
-        const { data: descData, error: descError } = await supabase.functions.invoke(
-          'generate-firm-description',
-          {
-            body: {
-              name: firma.name,
-              category: firma.categories.name,
-              firmId: firma.id,
-            },
-          }
-        );
-
-        if (!descError && descData?.description) {
-          setAiDescription(descData.description);
+        // Eğer AI açıklaması veritabanında varsa, direkt kullan
+        if (firma.ai_description) {
+          setAiDescription(firma.ai_description);
+          console.log('Using existing AI description from database');
         } else {
-          // Fallback description
-          setAiDescription(
-            `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır. ` +
-            `${firma.address} adresinde faaliyet gösteren ${firma.name}, müşteri memnuniyetini ön planda tutarak ` +
-            `kaliteli ve güvenilir hizmet sunmaktadır.`
+          // Yoksa AI ile oluştur (ilk ziyaret)
+          console.log('Generating AI description for first visit...');
+          const { data: descData, error: descError } = await supabase.functions.invoke(
+            'generate-firm-description',
+            {
+              body: {
+                name: firma.name,
+                category: firma.categories.name,
+                firmId: firma.id,
+              },
+            }
           );
+
+          if (!descError && descData?.description) {
+            setAiDescription(descData.description);
+          } else {
+            // Fallback description
+            setAiDescription(
+              `${firma.name}, ${firma.categories?.name} kategorisinde hizmet veren profesyonel bir firmadır. ` +
+              `${firma.address} adresinde faaliyet gösteren ${firma.name}, müşteri memnuniyetini ön planda tutarak ` +
+              `kaliteli ve güvenilir hizmet sunmaktadır.`
+            );
+          }
         }
 
-        // Generate meta description with AI
-        const { data: metaData, error: metaError } = await supabase.functions.invoke(
-          'generate-meta-description',
-          {
-            body: {
-              firmName: firma.name,
-              categoryName: firma.categories.name,
-              firmId: firma.id,
-            },
-          }
-        );
-
-        if (!metaError && metaData?.metaDescription) {
-          setMetaDescription(metaData.metaDescription);
+        // Eğer AI meta açıklaması veritabanında varsa, direkt kullan
+        if (firma.ai_meta_description) {
+          setMetaDescription(firma.ai_meta_description);
+          console.log('Using existing AI meta description from database');
         } else {
-          // Fallback meta description
-          setMetaDescription(
-            `${firma.name} - ${firma.categories.name} hizmetleri için güvenilir çözüm ortağınız. Detaylı bilgi ve iletişim için hemen inceleyin!`
+          // Yoksa AI ile oluştur (ilk ziyaret)
+          console.log('Generating AI meta description for first visit...');
+          const { data: metaData, error: metaError } = await supabase.functions.invoke(
+            'generate-meta-description',
+            {
+              body: {
+                firmName: firma.name,
+                categoryName: firma.categories.name,
+                firmId: firma.id,
+              },
+            }
           );
+
+          if (!metaError && metaData?.metaDescription) {
+            setMetaDescription(metaData.metaDescription);
+          } else {
+            // Fallback meta description
+            setMetaDescription(
+              `${firma.name} - ${firma.categories.name} hizmetleri için güvenilir çözüm ortağınız. Detaylı bilgi ve iletişim için hemen inceleyin!`
+            );
+          }
         }
       } catch (error) {
         console.error('Error generating content:', error);
