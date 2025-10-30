@@ -12,13 +12,22 @@ serve(async (req) => {
   }
 
   try {
-    const { query, location, maxPages = 1 } = await req.json();
+    const { query, location, maxPages = 1, city, district } = await req.json();
     
     if (!query) {
       return new Response(
         JSON.stringify({ error: 'Query is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Şehir ve ilçe varsa query'ye ekle (daha kesin filtreleme için)
+    let enhancedQuery = query;
+    if (city) {
+      enhancedQuery += ` ${city}`;
+      if (district) {
+        enhancedQuery += ` ${district}`;
+      }
     }
 
     const SERPER_API_KEY = Deno.env.get('SERPER_API_KEY');
@@ -44,7 +53,7 @@ serve(async (req) => {
     const allPlaces: any[] = [];
     const pagesToFetch = Math.min(Math.max(1, maxPages), 20); // Limit to 20 pages max
     
-    console.log(`Fetching ${pagesToFetch} pages for query: ${query}`);
+    console.log(`Fetching ${pagesToFetch} pages for query: ${enhancedQuery} (original: ${query})`);
 
     for (let page = 1; page <= pagesToFetch; page++) {
       console.log(`Fetching page ${page}...`);
@@ -56,7 +65,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          q: query,
+          q: enhancedQuery,
           location: location || defaultLocation,
           gl,
           hl,

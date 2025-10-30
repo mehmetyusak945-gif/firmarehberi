@@ -105,15 +105,32 @@ function guessCategory(name: string, types: string[], query?: string): string {
 
 // Konum filtreleme - adres belirtilen şehir/ilçeyi içeriyor mu?
 function matchesLocation(address: string, city?: string, district?: string): boolean {
-  if (!address) return false; // Adres yoksa filtrele
+  // Adres yoksa ama şehir/ilçe de belirtilmemişse kabul et
+  if (!address) {
+    return !city && !district;
+  }
   
   const addressLower = address.toLowerCase();
   
-  // Önce şehir kontrolü - bu zorunlu
+  // Şehir belirtilmişse kontrol et
   if (city) {
     const cityLower = city.toLowerCase();
+    // Türkçe karakter dönüşümü yap
+    const turkishMap: { [key: string]: string } = {
+      'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c',
+      'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'
+    };
+    
+    const normalizeTurkish = (text: string) => {
+      return text.split('').map(c => turkishMap[c] || c).join('').toLowerCase();
+    };
+    
+    const normalizedAddress = normalizeTurkish(address);
+    const normalizedCity = normalizeTurkish(city);
+    
     // Şehir adı adreste geçmiyorsa filtrele
-    if (!addressLower.includes(cityLower)) {
+    if (!normalizedAddress.includes(normalizedCity)) {
+      console.log(`City mismatch: looking for "${city}" in "${address}"`);
       return false;
     }
   }
