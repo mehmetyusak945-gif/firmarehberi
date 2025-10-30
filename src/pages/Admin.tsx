@@ -23,6 +23,8 @@ import { PageManagement } from "@/components/admin/PageManagement";
 import { DataClear } from "@/components/admin/DataClear";
 import { WebmasterManagement } from "@/components/admin/WebmasterManagement";
 import { AISettings } from "@/components/admin/AISettings";
+import { SerperSettings } from "@/components/admin/SerperSettings";
+import { SerperSearch } from "@/components/admin/SerperSearch";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
@@ -211,6 +213,8 @@ const Admin = () => {
               {activeTab === "pages" && <PageManagement />}
               {activeTab === "webmaster" && <WebmasterManagement />}
               {activeTab === "ai-settings" && <AISettings />}
+              {activeTab === "serper-settings" && <SerperSettings />}
+              {activeTab === "serper-search" && <SerperSearch />}
               
               {activeTab === "add-firm" && (
               <Card>

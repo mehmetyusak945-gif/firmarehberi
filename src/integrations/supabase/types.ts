@@ -260,6 +260,33 @@ export type Database = {
         }
         Relationships: []
       }
+      serper_settings: {
+        Row: {
+          created_at: string | null
+          gl: string
+          hl: string
+          id: string
+          location: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          gl?: string
+          hl?: string
+          id?: string
+          location?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          gl?: string
+          hl?: string
+          id?: string
+          location?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null

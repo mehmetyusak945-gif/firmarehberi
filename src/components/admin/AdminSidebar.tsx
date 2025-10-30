@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   Globe,
   Brain,
+  Search,
+  Settings,
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,6 +38,10 @@ const menuItems = {
     { value: "pending", label: "Bekleyenler", icon: Clock },
     { value: "add-firm", label: "Firma Ekle", icon: Building2 },
     { value: "upload-excel", label: "Toplu Ekle", icon: Upload },
+  ],
+  serper: [
+    { value: "serper-search", label: "Firma Ara", icon: Search },
+    { value: "serper-settings", label: "API Ayarları", icon: Settings },
   ],
   content: [
     { value: "categories", label: "Kategoriler", icon: FolderTree },
@@ -62,6 +68,26 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.firms.map((item) => (
+                <SidebarMenuItem key={item.value}>
+                  <SidebarMenuButton
+                    onClick={() => onTabChange(item.value)}
+                    isActive={activeTab === item.value}
+                    className="cursor-pointer"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {state === "expanded" && <span>{item.label}</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Google Places API</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.serper.map((item) => (
                 <SidebarMenuItem key={item.value}>
                   <SidebarMenuButton
                     onClick={() => onTabChange(item.value)}
