@@ -5,26 +5,38 @@ import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
 import { AdBox, AdLeaderboard } from "@/components/ads";
 import { SEOHead } from "@/components/SEOHead";
-import { mockFirms, categories } from "@/data/mockFirms";
+import { useFirms } from "@/hooks/useFirms";
+import { useCategories } from "@/hooks/useCategories";
+import { Loader2 } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { data: firms, isLoading: firmsLoading } = useFirms();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   
-  const handleCategoryClick = (category: string) => {
-    if (category === "all") {
+  const handleCategoryClick = (categorySlug: string) => {
+    if (categorySlug === "all") {
       setSelectedCategory("all");
     } else {
-      const slug = category.toLowerCase().replace(/\s+/g, "-");
-      navigate(`/kategori/${slug}`);
+      navigate(`/kategori/${categorySlug}`);
     }
   };
 
   // Filtrelenmiş firmalar
   const filteredFirms = useMemo(() => {
-    if (selectedCategory === "all") return mockFirms;
-    return mockFirms.filter(firma => firma.category === selectedCategory);
-  }, [selectedCategory]);
+    if (!firms) return [];
+    if (selectedCategory === "all") return firms;
+    return firms.filter(firma => firma.category_id === selectedCategory);
+  }, [firms, selectedCategory]);
+
+  if (firmsLoading || categoriesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   // Grid için karışık içerik (firma + reklam) - 16 alan: 12 firma + 4 reklam
   const gridItems = useMemo(() => {
@@ -110,13 +122,13 @@ const Index = () => {
                   >
                     Tümü
                   </button>
-                  {categories.map(category => (
+                  {categories?.map(category => (
                     <button
-                      key={category}
-                      onClick={() => handleCategoryClick(category)}
+                      key={category.id}
+                      onClick={() => handleCategoryClick(category.slug)}
                       className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md bg-white/95 text-foreground hover:bg-white hover:scale-105"
                     >
-                      {category}
+                      {category.name}
                     </button>
                   ))}
                 </div>
@@ -130,10 +142,10 @@ const Index = () => {
               <h2 className="text-2xl font-bold mb-2">
                 {selectedCategory === "all" 
                   ? "Öne Çıkan Firmalar" 
-                  : `${selectedCategory} Kategorisi`}
+                  : `${categories?.find(c => c.id === selectedCategory)?.name} Kategorisi`}
               </h2>
               <p className="text-muted-foreground">
-                {filteredFirms.length} firma listeleniyor
+                {filteredFirms?.length || 0} firma listeleniyor
               </p>
             </div>
 

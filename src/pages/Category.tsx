@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -6,7 +6,9 @@ import { FirmaCard } from "@/components/FirmaCard";
 import { AdBox, AdLeaderboard } from "@/components/ads";
 import { SEOHead } from "@/components/SEOHead";
 import { Pagination } from "@/components/Pagination";
-import { mockFirms, categories, type Category as CategoryType } from "@/data/mockFirms";
+import { useFirms } from "@/hooks/useFirms";
+import { useCategories } from "@/hooks/useCategories";
+import { Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -22,24 +24,40 @@ const ITEMS_PER_PAGE = 12;
 const Category = () => {
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
   
   // Kategoriyi doğrula
-  const validCategory = categories.find(
-    (c) => c.toLowerCase().replace(/\s+/g, "-") === category
+  const validCategory = categories?.find(
+    (c) => c.slug === category
   );
 
-  if (!validCategory) {
-    navigate("/404");
-    return null;
-  }
+  const { data: firms, isLoading: firmsLoading } = useFirms(validCategory?.id);
+
+  useEffect(() => {
+    if (!categoriesLoading && !validCategory) {
+      navigate("/404");
+    }
+  }, [validCategory, categoriesLoading, navigate]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState<SortOption>("random");
 
   // Kategoriye göre firmaları filtrele
   const categoryFirms = useMemo(() => {
-    return mockFirms.filter((firma) => firma.category === validCategory);
-  }, [validCategory]);
+    return firms || [];
+  }, [firms]);
+
+  if (firmsLoading || categoriesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!validCategory) {
+    return null;
+  }
 
   // Sıralama
   const sortedFirms = useMemo(() => {
@@ -48,16 +66,16 @@ const Category = () => {
     switch (sortOption) {
       case "newest":
         return firms.sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
       case "oldest":
         return firms.sort((a, b) => 
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
       case "highest":
-        return firms.sort((a, b) => b.rating - a.rating);
+        return firms.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case "lowest":
-        return firms.sort((a, b) => a.rating - b.rating);
+        return firms.sort((a, b) => (a.rating || 0) - (b.rating || 0));
       case "random":
       default:
         return firms.sort(() => Math.random() - 0.5);
@@ -118,18 +136,18 @@ const Category = () => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": `${validCategory} Firmaları - Firma Rehberim`,
-    "description": `${validCategory} kategorisinde güvenilir firmalar. ${categoryFirms.length} onaylı işletme.`,
+    "name": `${validCategory.name} Firmaları - Firma Rehberim`,
+    "description": `${validCategory.name} kategorisinde güvenilir firmalar. ${categoryFirms.length} onaylı işletme.`,
     "url": `https://firma-rehberim.lovable.app/kategori/${category}`
   };
 
   return (
     <>
       <SEOHead
-        title={`${validCategory} Firmaları - Firma Rehberim`}
-        description={`${validCategory} kategorisinde güvenilir ve kaliteli firmalar. ${categoryFirms.length} onaylı işletme arasından seçim yapın.`}
+        title={`${validCategory.name} Firmaları - Firma Rehberim`}
+        description={`${validCategory.name} kategorisinde güvenilir ve kaliteli firmalar. ${categoryFirms.length} onaylı işletme arasından seçim yapın.`}
         canonical={`https://firma-rehberim.lovable.app/kategori/${category}`}
-        keywords={`${validCategory}, ${validCategory.toLowerCase()} firmaları, güvenilir ${validCategory.toLowerCase()}, firma rehberi`}
+        keywords={`${validCategory.name}, ${validCategory.name.toLowerCase()} firmaları, güvenilir ${validCategory.name.toLowerCase()}, firma rehberi`}
         schema={schema}
       />
 
@@ -141,10 +159,10 @@ const Category = () => {
           <section className="gradient-primary py-16 md:py-20">
             <div className="container mx-auto px-4 text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-fade-in">
-                {validCategory} Firmaları
+                {validCategory.name} Firmaları
               </h1>
               <p className="text-lg text-white/90 max-w-2xl mx-auto">
-                Güvenilir ve kaliteli {validCategory.toLowerCase()} hizmeti veren firmalar
+                Güvenilir ve kaliteli {validCategory.name.toLowerCase()} hizmeti veren firmalar
               </p>
             </div>
           </section>
@@ -154,7 +172,7 @@ const Category = () => {
             <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold mb-2">
-                  {validCategory} Kategorisi
+                  {validCategory.name} Kategorisi
                 </h2>
                 <p className="text-muted-foreground">
                   {sortedFirms.length} firma listeleniyor

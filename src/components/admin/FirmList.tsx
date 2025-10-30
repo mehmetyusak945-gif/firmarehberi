@@ -7,17 +7,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Eye } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
+import { FirmDetailModal } from "./FirmDetailModal";
 
 interface Firm {
   id: string;
   name: string;
+  address: string | null;
+  phone: string | null;
+  website: string | null;
+  description: string | null;
+  rating: number | null;
   category_id: string;
+  slug: string;
   is_approved: boolean;
-  phone?: string;
-  email?: string;
-  website?: string;
   created_at: string;
 }
 
@@ -29,6 +33,8 @@ export const FirmList = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedFirm, setSelectedFirm] = useState<Firm | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchFirms();
@@ -65,7 +71,6 @@ export const FirmList = () => {
     if (searchTerm) {
       filtered = filtered.filter((firm) =>
         firm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        firm.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         firm.phone?.includes(searchTerm)
       );
     }
@@ -110,6 +115,20 @@ export const FirmList = () => {
     return categories?.find((cat) => cat.id === categoryId)?.name || "-";
   };
 
+  const handleViewDetails = (firm: Firm) => {
+    setSelectedFirm(firm);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedFirm(null);
+  };
+
+  const handleFirmUpdate = () => {
+    fetchFirms();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -130,7 +149,7 @@ export const FirmList = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Firma adı, email veya telefon ile ara..."
+                placeholder="Firma adı veya telefon ile ara..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -159,14 +178,14 @@ export const FirmList = () => {
                   <TableHead>Firma Adı</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead>Telefon</TableHead>
-                  <TableHead>Email</TableHead>
                   <TableHead>Durum</TableHead>
+                  <TableHead className="w-[100px]">İşlem</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredFirms.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                       Firma bulunamadı
                     </TableCell>
                   </TableRow>
@@ -176,7 +195,6 @@ export const FirmList = () => {
                       <TableCell className="font-medium">{firm.name}</TableCell>
                       <TableCell>{getCategoryName(firm.category_id)}</TableCell>
                       <TableCell>{firm.phone || "-"}</TableCell>
-                      <TableCell>{firm.email || "-"}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Switch
@@ -188,6 +206,15 @@ export const FirmList = () => {
                           </span>
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleViewDetails(firm)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -196,6 +223,13 @@ export const FirmList = () => {
           </div>
         </div>
       </CardContent>
+
+      <FirmDetailModal
+        firm={selectedFirm}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onUpdate={handleFirmUpdate}
+      />
     </Card>
   );
 };
