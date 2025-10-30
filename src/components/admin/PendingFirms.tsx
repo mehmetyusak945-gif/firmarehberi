@@ -79,7 +79,17 @@ export const PendingFirms = () => {
     }
   };
 
-  const handleApproveFirm = async (firmId: string, firmName: string) => {
+  const handleApproveFirm = async (firmId: string, firmName: string, categoryId: string | null) => {
+    // Kategori yoksa uyarı ver
+    if (!categoryId) {
+      toast({
+        variant: "destructive",
+        title: "Kategori Eksik",
+        description: "Lütfen önce firmayı inceleyin ve bir kategori atayın.",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from("firms")
@@ -204,7 +214,7 @@ export const PendingFirms = () => {
                               <AlertDialogFooter>
                                 <AlertDialogCancel>İptal</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() => handleApproveFirm(firm.id, firm.name)}
+                                  onClick={() => handleApproveFirm(firm.id, firm.name, firm.category_id)}
                                   className="bg-success text-white hover:bg-success/90"
                                 >
                                   Onayla

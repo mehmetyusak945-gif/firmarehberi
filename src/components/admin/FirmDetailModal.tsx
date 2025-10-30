@@ -23,6 +23,7 @@ interface Firm {
   category_id: string | null;
   suggested_category: string | null;
   slug: string;
+  is_approved: boolean | null;
 }
 
 interface FirmDetailModalProps {
@@ -71,6 +72,16 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
   const handleSave = async () => {
     if (!firm) return;
 
+    // Kategori kontrolü
+    if (!formData.category_id && !formData.new_category_name.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Kategori Gerekli",
+        description: "Lütfen bir kategori seçin veya yeni kategori oluşturun.",
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       let finalCategoryId = formData.category_id;
@@ -109,6 +120,7 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
         category_id: finalCategoryId,
         suggested_category: null, // Kategori atandıktan sonra öneriyi temizle
         slug: slugify(formData.name.trim()),
+        is_approved: true, // Kaydet dediğinde otomatik onayla
       };
 
       const { error } = await supabase
@@ -120,7 +132,7 @@ export const FirmDetailModal = ({ firm, isOpen, onClose, onUpdate }: FirmDetailM
 
       toast({
         title: "Başarılı!",
-        description: "Firma bilgileri güncellendi.",
+        description: "Firma bilgileri güncellendi ve yayına alındı.",
       });
 
       setIsEditing(false);
