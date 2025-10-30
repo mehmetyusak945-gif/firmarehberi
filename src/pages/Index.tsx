@@ -23,6 +23,13 @@ const Index = () => {
     }
   };
 
+  // Rastgele 16 kategori seç
+  const randomCategories = useMemo(() => {
+    if (!categories || categories.length === 0) return [];
+    const shuffled = [...categories].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 16);
+  }, [categories]);
+
   // Filtrelenmiş firmalar
   const filteredFirms = useMemo(() => {
     if (!firms) return [];
@@ -110,20 +117,16 @@ const Index = () => {
                 Elektrikçiden restorana, tesisatçıdan çeşmeciye kadar her şey burada!
               </p>
 
-              {/* Kategori Pills */}
+              {/* Kategori Pills - Rastgele 16 Kategori */}
               <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-center gap-2 flex-wrap px-4">
                   <button
                     onClick={() => handleCategoryClick("all")}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md ${
-                      selectedCategory === "all"
-                        ? "gradient-accent text-white"
-                        : "bg-white/95 text-foreground hover:bg-white hover:scale-105"
-                    }`}
+                    className="px-4 py-2 rounded-full text-sm font-medium transition-base shadow-md gradient-accent text-white"
                   >
                     Tümü
                   </button>
-                  {categories?.map(category => (
+                  {randomCategories.map(category => (
                     <button
                       key={category.id}
                       onClick={() => handleCategoryClick(category.slug)}

@@ -95,7 +95,7 @@ const FirmaDetail = () => {
     <>
       <SEOHead
         title={`${firma.name} - ${firma.categories?.name || 'Firma'} | Firmam.org`}
-        description={`${firma.name} ${firma.categories?.name || ''} hizmeti vermektedir. ${firma.address || ''} adresinde yer alan ${firma.name} için detaylı bilgi ve iletişim.`}
+        description={firma.description ? (firma.description.length > 155 ? firma.description.substring(0, 155) + '...' : firma.description) : `${firma.name} ${firma.categories?.name || ''} hizmeti vermektedir.`}
         canonical={`https://firmam.org/firma/${firma.slug}`}
         ogType="business.business"
         keywords={`${firma.name}, ${firma.categories?.name || ''}, ${firma.address || ''}, firma rehberi`}

@@ -11,12 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2, List, FolderTree, Database, Megaphone, Clock, HardDrive } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
 import { CategoryManagement } from "@/components/admin/CategoryManagement";
 import { AdManagement } from "@/components/admin/AdManagement";
+import { PendingFirms } from "@/components/admin/PendingFirms";
+import { DatabaseBackup } from "@/components/admin/DatabaseBackup";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -172,31 +174,43 @@ const Admin = () => {
 
         <main className="flex-1 container mx-auto px-4 py-8">
           <Tabs defaultValue="firms" className="w-full">
-            <TabsList className="grid w-full max-w-3xl grid-cols-5">
-              <TabsTrigger value="firms">
-                <List className="mr-2 h-4 w-4" />
-                Firmalar
+            <TabsList className="grid w-full max-w-5xl grid-cols-3 md:grid-cols-7 gap-2">
+              <TabsTrigger value="firms" className="text-xs md:text-sm">
+                <List className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Firmalar</span>
               </TabsTrigger>
-              <TabsTrigger value="add-firm">
-                <Building2 className="mr-2 h-4 w-4" />
-                Firma Ekle
+              <TabsTrigger value="pending" className="text-xs md:text-sm">
+                <Clock className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Bekleyenler</span>
               </TabsTrigger>
-              <TabsTrigger value="categories">
-                <FolderTree className="mr-2 h-4 w-4" />
-                Kategoriler
+              <TabsTrigger value="add-firm" className="text-xs md:text-sm">
+                <Building2 className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Ekle</span>
               </TabsTrigger>
-              <TabsTrigger value="ads">
-                <Megaphone className="mr-2 h-4 w-4" />
-                Reklamlar
+              <TabsTrigger value="categories" className="text-xs md:text-sm">
+                <FolderTree className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Kategoriler</span>
               </TabsTrigger>
-              <TabsTrigger value="upload-excel">
-                <Upload className="mr-2 h-4 w-4" />
-                CSV Yükle
+              <TabsTrigger value="ads" className="text-xs md:text-sm">
+                <Megaphone className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Reklamlar</span>
+              </TabsTrigger>
+              <TabsTrigger value="backup" className="text-xs md:text-sm">
+                <HardDrive className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Yedek</span>
+              </TabsTrigger>
+              <TabsTrigger value="upload-excel" className="text-xs md:text-sm">
+                <Upload className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">CSV</span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="firms">
               <FirmList />
+            </TabsContent>
+
+            <TabsContent value="pending">
+              <PendingFirms />
             </TabsContent>
 
             <TabsContent value="categories">
@@ -205,6 +219,10 @@ const Admin = () => {
 
             <TabsContent value="ads">
               <AdManagement />
+            </TabsContent>
+
+            <TabsContent value="backup">
+              <DatabaseBackup />
             </TabsContent>
 
             <TabsContent value="add-firm">

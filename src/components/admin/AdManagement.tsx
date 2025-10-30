@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Trash2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +20,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AdCode {
   id: string;
@@ -34,7 +43,10 @@ export const AdManagement = () => {
   const [adCodes, setAdCodes] = useState<AdCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", code: "" });
+  const [editingAd, setEditingAd] = useState<AdCode | null>(null);
+  const [editFormData, setEditFormData] = useState({ name: "", code: "" });
 
   useEffect(() => {
     fetchAdCodes();
@@ -98,6 +110,40 @@ export const AdManagement = () => {
       });
     } finally {
       setIsAdding(false);
+    }
+  };
+
+  const handleEditAd = async () => {
+    if (!editingAd || !editFormData.name.trim() || !editFormData.code.trim()) return;
+
+    setIsEditing(true);
+    try {
+      const { error } = await supabase
+        .from("ad_codes")
+        .update({
+          name: editFormData.name.trim(),
+          code: editFormData.code.trim(),
+        })
+        .eq("id", editingAd.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Başarılı!",
+        description: "Reklam kodu başarıyla güncellendi.",
+      });
+
+      setEditingAd(null);
+      setEditFormData({ name: "", code: "" });
+      await fetchAdCodes();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message,
+      });
+    } finally {
+      setIsEditing(false);
     }
   };
 
@@ -227,7 +273,7 @@ export const AdManagement = () => {
                   <TableRow>
                     <TableHead>Ad</TableHead>
                     <TableHead>Durum</TableHead>
-                    <TableHead className="w-[120px]">İşlem</TableHead>
+                    <TableHead className="w-[150px]">İşlem</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -247,6 +293,64 @@ export const AdManagement = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingAd(adCode);
+                                  setEditFormData({ name: adCode.name, code: adCode.code });
+                                }}
+                              >
+                                <Pencil className="h-4 w-4 text-primary" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle>Reklam Kodunu Düzenle</DialogTitle>
+                                <DialogDescription>
+                                  Reklam kodunu güncelleyin.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-ad-name">Reklam Adı</Label>
+                                  <Input
+                                    id="edit-ad-name"
+                                    value={editFormData.name}
+                                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                                    placeholder="Reklam adı"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-ad-code">Reklam Kodu (HTML/Script)</Label>
+                                  <Textarea
+                                    id="edit-ad-code"
+                                    value={editFormData.code}
+                                    onChange={(e) => setEditFormData({ ...editFormData, code: e.target.value })}
+                                    placeholder="Reklam HTML kodunu veya script'ini buraya yapıştırın..."
+                                    rows={6}
+                                  />
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  onClick={handleEditAd}
+                                  disabled={isEditing || !editFormData.name.trim() || !editFormData.code.trim()}
+                                >
+                                  {isEditing ? (
+                                    <>
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                      Güncelleniyor...
+                                    </>
+                                  ) : (
+                                    "Güncelle"
+                                  )}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button variant="ghost" size="sm">
