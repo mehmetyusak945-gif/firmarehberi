@@ -64,7 +64,7 @@ serve(async (req) => {
             body: JSON.stringify({
               contents: [{
                 parts: [{
-                  text: `"${category.name}" kelimesini Türkçe yazım kurallarına göre düzelt. SADECE düzeltilmiş kelimeyi yaz, başka bir şey yazma. Örnek: "Kuafor" -> "Kuaför", "Elektrikci" -> "Elektrikçi"`
+                  text: `"${category.name}" kelimesini Türkçe yazım kurallarına göre düzelt. Türkçe'de ş, ğ, ü, ö, ç, ı harfleri kullanılır. İngilizce karakterler yerine mutlaka Türkçe karakterler kullanılmalı. SADECE düzeltilmiş kelimeyi yaz, başka bir şey yazma. Örnekler: "Esya" -> "Eşya", "Yemegi" -> "Yemeği", "Kuafor" -> "Kuaför", "Elektrikci" -> "Elektrikçi", "Pastane" -> "Pastane", "Giyim" -> "Giyim"`
                 }]
               }],
               generationConfig: {
@@ -93,11 +93,11 @@ serve(async (req) => {
               messages: [
                 {
                   role: "system",
-                  content: "Sen bir Türkçe dil uzmanısın. Verilen kelimenin Türkçe yazım kurallarına uygun halini yazıyorsun. SADECE düzeltilmiş kelimeyi yaz, başka bir şey yazma.",
+                  content: "Sen bir Türkçe dil uzmanısın. Verilen kelimenin Türkçe yazım kurallarına uygun halini yazıyorsun. Türkçe'de ş, ğ, ü, ö, ç, ı harfleri kullanılır. İngilizce karakterler yerine mutlaka Türkçe karakterler kullanılmalı. SADECE düzeltilmiş kelimeyi yaz, başka bir şey yazma.",
                 },
                 {
                   role: "user",
-                  content: `"${category.name}" kelimesini Türkçe yazım kurallarına göre düzelt. Örnek: "Kuafor" -> "Kuaför", "Elektrikci" -> "Elektrikçi"`,
+                  content: `"${category.name}" kelimesini Türkçe yazım kurallarına göre düzelt. Örnekler: "Esya" -> "Eşya", "Yemegi" -> "Yemeği", "Kuafor" -> "Kuaför", "Elektrikci" -> "Elektrikçi"`,
                 },
               ],
               max_completion_tokens: 50,
@@ -123,11 +123,11 @@ serve(async (req) => {
               messages: [
                 {
                   role: "system",
-                  content: "Sen bir Türkçe dil uzmanısın. Verilen kelimenin Türkçe yazım kurallarına uygun halini yazıyorsun. SADECE düzeltilmiş kelimeyi yaz, başka bir şey yazma.",
+                  content: "Sen bir Türkçe dil uzmanısın. Verilen kelimenin Türkçe yazım kurallarına uygun halini yazıyorsun. Türkçe'de ş, ğ, ü, ö, ç, ı harfleri kullanılır. İngilizce karakterler yerine mutlaka Türkçe karakterler kullanılmalı. SADECE düzeltilmiş kelimeyi yaz, başka bir şey yazma.",
                 },
                 {
                   role: "user",
-                  content: `"${category.name}" kelimesini Türkçe yazım kurallarına göre düzelt. Örnek: "Kuafor" -> "Kuaför", "Elektrikci" -> "Elektrikçi"`,
+                  content: `"${category.name}" kelimesini Türkçe yazım kurallarına göre düzelt. Örnekler: "Esya" -> "Eşya", "Yemegi" -> "Yemeği", "Kuafor" -> "Kuaför", "Elektrikci" -> "Elektrikçi"`,
                 },
               ],
             }),

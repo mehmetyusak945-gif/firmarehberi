@@ -282,8 +282,7 @@ export const CategoryManagement = () => {
               <Button
                 onClick={handleFixCategories}
                 disabled={isFixing}
-                variant="outline"
-                className="whitespace-nowrap"
+                className="whitespace-nowrap bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 {isFixing ? (
                   <>
