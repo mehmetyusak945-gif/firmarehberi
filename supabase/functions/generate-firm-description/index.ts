@@ -92,6 +92,7 @@ ZORUNLU KURALLAR:
 6. "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti" gibi KLİŞE ifadelerden KAÇIN
 7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
 8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
+9. ÇOK ÖNEMLİ: Düz metin yaz. Markdown formatı kullanma (**, *, _, # yasak). Hiçbir özel karakter kullanma.
 
 UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz. AYNI METNİ İKİ KERE YAZMAK YASAK!`
             }]
@@ -136,12 +137,15 @@ YASAK OLAN ŞEYLER:
 - Genel şablonlar YASAK
 - Klişe ifadeler YASAK
 - Aynı yapıyı kullanmak YASAK
+- Markdown formatı (**, *, _, # gibi) YASAK
+- Özel karakterler YASAK
 
 ZORUNLU OLAN ŞEYLER:
 - Her firma için firma adı, sektörü ve adresine özel FARKLI içerik
 - 250-500 kelime DETAYLI açıklama
 - Sektöre özel teknik terimler ve hizmet detayları
-- Lokasyona özel bilgiler`,
+- Lokasyona özel bilgiler
+- Düz metin formatı`,
           },
           {
             role: "user",
@@ -161,6 +165,7 @@ ZORUNLU KURALLAR:
 6. Bu KLİŞELERİ ASLA KULLANMA: "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti", "deneyimli kadro"
 7. Her firma için TAMAMEN FARKLI içerik yaz
 8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
+9. ÇOK ÖNEMLİ: Düz metin yaz. Markdown formatı kullanma (**, *, _, # yasak). Hiçbir özel karakter kullanma.
 
 UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz. Genel cümleler kullanırsan başarısız olursun!`,
           },
@@ -214,7 +219,7 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
           messages: [
             {
               role: "system",
-              content: "Sen bir içerik yazarısın. HER FİRMA İÇİN TAMAMEN FARKLI VE ÖZGÜN açıklama yazacaksın. AYNI METNİ İKİ KERE ASLA YAZMAYACAKSIN. Her firma için firma adı, sektörü ve lokasyonuna göre TAMAMEN FARKLI içerik üreteceksin. Genel şablonlar YASAK. 250-500 kelime detaylı açıklama yazacaksın.",
+              content: "Sen bir içerik yazarısın. HER FİRMA İÇİN TAMAMEN FARKLI VE ÖZGÜN açıklama yazacaksın. AYNI METNİ İKİ KERE ASLA YAZMAYACAKSIN. Her firma için firma adı, sektörü ve lokasyonuna göre TAMAMEN FARKLI içerik üreteceksin. Genel şablonlar YASAK. 250-500 kelime detaylı açıklama yazacaksın. ÇOK ÖNEMLİ: Düz metin yaz, markdown formatı kullanma (**, *, _, # yasak).",
             },
             {
               role: "user",
@@ -234,6 +239,7 @@ ZORUNLU KURALLAR:
 6. "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti" gibi KLİŞE ifadelerden KAÇIN
 7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
 8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
+9. ÇOK ÖNEMLİ: Düz metin yaz. Markdown formatı kullanma (**, *, _, # yasak). Hiçbir özel karakter kullanma.
 
 UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz.`,
             },
@@ -257,6 +263,17 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
       
       description = rawDescription.trim();
     }
+
+    // Özel karakterleri temizle (markdown formatlarını kaldır)
+    description = description
+      .replace(/\*\*/g, '') // ** işaretlerini kaldır
+      .replace(/\*/g, '')   // * işaretlerini kaldır
+      .replace(/_/g, '')    // _ işaretlerini kaldır
+      .replace(/#/g, '')    // # işaretlerini kaldır
+      .replace(/\[/g, '')   // [ işaretlerini kaldır
+      .replace(/\]/g, '')   // ] işaretlerini kaldır
+      .replace(/`/g, '')    // ` işaretlerini kaldır
+      .trim();
 
     // Save description to database if firmId is provided
     if (firmId && description) {
