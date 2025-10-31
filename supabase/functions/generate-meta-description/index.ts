@@ -69,7 +69,16 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. ZORUNLU: 130-155 karakter arası. Firma adı ve kategori içermeli. Türkçe.`
+              text: `"${firmName}" firması için SEO meta description yaz. Kategori: ${categoryName}. 
+
+ZORUNLU KURALLAR:
+- 130-155 karakter arası olmalı
+- Düz metin olarak yaz, hiçbir özel karakter kullanma
+- Markdown formatı kullanma (**, *, _, #, vb.)
+- Tırnak işareti, yıldız, nokta virgül gibi özel karakterler kullanma
+- Sadece normal cümle yazımı, nokta ve virgül kullanabilirsin
+- Firma adı ve kategori içermeli
+- Türkçe olmalı`
             }]
           }],
           generationConfig: {
@@ -104,11 +113,18 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: "Sen bir SEO uzmanısın. Meta description yazıyorsun. MUTLAKA 130-155 karakter arasında olmalı. Firma adı ve kategori içermeli, açıklayıcı ve net olmalı.",
+              content: "Sen bir SEO uzmanısın. Meta description yazıyorsun. ÇOK ÖNEMLİ: Sadece düz metin yaz. Markdown formatı kullanma (**, *, _, # gibi). Hiçbir özel karakter kullanma. 130-155 karakter arasında olmalı. Firma adı ve kategori içermeli.",
             },
             {
               role: 'user',
-              content: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. ZORUNLU: 130-155 karakter arası. Türkçe.`,
+              content: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. 
+
+ZORUNLU KURALLAR:
+- 130-155 karakter arası
+- Düz metin, hiçbir markdown formatı yok (**, *, _, # yasak)
+- Hiçbir özel karakter kullanma (sadece normal nokta ve virgül kullan)
+- Firma adı ve kategori içermeli
+- Türkçe`,
             },
           ],
           max_completion_tokens: 100,
@@ -145,11 +161,18 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: "Sen bir SEO uzmanısın. Meta description yazıyorsun. MUTLAKA 130-155 karakter arasında olmalı. Firma adı ve kategori içermeli, açıklayıcı ve net olmalı.",
+              content: "Sen bir SEO uzmanısın. Meta description yazıyorsun. ÇOK ÖNEMLİ: Sadece düz metin yaz. Markdown formatı kullanma (**, *, _, # gibi). Hiçbir özel karakter kullanma. 130-155 karakter arasında olmalı. Firma adı ve kategori içermeli.",
             },
             {
               role: 'user',
-              content: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. ZORUNLU: 130-155 karakter arası. Türkçe.`,
+              content: `"${firmName}" firması için meta description yaz. Kategori: ${categoryName}. 
+
+ZORUNLU KURALLAR:
+- 130-155 karakter arası
+- Düz metin, hiçbir markdown formatı yok (**, *, _, # yasak)
+- Hiçbir özel karakter kullanma (sadece normal nokta ve virgül kullan)
+- Firma adı ve kategori içermeli
+- Türkçe`,
             },
           ],
           temperature: 0.9,
@@ -179,8 +202,18 @@ serve(async (req) => {
       throw new Error('Meta açıklama oluşturulamadı')
     }
 
-    // Karakter sayısını kontrol et ve gerekirse kısalt
+    // Özel karakterleri temizle (markdown formatlarını kaldır)
     let finalDescription = metaDescription
+      .replace(/\*\*/g, '') // ** işaretlerini kaldır
+      .replace(/\*/g, '')   // * işaretlerini kaldır
+      .replace(/_/g, '')    // _ işaretlerini kaldır
+      .replace(/#/g, '')    // # işaretlerini kaldır
+      .replace(/\[/g, '')   // [ işaretlerini kaldır
+      .replace(/\]/g, '')   // ] işaretlerini kaldır
+      .replace(/`/g, '')    // ` işaretlerini kaldır
+      .trim();
+    
+    // Karakter sayısını kontrol et ve gerekirse kısalt
     if (finalDescription.length > 155) {
       finalDescription = finalDescription.substring(0, 152) + '...'
     } else if (finalDescription.length < 130) {
