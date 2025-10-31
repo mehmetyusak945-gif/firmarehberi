@@ -14,13 +14,13 @@ export const AISettings = () => {
   const updateSettings = useUpdateAISettings();
 
   const [provider, setProvider] = useState("lovable");
-  const [model, setModel] = useState("google/gemini-2.5-flash-lite");
+  const [model, setModel] = useState("google/gemini-2.5-flash");
   const [apiKey, setApiKey] = useState("");
 
   useEffect(() => {
     if (settings) {
       setProvider(settings.provider || "lovable");
-      setModel(settings.model || "google/gemini-2.5-flash-lite");
+      setModel(settings.model || "google/gemini-2.5-flash");
       setApiKey(settings.api_key || "");
     }
   }, [settings]);

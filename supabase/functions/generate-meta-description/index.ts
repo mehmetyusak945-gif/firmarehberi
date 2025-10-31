@@ -52,7 +52,7 @@ serve(async (req) => {
       .single();
 
     const provider = aiSettings?.provider || "lovable";
-    const model = aiSettings?.model || "google/gemini-2.5-flash-lite";
+    const model = aiSettings?.model || "google/gemini-2.5-flash";
 
     console.log(`Generating meta description for: ${firmName} - ${categoryName}`)
 
