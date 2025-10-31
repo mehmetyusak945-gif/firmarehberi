@@ -76,7 +76,7 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `"${name}" firması için DETAYLI ve ÖZGÜN bir açıklama yaz.
+              text: `"${name}" firması için BENZERSIZ ve DETAYLI bir açıklama yaz.
 
 FİRMA BİLGİLERİ:
 - Firma Adı: ${name}
@@ -93,7 +93,7 @@ ZORUNLU KURALLAR:
 7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
 8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
 
-Bu firma için sektöre özel, detaylı ve profesyonel bir açıklama yaz.`
+UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz. AYNI METNİ İKİ KERE YAZMAK YASAK!`
             }]
           }],
           generationConfig: {
@@ -113,39 +113,55 @@ Bu firma için sektöre özel, detaylı ve profesyonel bir açıklama yaz.`
       description = data.candidates?.[0]?.content?.parts?.[0]?.text || "Kaliteli hizmet sunan güvenilir bir firma.";
     } else if (provider === "openai" && aiSettings?.api_key) {
       // Direct OpenAI API call
+      const isLegacyModel = model.includes("gpt-4o") || model.includes("gpt-3.5");
+      
+      const requestBody: any = {
+        model: model,
+        messages: [
+          {
+            role: "system",
+            content: "Sen bir içerik yazarısın. HER FİRMA İÇİN TAMAMEN FARKLI VE ÖZGÜN açıklama yazacaksın. AYNI METNİ İKİ KERE ASLA YAZMAYACAKSIN. Her firma için firma adı, sektörü ve lokasyonuna göre TAMAMEN FARKLI içerik üreteceksin. Genel şablonlar YASAK. 250-500 kelime detaylı açıklama yazacaksın.",
+          },
+          {
+            role: "user",
+            content: `"${name}" firması için BENZERSIZ ve DETAYLI bir açıklama yaz.
+
+FİRMA BİLGİLERİ:
+- Firma Adı: ${name}
+- Sektör: ${category}
+- Adres: ${address}
+
+ZORUNLU KURALLAR:
+1. MUTLAKA firma adını (${name}), sektörü (${category}) ve lokasyon bilgisini (${address}) kullan
+2. ${category} sektörüne özgü SPESIFIK hizmetleri detaylandır
+3. Sektördeki teknik terimler, uzmanlık alanları ve hizmet detaylarını ekle
+4. Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
+5. EN AZ 250 kelime, EN FAZLA 500 kelime yaz
+6. "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti" gibi KLİŞE ifadelerden KAÇIN
+7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
+8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
+
+UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz.`,
+          },
+        ],
+      };
+
+      // Use correct parameters based on model version
+      if (isLegacyModel) {
+        requestBody.max_tokens = 750;
+        requestBody.temperature = 0.9;
+      } else {
+        requestBody.max_completion_tokens = 750;
+        // New models don't support temperature parameter
+      }
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            {
-              role: "system",
-              content: "Sen profesyonel bir içerik yazarısın. Her firma için DETAYLI, ÖZGÜN ve sektöre özel açıklamalar yazıyorsun. ASLA genel şablonlar kullanmazsın. Her açıklama firmaya, sektöre ve lokasyona özgü olmalıdır. Sektör terminolojisi ve teknik detaylar kullanarak 250-500 kelimelik profesyonel açıklamalar yazarsın.",
-            },
-            {
-              role: "user",
-              content: `"${name}" firması için DETAYLI açıklama yaz.
-
-FİRMA BİLGİLERİ:
-- Firma: ${name}
-- Sektör: ${category}
-- Adres: ${address}
-
-KURALLAR:
-- MUTLAKA firma adı, sektör ve lokasyon kullan
-- ${category} sektörüne özgü SPESIFIK hizmetler, teknik terimler ve uzmanlık alanları detaylandır
-- Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
-- 250-500 kelime yaz
-- "Kaliteli hizmet", "güvenilir" gibi klişelerden KAÇIN
-- ÖZGÜN ve DETAYLI yaz`,
-            },
-          ],
-          max_completion_tokens: 750,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -169,24 +185,28 @@ KURALLAR:
           messages: [
             {
               role: "system",
-              content: "Sen profesyonel bir içerik yazarısın. Her firma için DETAYLI, ÖZGÜN ve sektöre özel açıklamalar yazıyorsun. ASLA genel şablonlar kullanmazsın. Her açıklama firmaya, sektöre ve lokasyona özgü olmalıdır. Sektör terminolojisi ve teknik detaylar kullanarak 250-500 kelimelik profesyonel açıklamalar yazarsın.",
+              content: "Sen bir içerik yazarısın. HER FİRMA İÇİN TAMAMEN FARKLI VE ÖZGÜN açıklama yazacaksın. AYNI METNİ İKİ KERE ASLA YAZMAYACAKSIN. Her firma için firma adı, sektörü ve lokasyonuna göre TAMAMEN FARKLI içerik üreteceksin. Genel şablonlar YASAK. 250-500 kelime detaylı açıklama yazacaksın.",
             },
             {
               role: "user",
-              content: `"${name}" firması için DETAYLI açıklama yaz.
+              content: `"${name}" firması için BENZERSIZ ve DETAYLI bir açıklama yaz.
 
 FİRMA BİLGİLERİ:
-- Firma: ${name}
+- Firma Adı: ${name}
 - Sektör: ${category}
 - Adres: ${address}
 
-KURALLAR:
-- MUTLAKA firma adı, sektör ve lokasyon kullan
-- ${category} sektörüne özgü SPESIFIK hizmetler, teknik terimler ve uzmanlık alanları detaylandır
-- Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
-- 250-500 kelime yaz
-- "Kaliteli hizmet", "güvenilir" gibi klişelerden KAÇIN
-- ÖZGÜN ve DETAYLI yaz`,
+ZORUNLU KURALLAR:
+1. MUTLAKA firma adını (${name}), sektörü (${category}) ve lokasyon bilgisini (${address}) kullan
+2. ${category} sektörüne özgü SPESIFIK hizmetleri detaylandır
+3. Sektördeki teknik terimler, uzmanlık alanları ve hizmet detaylarını ekle
+4. Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
+5. EN AZ 250 kelime, EN FAZLA 500 kelime yaz
+6. "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti" gibi KLİŞE ifadelerden KAÇIN
+7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
+8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
+
+UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz.`,
             },
           ],
         }),
