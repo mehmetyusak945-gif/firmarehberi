@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { name, category, firmId } = await req.json();
+    const { name, category, address, firmId } = await req.json();
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -76,23 +76,29 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `"${name}" adlı ${category} firması için benzersiz ve özgün bir açıklama yaz. 
+              text: `"${name}" firması için DETAYLI ve ÖZGÜN bir açıklama yaz.
+
+FİRMA BİLGİLERİ:
+- Firma Adı: ${name}
+- Sektör: ${category}
+- Adres: ${address}
 
 ZORUNLU KURALLAR:
-- Her firma için FARKLI bir açıklama yaz, genel şablonlar kullanma
-- "${name}" firma adını ve "${category}" kategorisini MUTLAKA kullan
-- Firmanın sunabileceği SPESIFIK hizmetleri detaylandır
-- En az 5-6 cümle yaz
-- "Kaliteli hizmet", "güvenilir firma" gibi KLİŞE ifadeler kullanma
-- Sektöre özgü teknik detaylar ve uzmanlık alanları ekle
-- Türkçe karakter kurallarına uy
+1. MUTLAKA firma adını (${name}), sektörü (${category}) ve lokasyon bilgisini (${address}) kullan
+2. ${category} sektörüne özgü SPESIFIK hizmetleri detaylandır
+3. Sektördeki teknik terimler, uzmanlık alanları ve hizmet detaylarını ekle
+4. Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
+5. EN AZ 250 kelime, EN FAZLA 500 kelime yaz
+6. "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti" gibi KLİŞE ifadelerden KAÇIN
+7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
+8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
 
-Bu ${category} firması için profesyonel, detaylı ve BENZERSİZ bir açıklama yaz.`
+Bu firma için sektöre özel, detaylı ve profesyonel bir açıklama yaz.`
             }]
           }],
           generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 250,
+            temperature: 0.9,
+            maxOutputTokens: 750,
           }
         }),
       });
@@ -118,14 +124,27 @@ Bu ${category} firması için profesyonel, detaylı ve BENZERSİZ bir açıklama
           messages: [
             {
               role: "system",
-              content: "Sen yaratıcı bir içerik yazarısın. Her firma için ÖZGÜN ve FARKLI açıklamalar yazıyorsun. ASLA genel şablonlar veya klişe ifadeler kullanmazsın. Her açıklama o firmaya özgü, detaylı ve benzersiz olmalıdır. Sektöre özel terimler ve detaylar kullanarak profesyonel ama samimi açıklamalar yazarsın.",
+              content: "Sen profesyonel bir içerik yazarısın. Her firma için DETAYLI, ÖZGÜN ve sektöre özel açıklamalar yazıyorsun. ASLA genel şablonlar kullanmazsın. Her açıklama firmaya, sektöre ve lokasyona özgü olmalıdır. Sektör terminolojisi ve teknik detaylar kullanarak 250-500 kelimelik profesyonel açıklamalar yazarsın.",
             },
             {
               role: "user",
-              content: `"${name}" adlı ${category} firması için benzersiz bir açıklama yaz. Firma adını ve kategorisini mutlaka kullan. ${category} sektörüne özgü hizmetleri, uzmanlık alanlarını DETAYLI anlat. En az 5-6 cümle. "Kaliteli hizmet", "güvenilir" gibi KLİŞE ifadelerden KAÇIN. Sektöre özgü teknik detaylar ekle. Bu firma için ÖZGÜN bir metin yaz.`,
+              content: `"${name}" firması için DETAYLI açıklama yaz.
+
+FİRMA BİLGİLERİ:
+- Firma: ${name}
+- Sektör: ${category}
+- Adres: ${address}
+
+KURALLAR:
+- MUTLAKA firma adı, sektör ve lokasyon kullan
+- ${category} sektörüne özgü SPESIFIK hizmetler, teknik terimler ve uzmanlık alanları detaylandır
+- Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
+- 250-500 kelime yaz
+- "Kaliteli hizmet", "güvenilir" gibi klişelerden KAÇIN
+- ÖZGÜN ve DETAYLI yaz`,
             },
           ],
-          max_completion_tokens: 250,
+          max_completion_tokens: 750,
         }),
       });
 
@@ -150,11 +169,24 @@ Bu ${category} firması için profesyonel, detaylı ve BENZERSİZ bir açıklama
           messages: [
             {
               role: "system",
-              content: "Sen yaratıcı bir içerik yazarısın. Her firma için ÖZGÜN ve FARKLI açıklamalar yazıyorsun. ASLA genel şablonlar veya klişe ifadeler kullanmazsın. Her açıklama o firmaya özgü, detaylı ve benzersiz olmalıdır. Sektöre özel terimler ve detaylar kullanarak profesyonel ama samimi açıklamalar yazarsın.",
+              content: "Sen profesyonel bir içerik yazarısın. Her firma için DETAYLI, ÖZGÜN ve sektöre özel açıklamalar yazıyorsun. ASLA genel şablonlar kullanmazsın. Her açıklama firmaya, sektöre ve lokasyona özgü olmalıdır. Sektör terminolojisi ve teknik detaylar kullanarak 250-500 kelimelik profesyonel açıklamalar yazarsın.",
             },
             {
               role: "user",
-              content: `"${name}" adlı ${category} firması için benzersiz bir açıklama yaz. Firma adını ve kategorisini mutlaka kullan. ${category} sektörüne özgü hizmetleri, uzmanlık alanlarını DETAYLI anlat. En az 5-6 cümle. "Kaliteli hizmet", "güvenilir" gibi KLİŞE ifadelerden KAÇIN. Sektöre özgü teknik detaylar ekle. Bu firma için ÖZGÜN bir metin yaz.`,
+              content: `"${name}" firması için DETAYLI açıklama yaz.
+
+FİRMA BİLGİLERİ:
+- Firma: ${name}
+- Sektör: ${category}
+- Adres: ${address}
+
+KURALLAR:
+- MUTLAKA firma adı, sektör ve lokasyon kullan
+- ${category} sektörüne özgü SPESIFIK hizmetler, teknik terimler ve uzmanlık alanları detaylandır
+- Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
+- 250-500 kelime yaz
+- "Kaliteli hizmet", "güvenilir" gibi klişelerden KAÇIN
+- ÖZGÜN ve DETAYLI yaz`,
             },
           ],
         }),

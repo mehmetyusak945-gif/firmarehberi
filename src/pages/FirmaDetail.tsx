@@ -37,6 +37,7 @@ const FirmaDetail = () => {
               body: {
                 name: firma.name,
                 category: firma.categories.name,
+                address: firma.address,
                 firmId: firma.id,
               },
             }
