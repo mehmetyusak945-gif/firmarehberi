@@ -76,7 +76,18 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `${category} kategorisindeki "${name}" firması için kapsamlı ve bilgilendirici bir açıklama yaz. Firmanın sunduğu hizmetleri, uzmanlık alanlarını ve neden tercih edilmesi gerektiğini detaylı şekilde anlat. En az 5-6 cümle kullan. Türkçe olmalı.`
+              text: `"${name}" adlı ${category} firması için benzersiz ve özgün bir açıklama yaz. 
+
+ZORUNLU KURALLAR:
+- Her firma için FARKLI bir açıklama yaz, genel şablonlar kullanma
+- "${name}" firma adını ve "${category}" kategorisini MUTLAKA kullan
+- Firmanın sunabileceği SPESIFIK hizmetleri detaylandır
+- En az 5-6 cümle yaz
+- "Kaliteli hizmet", "güvenilir firma" gibi KLİŞE ifadeler kullanma
+- Sektöre özgü teknik detaylar ve uzmanlık alanları ekle
+- Türkçe karakter kurallarına uy
+
+Bu ${category} firması için profesyonel, detaylı ve BENZERSİZ bir açıklama yaz.`
             }]
           }],
           generationConfig: {
@@ -107,11 +118,11 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: "Sen profesyonel bir içerik yazarısın. Firma açıklamalarını detaylı, bilgilendirici ve SEO dostu bir şekilde yazıyorsun. Açıklamalar firmanın sunduğu hizmetleri, uzmanlık alanlarını ve müşterilere sağladığı değeri net bir şekilde anlatmalı. Profesyonel ama samimi bir dil kullan.",
+              content: "Sen yaratıcı bir içerik yazarısın. Her firma için ÖZGÜN ve FARKLI açıklamalar yazıyorsun. ASLA genel şablonlar veya klişe ifadeler kullanmazsın. Her açıklama o firmaya özgü, detaylı ve benzersiz olmalıdır. Sektöre özel terimler ve detaylar kullanarak profesyonel ama samimi açıklamalar yazarsın.",
             },
             {
               role: "user",
-              content: `${category} kategorisindeki "${name}" firması için kapsamlı ve bilgilendirici bir açıklama yaz. Firmanın sunduğu hizmetleri, uzmanlık alanlarını ve neden tercih edilmesi gerektiğini detaylı şekilde anlat. En az 5-6 cümle kullan. Türkçe olmalı.`,
+              content: `"${name}" adlı ${category} firması için benzersiz bir açıklama yaz. Firma adını ve kategorisini mutlaka kullan. ${category} sektörüne özgü hizmetleri, uzmanlık alanlarını DETAYLI anlat. En az 5-6 cümle. "Kaliteli hizmet", "güvenilir" gibi KLİŞE ifadelerden KAÇIN. Sektöre özgü teknik detaylar ekle. Bu firma için ÖZGÜN bir metin yaz.`,
             },
           ],
           max_completion_tokens: 250,
@@ -139,11 +150,11 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: "Sen profesyonel bir içerik yazarısın. Firma açıklamalarını detaylı, bilgilendirici ve SEO dostu bir şekilde yazıyorsun. Açıklamalar firmanın sunduğu hizmetleri, uzmanlık alanlarını ve müşterilere sağladığı değeri net bir şekilde anlatmalı. Profesyonel ama samimi bir dil kullan.",
+              content: "Sen yaratıcı bir içerik yazarısın. Her firma için ÖZGÜN ve FARKLI açıklamalar yazıyorsun. ASLA genel şablonlar veya klişe ifadeler kullanmazsın. Her açıklama o firmaya özgü, detaylı ve benzersiz olmalıdır. Sektöre özel terimler ve detaylar kullanarak profesyonel ama samimi açıklamalar yazarsın.",
             },
             {
               role: "user",
-              content: `${category} kategorisindeki "${name}" firması için kapsamlı ve bilgilendirici bir açıklama yaz. Firmanın sunduğu hizmetleri, uzmanlık alanlarını ve neden tercih edilmesi gerektiğini detaylı şekilde anlat. En az 5-6 cümle kullan. Türkçe olmalı.`,
+              content: `"${name}" adlı ${category} firması için benzersiz bir açıklama yaz. Firma adını ve kategorisini mutlaka kullan. ${category} sektörüne özgü hizmetleri, uzmanlık alanlarını DETAYLI anlat. En az 5-6 cümle. "Kaliteli hizmet", "güvenilir" gibi KLİŞE ifadelerden KAÇIN. Sektöre özgü teknik detaylar ekle. Bu firma için ÖZGÜN bir metin yaz.`,
             },
           ],
         }),
