@@ -106,43 +106,53 @@ SADECE düzeltilmiş kelimeyi yaz. Başka açıklama yapma!`
             fixedName = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || category.name;
           }
         } else if (provider === "openai" && aiSettings?.api_key) {
+          // Legacy models use max_tokens, new models use max_completion_tokens
+          const isLegacyModel = model.includes("gpt-4o") || model.includes("gpt-3.5");
+          
+          const requestBody: any = {
+            model: model,
+            messages: [
+              {
+                role: "system",
+                content: "Sen bir Türkçe dil uzmanısın. SADECE VE SADECE Türkçe karakter düzeltmesi yapacaksın. Hiçbir açıklama yapmayacaksın. s->ş, g->ğ, u->ü, o->ö, c->ç, i->ı değişimlerini yapacaksın. SADECE düzeltilmiş kelimeyi döndüreceksin.",
+              },
+              {
+                role: "user",
+                content: `Kelime: "${category.name}"
+
+TÜRKÇE KARAKTER DÜZELTMESİ KURALLARI:
+- "Kuafor" → "Kuaför" (o→ö)
+- "Arac" → "Araç" (c→ç)
+- "Aku" → "Akü" (u→ü)
+- "Magazasi" → "Mağazası" (g→ğ, i→ı)
+- "Esya" → "Eşya" (s→ş)
+- "Elektrikci" → "Elektrikçi" (c→ç, i→ı)
+- "Saglik" → "Sağlık" (g→ğ, i→ı)
+- "Insaat" → "İnşaat" (I→İ, s→ş)
+
+ÇOK ÖNEMLİ: SADECE düzeltilmiş kelimeyi yaz. Hiçbir açıklama ekleme!`,
+              },
+            ],
+          };
+
+          if (isLegacyModel) {
+            requestBody.max_tokens = 50;
+          } else {
+            requestBody.max_completion_tokens = 50;
+          }
+
           const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${apiKey}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              model: model,
-              messages: [
-                {
-                  role: "system",
-                  content: "Sen bir Türkçe dil uzmanısın. Verilen kelimelerde İngilizce karakterler varsa MUTLAKA Türkçe karakterlere çeviriyorsun. s->ş, g->ğ, u->ü, o->ö, c->ç, i->ı değişimlerini yapıyorsun. SADECE düzeltilmiş kelimeyi yaz.",
-                },
-                {
-                  role: "user",
-                  content: `TÜRKÇE YAZIM DÜZELTMESİ:
-"${category.name}"
-
-Kurallar:
-- s yerine ş (gerekirse)
-- g yerine ğ (gerekirse)
-- u yerine ü (gerekirse)
-- o yerine ö (gerekirse)
-- c yerine ç (gerekirse)
-- i yerine ı (gerekirse)
-
-Örnekler: "Esya"→"Eşya", "Yemegi"→"Yemeği", "Kuafor"→"Kuaför", "Elektrikci"→"Elektrikçi", "Saglik"→"Sağlık", "Insaat"→"İnşaat"
-
-SADECE düzeltilmiş kelimeyi yaz!`,
-                },
-              ],
-              max_completion_tokens: 50,
-            }),
+            body: JSON.stringify(requestBody),
           });
 
           if (!response.ok) {
-            console.error(`OpenAI API error for ${category.name}:`, response.status);
+            const errorText = await response.text();
+            console.error(`OpenAI API error for ${category.name}:`, response.status, errorText);
             fixedName = category.name;
           } else {
             const data = await response.json();
@@ -192,8 +202,15 @@ SADECE düzeltilmiş kelimeyi yaz!`,
           }
         }
 
-        // Clean up the response (remove quotes, extra text)
-        fixedName = fixedName.replace(/["""'']/g, '').trim();
+        // Clean up the response aggressively
+        fixedName = fixedName
+          .replace(/["""''`]/g, '') // Remove all quotes
+          .replace(/^(Düzeltilmiş:|Sonuç:|Kelime:|Cevap:)/i, '') // Remove prefixes
+          .split('\n')[0] // Take only first line
+          .split('.')[0] // Take only first sentence
+          .trim();
+        
+        console.log(`Processing: "${category.name}" -> "${fixedName}"`);
         
         // Only update if name actually changed
         if (fixedName !== category.name && fixedName.length > 0) {

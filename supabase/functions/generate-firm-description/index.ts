@@ -110,9 +110,18 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
       }
 
       const data = await response.json();
-      description = data.candidates?.[0]?.content?.parts?.[0]?.text || "Kaliteli hizmet sunan güvenilir bir firma.";
+      const rawDescription = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (!rawDescription || rawDescription.trim().length < 100) {
+        console.error("Google API returned invalid description:", rawDescription);
+        throw new Error("Google API returned insufficient content");
+      }
+      
+      description = rawDescription.trim();
     } else if (provider === "openai" && aiSettings?.api_key) {
       // Direct OpenAI API call
+      // Legacy models use max_tokens + temperature
+      // New models (gpt-5*, gpt-4.1*) use max_completion_tokens only (no temperature)
       const isLegacyModel = model.includes("gpt-4o") || model.includes("gpt-3.5");
       
       const requestBody: any = {
@@ -120,11 +129,23 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
         messages: [
           {
             role: "system",
-            content: "Sen bir içerik yazarısın. HER FİRMA İÇİN TAMAMEN FARKLI VE ÖZGÜN açıklama yazacaksın. AYNI METNİ İKİ KERE ASLA YAZMAYACAKSIN. Her firma için firma adı, sektörü ve lokasyonuna göre TAMAMEN FARKLI içerik üreteceksin. Genel şablonlar YASAK. 250-500 kelime detaylı açıklama yazacaksın.",
+            content: `Sen bir profesyonel içerik yazarısın. KRITIK KURAL: Her firma için TAMAMEN FARKLI ve BENZERSIZ açıklama yazacaksın. 
+
+YASAK OLAN ŞEYLER:
+- "Kaliteli hizmet sunan güvenilir bir firma" gibi genel cümleler YASAK
+- Genel şablonlar YASAK
+- Klişe ifadeler YASAK
+- Aynı yapıyı kullanmak YASAK
+
+ZORUNLU OLAN ŞEYLER:
+- Her firma için firma adı, sektörü ve adresine özel FARKLI içerik
+- 250-500 kelime DETAYLI açıklama
+- Sektöre özel teknik terimler ve hizmet detayları
+- Lokasyona özel bilgiler`,
           },
           {
             role: "user",
-            content: `"${name}" firması için BENZERSIZ ve DETAYLI bir açıklama yaz.
+            content: `"${name}" firması için BENZERSIZ bir açıklama yaz.
 
 FİRMA BİLGİLERİ:
 - Firma Adı: ${name}
@@ -132,16 +153,16 @@ FİRMA BİLGİLERİ:
 - Adres: ${address}
 
 ZORUNLU KURALLAR:
-1. MUTLAKA firma adını (${name}), sektörü (${category}) ve lokasyon bilgisini (${address}) kullan
-2. ${category} sektörüne özgü SPESIFIK hizmetleri detaylandır
+1. İlk cümlede MUTLAKA firma adını (${name}), sektörünü (${category}) ve şehrini kullan
+2. ${category} sektörüne özgü SPESIFIK hizmetleri detaylandır (en az 5 farklı hizmet)
 3. Sektördeki teknik terimler, uzmanlık alanları ve hizmet detaylarını ekle
-4. Firmanın konumunu ve bölgede sunduğu hizmetleri vurgula
+4. Firmanın ${address} lokasyonunu ve bölgede sunduğu hizmetleri vurgula
 5. EN AZ 250 kelime, EN FAZLA 500 kelime yaz
-6. "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti" gibi KLİŞE ifadelerden KAÇIN
-7. Her firma için FARKLI ve ÖZGÜN açıklama yaz, genel şablonlar kullanma
+6. Bu KLİŞELERİ ASLA KULLANMA: "Kaliteli hizmet", "güvenilir firma", "müşteri memnuniyeti", "deneyimli kadro"
+7. Her firma için TAMAMEN FARKLI içerik yaz
 8. Türkçe karakter kurallarına uy (ş, ğ, ü, ö, ç, ı)
 
-UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz.`,
+UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre özel, detaylı ve profesyonel bir açıklama yaz. Genel cümleler kullanırsan başarısız olursun!`,
           },
         ],
       };
@@ -151,8 +172,9 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
         requestBody.max_tokens = 750;
         requestBody.temperature = 0.9;
       } else {
+        // New models (gpt-5*, gpt-4.1*) only support max_completion_tokens
         requestBody.max_completion_tokens = 750;
-        // New models don't support temperature parameter
+        // DO NOT add temperature for new models - it will cause an error
       }
 
       const response = await fetch(apiUrl, {
@@ -167,11 +189,18 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("OpenAI API error:", response.status, errorText);
-        throw new Error(`OpenAI API error: ${response.status}`);
+        throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      description = data.choices?.[0]?.message?.content || "Kaliteli hizmet sunan güvenilir bir firma.";
+      const rawDescription = data.choices?.[0]?.message?.content;
+      
+      if (!rawDescription || rawDescription.trim().length < 100) {
+        console.error("OpenAI returned invalid description:", rawDescription);
+        throw new Error("OpenAI API returned insufficient content");
+      }
+      
+      description = rawDescription.trim();
     } else {
       // Use Lovable AI Gateway
       const response = await fetch(apiUrl, {
@@ -219,7 +248,14 @@ UYARI: Bu firma için BAŞKA HİÇBİR FİRMAYA BENZEMEYECEK şekilde, sektöre 
       }
 
       const data = await response.json();
-      description = data.choices?.[0]?.message?.content || "Kaliteli hizmet sunan güvenilir bir firma.";
+      const rawDescription = data.choices?.[0]?.message?.content;
+      
+      if (!rawDescription || rawDescription.trim().length < 100) {
+        console.error("Lovable AI returned invalid description:", rawDescription);
+        throw new Error("AI returned insufficient content");
+      }
+      
+      description = rawDescription.trim();
     }
 
     // Save description to database if firmId is provided
