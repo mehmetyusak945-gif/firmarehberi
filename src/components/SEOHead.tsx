@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useWebmasterSettings } from "@/hooks/useWebmasterSettings";
 
 interface SEOHeadProps {
   title: string;
@@ -20,8 +19,6 @@ export const SEOHead = ({
   keywords,
   schema
 }: SEOHeadProps) => {
-  const { data: webmasterSettings } = useWebmasterSettings();
-
   useEffect(() => {
     // Title
     document.title = title;
@@ -75,90 +72,7 @@ export const SEOHead = ({
       }
       script.textContent = JSON.stringify(schema);
     }
-
-    // Webmaster verification codes
-    if (webmasterSettings) {
-      // Google Search Console
-      if (webmasterSettings.google_search_console_meta) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = webmasterSettings.google_search_console_meta.trim();
-        const metaElement = tempDiv.querySelector('meta');
-        if (metaElement) {
-          const name = metaElement.getAttribute('name');
-          const content = metaElement.getAttribute('content');
-          if (name && content) {
-            let existingMeta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
-            if (!existingMeta) {
-              existingMeta = document.createElement('meta');
-              existingMeta.setAttribute('name', name);
-              document.head.appendChild(existingMeta);
-            }
-            existingMeta.setAttribute('content', content);
-          }
-        }
-      }
-
-      // Yandex Webmaster
-      if (webmasterSettings.yandex_webmaster_meta) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = webmasterSettings.yandex_webmaster_meta.trim();
-        const metaElement = tempDiv.querySelector('meta');
-        if (metaElement) {
-          const name = metaElement.getAttribute('name');
-          const content = metaElement.getAttribute('content');
-          if (name && content) {
-            let existingMeta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
-            if (!existingMeta) {
-              existingMeta = document.createElement('meta');
-              existingMeta.setAttribute('name', name);
-              document.head.appendChild(existingMeta);
-            }
-            existingMeta.setAttribute('content', content);
-          }
-        }
-      }
-
-      // Bing Webmaster
-      if (webmasterSettings.bing_webmaster_meta) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = webmasterSettings.bing_webmaster_meta.trim();
-        const metaElement = tempDiv.querySelector('meta');
-        if (metaElement) {
-          const name = metaElement.getAttribute('name');
-          const content = metaElement.getAttribute('content');
-          if (name && content) {
-            let existingMeta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
-            if (!existingMeta) {
-              existingMeta = document.createElement('meta');
-              existingMeta.setAttribute('name', name);
-              document.head.appendChild(existingMeta);
-            }
-            existingMeta.setAttribute('content', content);
-          }
-        }
-      }
-
-      // Google Analytics
-      if (webmasterSettings.google_analytics_code) {
-        const existingGAScripts = document.querySelectorAll('script[src*="googletagmanager.com"]');
-        if (existingGAScripts.length === 0) {
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = webmasterSettings.google_analytics_code.trim();
-          const scripts = tempDiv.querySelectorAll('script');
-          scripts.forEach((script) => {
-            const newScript = document.createElement('script');
-            if (script.src) {
-              newScript.src = script.src;
-              newScript.async = true;
-            } else {
-              newScript.textContent = script.textContent;
-            }
-            document.head.appendChild(newScript);
-          });
-        }
-      }
-    }
-  }, [title, description, canonical, ogType, ogImage, keywords, schema, webmasterSettings]);
+  }, [title, description, canonical, ogType, ogImage, keywords, schema]);
 
   return null;
 };
