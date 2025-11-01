@@ -19,6 +19,7 @@ import { CategoryMerge } from "@/components/admin/CategoryMerge";
 import { AdManagement } from "@/components/admin/AdManagement";
 import { PendingFirms } from "@/components/admin/PendingFirms";
 import { DatabaseBackup } from "@/components/admin/DatabaseBackup";
+import { DatabaseConnection } from "@/components/admin/DatabaseConnection";
 import { ContactMessages } from "@/components/admin/ContactMessages";
 import { PageManagement } from "@/components/admin/PageManagement";
 import { DataClear } from "@/components/admin/DataClear";
@@ -213,6 +214,7 @@ const Admin = () => {
               {activeTab === "category-merge" && <CategoryMerge />}
               {activeTab === "ads" && <AdManagement />}
               {activeTab === "backup" && <DatabaseBackup />}
+              {activeTab === "db-connection" && <DatabaseConnection />}
               {activeTab === "clear-data" && <DataClear />}
               {activeTab === "messages" && <ContactMessages />}
               {activeTab === "firm-reports" && <FirmReports />}

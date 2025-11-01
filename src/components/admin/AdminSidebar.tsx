@@ -61,6 +61,7 @@ const menuItems = {
     { value: "ai-settings", label: "AI Ayarları", icon: Brain },
     { value: "webmaster", label: "Webmaster", icon: Globe },
     { value: "backup", label: "Yedekleme", icon: HardDrive },
+    { value: "db-connection", label: "DB Bağlantısı", icon: Settings },
     { value: "clear-data", label: "Veri Temizle", icon: AlertTriangle, danger: true },
   ],
 };

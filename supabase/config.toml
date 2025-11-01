@@ -9,6 +9,12 @@ verify_jwt = false
 [functions.restore-backup]
 verify_jwt = true
 
+[functions.full-backup]
+verify_jwt = true
+
+[functions.full-restore]
+verify_jwt = true
+
 [functions.upload-firms-excel]
 verify_jwt = true
 
