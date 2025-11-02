@@ -3,7 +3,7 @@ Allow: /
 Disallow: /auth
 Disallow: /admin
 
-Sitemap: https://wzpjmnjzfismjozhapmq.supabase.co/functions/v1/sitemap
+Sitemap: https://wzpjmnjzfismjozhapmq.supabase.co/functions/v1/sitemap/sitemap_index.xml
 
 # Crawl-delay for all bots
 Crawl-delay: 1
