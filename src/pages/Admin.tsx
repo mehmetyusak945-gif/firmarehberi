@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, Upload, LogOut, Loader2 } from "lucide-react";
+import { Building2, Upload, LogOut, Loader2, Home } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { slugify } from "@/lib/slugify";
 import { FirmList } from "@/components/admin/FirmList";
@@ -199,10 +199,20 @@ const Admin = () => {
                     Yönetim Paneli
                   </h1>
                 </div>
-                <Button onClick={handleLogout} variant="outline">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Çıkış Yap
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    onClick={() => window.open('/', '_blank')} 
+                    variant="outline"
+                    size="icon"
+                    title="Ana Sayfaya Git"
+                  >
+                    <Home className="h-4 w-4" />
+                  </Button>
+                  <Button onClick={handleLogout} variant="outline">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Çıkış Yap
+                  </Button>
+                </div>
               </div>
             </header>
 
