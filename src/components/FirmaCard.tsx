@@ -21,9 +21,9 @@ interface FirmaCardProps {
 
 export const FirmaCard = ({ firma }: FirmaCardProps) => {
   return (
-    <article 
+    <article
       className="group relative bg-card rounded-xl border border-border overflow-hidden hover-lift shadow-md hover:shadow-primary transition-all duration-300 flex flex-col"
-      style={{ minHeight: '280px', maxHeight: '320px', width: '300px' }}
+      style={{ minHeight: "250px", maxHeight: "300px", width: "300px" }}
     >
       {/* Kategori badge */}
       {(firma.category || firma.categories?.name) && (
@@ -69,11 +69,11 @@ export const FirmaCard = ({ firma }: FirmaCardProps) => {
               <span className="line-clamp-1">{firma.address}</span>
             </div>
           )}
-          
+
           {firma.landline_phone && (
             <div className="flex items-center space-x-1.5 text-xs text-muted-foreground">
               <Phone className="h-3 w-3 flex-shrink-0 text-success" />
-              <a 
+              <a
                 href={`tel:${firma.landline_phone}`}
                 className="hover:text-primary transition-fast"
                 aria-label={`${firma.name} sabit telefon numarasını ara`}
@@ -82,12 +82,12 @@ export const FirmaCard = ({ firma }: FirmaCardProps) => {
               </a>
             </div>
           )}
-          
+
           {firma.mobile_phone && (
             <div className="flex items-center space-x-1.5 text-xs text-muted-foreground">
               <Smartphone className="h-3 w-3 flex-shrink-0 text-green-600" />
-              <a 
-                href={`https://wa.me/${firma.mobile_phone.replace(/\D/g, '')}`}
+              <a
+                href={`https://wa.me/${firma.mobile_phone.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-fast"
@@ -97,18 +97,18 @@ export const FirmaCard = ({ firma }: FirmaCardProps) => {
               </a>
             </div>
           )}
-          
+
           {firma.website && (
             <div className="flex items-center space-x-1.5 text-xs text-muted-foreground">
               <Globe className="h-3 w-3 flex-shrink-0 text-blue-600" />
-              <a 
-                href={firma.website.startsWith('http') ? firma.website : `https://${firma.website}`}
+              <a
+                href={firma.website.startsWith("http") ? firma.website : `https://${firma.website}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-fast line-clamp-1"
                 aria-label={`${firma.name} web sitesini ziyaret et`}
               >
-                {firma.website.replace(/^https?:\/\/(www\.)?/, '')}
+                {firma.website.replace(/^https?:\/\/(www\.)?/, "")}
               </a>
             </div>
           )}
