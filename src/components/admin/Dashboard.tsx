@@ -133,11 +133,16 @@ export function Dashboard() {
             ) : serperAccount ? (
               <div className="space-y-2">
                 <div className="text-4xl font-bold text-yellow-600">
-                  {serperAccount.credits?.toLocaleString() || 0}
+                  {serperAccount.balance?.toLocaleString() || 0}
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Kalan arama kredisi
                 </p>
+                {serperAccount.rateLimit && (
+                  <p className="text-xs text-muted-foreground">
+                    Limit: {serperAccount.rateLimit} istek/dakika
+                  </p>
+                )}
               </div>
             ) : (
               <div className="text-sm text-muted-foreground">
