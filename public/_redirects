@@ -1,0 +1,3 @@
+/sitemap_index.xml https://wzpjmnjzfismjozhapmq.supabase.co/functions/v1/sitemap/sitemap_index.xml 301
+/sitemap.xml https://wzpjmnjzfismjozhapmq.supabase.co/functions/v1/sitemap/sitemap_index.xml 301
+/sitemap/* https://wzpjmnjzfismjozhapmq.supabase.co/functions/v1/sitemap/:splat 301
