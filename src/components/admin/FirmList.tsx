@@ -66,6 +66,11 @@ export const FirmList = () => {
     filterFirms();
   }, [searchTerm, selectedCategory, firms]);
 
+  // Reset to first page when search or filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
+
   const fetchFirms = async () => {
     try {
       const { data, error } = await supabase
