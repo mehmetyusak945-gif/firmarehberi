@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Search, Eye, ExternalLink, Sparkles, Trash2 } from "lucide-react";
+import { Loader2, Search, Eye, ExternalLink, Sparkles, Trash2, FolderTree } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { FirmDetailModal } from "./FirmDetailModal";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -54,6 +54,9 @@ export const FirmList = () => {
   const [selectedFirmIds, setSelectedFirmIds] = useState<Set<string>>(new Set());
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [selectedNewCategory, setSelectedNewCategory] = useState<string>("");
+  const [isChangingCategory, setIsChangingCategory] = useState(false);
 
   useEffect(() => {
     fetchFirms();
@@ -62,6 +65,11 @@ export const FirmList = () => {
   useEffect(() => {
     filterFirms();
   }, [searchTerm, selectedCategory, firms]);
+
+  // Reset to first page when search or filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
   const fetchFirms = async () => {
     try {
@@ -213,6 +221,44 @@ export const FirmList = () => {
     }
   };
 
+  const handleChangeCategoryClick = () => {
+    if (selectedFirmIds.size === 0) return;
+    setSelectedNewCategory("");
+    setIsCategoryDialogOpen(true);
+  };
+
+  const handleChangeCategory = async () => {
+    if (selectedFirmIds.size === 0 || !selectedNewCategory) return;
+
+    setIsChangingCategory(true);
+    try {
+      const { error } = await supabase
+        .from("firms")
+        .update({ category_id: selectedNewCategory })
+        .in("id", Array.from(selectedFirmIds));
+
+      if (error) throw error;
+
+      toast({
+        title: "Başarılı!",
+        description: `${selectedFirmIds.size} firmanın kategorisi güncellendi.`,
+      });
+
+      setSelectedFirmIds(new Set());
+      setIsCategoryDialogOpen(false);
+      setSelectedNewCategory("");
+      await fetchFirms();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message,
+      });
+    } finally {
+      setIsChangingCategory(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -228,20 +274,30 @@ export const FirmList = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {/* Delete Selected */}
+          {/* Bulk Actions */}
           {selectedFirmIds.size > 0 && (
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <span className="text-sm font-medium">
                 {selectedFirmIds.size} firma seçildi
               </span>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => setIsDeleteDialogOpen(true)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Seçilenleri Sil
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleChangeCategoryClick}
+                >
+                  <FolderTree className="h-4 w-4 mr-2" />
+                  Kategorisini Değiştir
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Seçilenleri Sil
+                </Button>
+              </div>
             </div>
           )}
 
@@ -280,6 +336,8 @@ export const FirmList = () => {
                   <SelectItem value="50">50</SelectItem>
                   <SelectItem value="75">75</SelectItem>
                   <SelectItem value="100">100</SelectItem>
+                  <SelectItem value="500">500</SelectItem>
+                  <SelectItem value="1000">Tümünü Göster</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -424,6 +482,49 @@ export const FirmList = () => {
                 </>
               ) : (
                 "Sil"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Kategoriyi Değiştir</AlertDialogTitle>
+            <AlertDialogDescription>
+              Seçili {selectedFirmIds.size} firmanın kategorisini değiştirmek istediğinizden emin misiniz? 
+              Firmaların URL yapısı ve diğer bilgileri korunacaktır.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4">
+            <label className="text-sm font-medium mb-2 block">Yeni Kategori:</label>
+            <Select value={selectedNewCategory} onValueChange={setSelectedNewCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Kategori seçin" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories?.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isChangingCategory}>İptal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleChangeCategory}
+              disabled={isChangingCategory || !selectedNewCategory}
+            >
+              {isChangingCategory ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Güncelleniyor...
+                </>
+              ) : (
+                "Kategoriyi Değiştir"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

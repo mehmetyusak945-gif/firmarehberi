@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 interface SEOHeadProps {
   title: string;
@@ -19,60 +19,38 @@ export const SEOHead = ({
   keywords,
   schema
 }: SEOHeadProps) => {
-  useEffect(() => {
-    // Title
-    document.title = title;
+  return (
+    <Helmet>
+      {/* Title */}
+      <title>{title}</title>
 
-    // Meta tags
-    const metaTags = [
-      { name: "description", content: description },
-      { name: "keywords", content: keywords || "firma rehberi, işletme rehberi, türkiye firmaları" },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: ogType },
-      { property: "og:image", content: ogImage },
-      { property: "og:locale", content: "tr_TR" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-      { name: "twitter:image", content: ogImage },
-    ];
-
-    metaTags.forEach(({ name, property, content }) => {
-      const attribute = property ? "property" : "name";
-      const value = property || name;
-      let meta = document.querySelector(`meta[${attribute}="${value}"]`) as HTMLMetaElement;
+      {/* Meta Tags */}
+      <meta name="description" content={description} />
+      <meta name="keywords" content={keywords || "firma rehberi, işletme rehberi, türkiye firmaları"} />
       
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute(attribute, value);
-        document.head.appendChild(meta);
-      }
-      meta.content = content;
-    });
+      {/* Open Graph */}
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:locale" content="tr_TR" />
+      {canonical && <meta property="og:url" content={canonical} />}
+      
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImage} />
 
-    // Canonical URL
-    if (canonical) {
-      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-      if (!link) {
-        link = document.createElement("link");
-        link.rel = "canonical";
-        document.head.appendChild(link);
-      }
-      link.href = canonical;
-    }
+      {/* Canonical URL */}
+      {canonical && <link rel="canonical" href={canonical} />}
 
-    // Structured Data (Schema.org)
-    if (schema) {
-      let script = document.querySelector('script[type="application/ld+json"]') as HTMLScriptElement;
-      if (!script) {
-        script = document.createElement("script");
-        script.type = "application/ld+json";
-        document.head.appendChild(script);
-      }
-      script.textContent = JSON.stringify(schema);
-    }
-  }, [title, description, canonical, ogType, ogImage, keywords, schema]);
-
-  return null;
+      {/* Structured Data (Schema.org) */}
+      {schema && (
+        <script type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      )}
+    </Helmet>
+  );
 };
